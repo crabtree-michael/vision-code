@@ -20,6 +20,7 @@ enum SFTPError: Error {
     case unexpectedResponse
     case closedHandle
     case serverSuppliedError(message: String)
+    case timeout
 }
 
 class SFTPHandler: ChannelDuplexHandler {
@@ -43,6 +44,8 @@ class SFTPHandler: ChannelDuplexHandler {
     private var chunkSize: UInt32 = 1000000
     
     private let mapLock = NSLock()
+    
+    var timeout: TimeInterval = 30
     
     
     init(eventLoop: EventLoop) {
@@ -148,6 +151,16 @@ class SFTPHandler: ChannelDuplexHandler {
         }
         let response = self.makeExpectedResponse(context: context, of: T.self)
         let id = response.id
+        
+        let timeout = self.timeout
+        var timeoutTask: Task<Void, Never>?
+        if timeout > 0 {
+            timeoutTask = Task {
+                try? await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
+                response.promise.fail(SFTPError.timeout)
+            }
+        }
+        
         context.eventLoop.execute({
             let data = self.wrapOutboundOut(request(id))
             context.writeAndFlush(data).whenFailure { error in
@@ -155,7 +168,9 @@ class SFTPHandler: ChannelDuplexHandler {
                 response.promise.fail(error)
             }
         })
+        
         try await response.promise.futureResult.get()
+        timeoutTask?.cancel()
         return response
     }
     
@@ -241,6 +256,15 @@ public class RCSFTPClient {
     internal var creationPromise: EventLoopPromise<Void> {
         get {
             return self.handler.creationPromise
+        }
+    }
+    
+    var requestTimeout: TimeInterval {
+        get {
+            handler.timeout
+        }
+        set {
+            handler.timeout = newValue
         }
     }
     

@@ -25,6 +25,9 @@ struct File {
     var content: String = ""
     var size: Int? = nil
     
+    var modifiedDate: Date?
+    var accessedDate : Date?
+    
     init(path: String, icon: FileIcon = .file, isFolder: Bool = false, content: String = "") {
         self.path = path
         self.icon = isFolder ? .folder : .file
@@ -38,6 +41,12 @@ struct File {
         self.isFolder = sftpFile.isDirectory
         if let size = sftpFile.attributes.size {
             self.size = Int(size)
+        }
+        if let aTime = sftpFile.attributes.atime {
+            self.accessedDate = Date.init(timeIntervalSince1970: TimeInterval(aTime))
+        }
+        if let mTime = sftpFile.attributes.mtime {
+            self.modifiedDate = Date.init(timeIntervalSince1970: TimeInterval(mTime))
         }
     }
 }

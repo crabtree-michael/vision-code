@@ -79,9 +79,10 @@ class BreadthFirstPathTraversal {
                 continue
             }
             
-            files = files.sorted { a, b in
-                return a.size ?? 100000 < b.size ?? 100000
-            }
+            files = files.sorted(by: { a, b in
+                b.accessedDate ?? b.modifiedDate ?? Date(timeIntervalSince1970: 0) < b.accessedDate ?? b.modifiedDate ?? Date(timeIntervalSince1970: 0)
+            })
+            
             var childCount = 0
             for file in files {
                 if file.name == "." || file.name == ".." {
@@ -107,6 +108,7 @@ class BreadthFirstPathTraversal {
         let parent = parents[currentParentIndex]
         parent.node.subnodes.append(node)
         if parent.node.subnodes.count == parent.childCount {
+            print("Loaded \(parent.node.file.path)")
             parent.node.loaded = true
             self.onNodeLoaded?(self)
             currentParentIndex += 1
