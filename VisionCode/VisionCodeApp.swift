@@ -26,9 +26,14 @@ struct VisionCodeApp: App {
         let manager = self.terminalManager
         let bManager = self.browserManager
         Task {
-            try! await connection.connect()
-            await manager.connect()
-            await bManager.connect()
+            do {
+                try await connection.connect()
+                await manager.connect()
+                await bManager.connect()
+            } catch {
+                print("Failed to make connection \(error)")
+            }
+
         }
         
     }
