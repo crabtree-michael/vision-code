@@ -20,15 +20,16 @@ struct FileCellView: View {
     var onOpen: FileLambda?  = nil
     
     var body: some View {
-        LazyVStack(spacing: 8) {
+        LazyVStack(spacing: 4) {
             HStack {
                 Spacer(minLength: 12 * CGFloat(indentationLevel))
-                HStack {
+                HStack(alignment: .center) {
                     Spacer()
                     if (!state.loaded) {
                         ProgressView()
-                            .padding()
-                            .scaleEffect(CGSize(width: 0.5, height: 0.5))
+                            .frame(maxHeight: 0)
+                            .scaleEffect(CGSize(width: 0.4, height: 0.4))
+                        
                     } else if (!empty) {
                         Image(systemName: !collapsed ? "chevron.down" : "chevron.right")
                     } else {
@@ -45,7 +46,6 @@ struct FileCellView: View {
             .hoverEffect()
             .onTapGesture {
                 guard state.loaded else {
-                    print("Not loaded")
                     return
                 }
                 guard !empty else {
@@ -53,7 +53,6 @@ struct FileCellView: View {
                     return
                 }
                 
-                print("Collapsing")
                 self.collapsed = !self.collapsed
             }
             if (!empty && !collapsed && state.loaded) {
@@ -66,4 +65,23 @@ struct FileCellView: View {
             }
         }
     }
+}
+
+#Preview {
+    var state: FileCellViewState {
+        let root = PathNode(file: File(path: "test/"), 
+                            subnodes:
+                                [PathNode(file: File(path: "test/green.txt"), subnodes: []),
+                                 PathNode(file: File(path: "test/green2.txt"), subnodes: []),
+                                 PathNode(file: File(path: "test/blue.txt"), subnodes: [], loaded: true),
+                                  PathNode(file: File(path: "test/blue2.txt"), subnodes: [], loaded: true)]
+                            )
+        root.loaded = true
+        return FileCellViewState(node: root)
+    }
+    
+    return FileCellView(state: state,
+                 indentationLevel: 1,
+                 collapsed: false,
+                 onOpen: nil)
 }

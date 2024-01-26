@@ -27,7 +27,7 @@ struct File {
     
     init(path: String, icon: FileIcon = .file, isFolder: Bool = false, content: String = "") {
         self.path = path
-        self.icon = isFolder ? .file : .folder
+        self.icon = isFolder ? .folder : .file
         self.isFolder = isFolder
         self.content = content
     }
@@ -49,8 +49,9 @@ class PathNode {
     var loaded: Bool = false
     var skipped: Bool = false
     
-    init(file: File, subnodes: [PathNode]) {
+    init(file: File, subnodes: [PathNode], loaded: Bool = false) {
         self.file = file
         self.subnodes = subnodes
+        self.loaded = loaded
     }
 }
