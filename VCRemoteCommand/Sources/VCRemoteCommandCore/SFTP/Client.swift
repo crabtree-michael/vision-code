@@ -71,8 +71,6 @@ class SFTPHandler: ChannelDuplexHandler {
         if context.channel.isWritable && !self.wroteInit {
             self.writeInitMessage()
         }
-        
-        print("Writability changed on context \(context.channel.isWritable)")
     }
     
     func channelRead(context: ChannelHandlerContext, data: NIOAny) {

@@ -26,6 +26,7 @@ class TerminalViewState: ObservableObject {
     var title: String
     @Published var historyText: String
     var commandInputText: String
+    var showTitle: Bool = true
     
     var onExecute: (() -> ())? = nil
     

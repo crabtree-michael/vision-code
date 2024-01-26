@@ -73,9 +73,12 @@ struct TerminalView: View {
     var body: some View {
         switch(state.connectionState) {
         case .connected:
-            VStack {
-                TerminalHeader(text: state.title).padding()
-                Spacer()
+            VStack(spacing: 0) {
+                if state.showTitle {
+                    TerminalHeader(text: state.title).padding()
+                    Spacer()
+                }
+               
                 HistoryView(text: $state.historyText)
                     .background(.regularMaterial)
                 Prompt(commandState: $state.commandState,

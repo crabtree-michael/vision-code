@@ -13,6 +13,7 @@ class RepositoryViewManager {
     let path: String
     let editor: EditorViewManager
     let browser: RepositoryFileBrowserManager
+    let terminal: TerminalManager
     let state: RepositoryViewState
     
     var didClose: ((RepositoryViewManager) -> ())? = nil
@@ -21,7 +22,11 @@ class RepositoryViewManager {
         self.connection = connection
         self.editor = EditorViewManager(path: path)
         self.browser = RepositoryFileBrowserManager(path: path)
-        self.state = RepositoryViewState(editorState: editor.state, browserState: browser.state)
+
+        self.terminal = TerminalManager(title: (path as NSString).lastPathComponent, connection: connection)
+        self.terminal.state.showTitle = false
+        
+        self.state = RepositoryViewState(editorState: editor.state, browserState: browser.state, terminalState: self.terminal.state)
         self.path = path
         
         self.state.onClose = self.onClose
@@ -39,6 +44,8 @@ class RepositoryViewManager {
                 let browserClient = try await self.connection.createSFTPClient()
                 self.browser.client = browserClient
                 self.browser.load()
+                
+                await self.terminal.connect()
             } catch {
                 print("Failed to load \(error)")
             }
