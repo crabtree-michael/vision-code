@@ -23,8 +23,7 @@ struct FileView: View {
             if state.isLoading {
                 ProgressView()
             } else {
-                TextEditor(text: $state.content)
-                    .font(.system(size: 14))
+                VCTextEditor(text: $state.content)
                 if !state.isWriting {
                     Button {
                         state.onSave?()
@@ -44,4 +43,56 @@ struct FileView: View {
             }
         }
     }
+}
+
+#Preview {
+    
+    var state: FileViewState {
+        let state = FileViewState()
+        state.isLoading = false
+        state.content = """
+//
+//  DocumentView.swift
+//  SwiftUITextEditor
+//
+//  Created by mark on 12/18/19.
+//  Copyright © 2019 Swift Dev Journal. All rights reserved.
+//
+
+import SwiftUI
+
+struct DocumentView: View {
+    @State var document: Document
+    var dismiss: () -> Void
+
+    var body: some View {
+        VStack {
+            HStack {
+                Text("File Name")
+                    .foregroundColor(.secondary)
+
+                Text(document.fileURL.lastPathComponent) laskjdflaksjdflaksdjflaksdjflaksjdflaksjdflkajsdlfkjasdlfkjasldkfjalskdfjlaskdjflaskdjflaksdjflaksjdflkasjdflkjasdf
+            }
+            TextView(document: $document)
+            Button("Done", action: dismiss)
+        }
+    }
+}
+
+
+
+
+
+
+
+Now this is really long!
+
+Can you see me?
+
+oh you can't
+"""
+        return state
+    }
+    
+    return FileView(state: state)
 }
