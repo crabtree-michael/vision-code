@@ -21,7 +21,7 @@ extension VCTextInputView: UITextInput {
     }
     
     override var canResignFirstResponder: Bool {
-        return true
+        return self.isFirstResponder
     }
     
     

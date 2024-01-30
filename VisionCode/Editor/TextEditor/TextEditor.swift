@@ -51,7 +51,6 @@ class VCTextEditorViewController: UIViewController,
         contentStorage.automaticallySynchronizesToBackingStore = true
         contentStorage.automaticallySynchronizesTextLayoutManagers = true
         self.view.addSubview(textView)
-        textView.becomeFirstResponder()
         
         textView.isScrollEnabled = true
         textView.showsHorizontalScrollIndicator = true

@@ -13,7 +13,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
     var layoutManager: NSTextLayoutManager
     var contentStore: NSTextContentStorage
     
-    let carrot = UIView()
+    let carrot = Carrot()
     var carrotLocation: NSTextLocation? = nil
     
     var widestTextFragement: NSTextLayoutFragment?
@@ -121,8 +121,9 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
         
         self.addSubview(contentView)
         
-        carrot.frame = CGRect(x: 0, y: 0, width: 2, height: 10)
-        carrot.backgroundColor = .blue
+        carrot.frame = CGRect(x: 0, y: 0, width: 6, height: 10)
+        carrot.backgroundColor = .white
+        carrot.isHidden = true
         self.contentView.addSubview(carrot)
         
         tapGesture.addTarget(self, action: #selector(onTap))
@@ -157,6 +158,10 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
     }
     
     @objc func onTap(_ gesture: UITapGestureRecognizer) {
+        if !self.isFirstResponder {
+            self.becomeFirstResponder()
+        }
+        
         self.carrotLocation = closestLocation(to: gesture.location(in: self))
         self.updateCarrotLocation()
     }
@@ -209,6 +214,18 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
                 self.carrot.frame = CGRect(x: x, y: lineFragment.layoutFragmentFrame.minY, width: self.carrot.frame.width, height: lineFragment.layoutFragmentFrame.height)
             }
         })
+    }
+    
+    override func becomeFirstResponder() -> Bool {
+        carrot.isHidden = false
+        carrot.startBlinking()
+        return super.becomeFirstResponder()
+    }
+    
+    override func resignFirstResponder() -> Bool {
+        self.carrot.stopBlinking()
+        self.carrot.isHidden = true
+        return super.resignFirstResponder()
     }
 }
 
