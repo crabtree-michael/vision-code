@@ -10,64 +10,56 @@ import UIKit
 
 typealias TextAttributes = [NSAttributedString.Key: Any]
 
-struct Cursor {
-    
-}
-
-
-class LineNumber {
-    let number: Int
-    let y:CGFloat
-    
-    init(number: Int, y: CGFloat) {
-        self.number = number
-        self.y = y
-    }
-}
-
-class GutterView: UIView {
-    var lineNumbers: [LineNumber] = []
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    
-    override func draw(_ rect: CGRect) {
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .right
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 10),
-            .foregroundColor: UIColor.darkGray,
-            .paragraphStyle: paragraphStyle
-        ]
-        
-        for number in self.lineNumbers {
-            let line = "\(number.number)"
-            let size = line.size(withAttributes: attributes)
-            let drawRect = CGRect(x: rect.origin.x, y: rect.origin.y + number.y - size.height/2, width: rect.width - 2, height: size.height)
-            line.draw(in: drawRect, withAttributes: attributes)
-        }
-        super.draw(rect)
-    }
-}
-
-class VCTextEditorViewController: UIViewController, UITextViewDelegate {
-    let textView = UITextView()
+class VCTextEditorViewController: UIViewController, 
+                                    UITextViewDelegate,
+                                    UIScrollViewDelegate,
+                                    NSTextLayoutManagerDelegate, NSTextStorageDelegate {
+    var textView: VCTextInputView!
+    let layoutManager = NSTextLayoutManager()
     var gutterView: GutterView = GutterView()
     let gutterWidth: CGFloat = 25
     
+    var contentObserver: NSKeyValueObservation?
+    
+    var hasUpdateAllYs: Bool = true
+    
+    let contentStorage = NSTextContentStorage()
+    
+    let attributes: TextAttributes = [
+        .font: UIFont(name: "Menlo", size: 12)!,
+        .foregroundColor: UIColor.white
+        
+    ]
+
     override func viewDidLoad() {
+        let container = NSTextContainer(size: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
+        textView = VCTextInputView(
+            manager: layoutManager,
+            content: contentStorage)
+        textView.contentSize = CGSize(width: 100, height: 10000)
+    
+        layoutManager.textContainer = container
+        layoutManager.delegate = self
+        layoutManager.textViewportLayoutController.delegate = textView
+        layoutManager.replace(contentStorage)
+        
+        contentStorage.textStorage = NSTextStorage()
+        contentStorage.addTextLayoutManager(layoutManager)
+        contentStorage.primaryTextLayoutManager = layoutManager
+        contentStorage.automaticallySynchronizesToBackingStore = true
+        contentStorage.automaticallySynchronizesTextLayoutManagers = true
         self.view.addSubview(textView)
+        textView.becomeFirstResponder()
+        
         textView.isScrollEnabled = true
         textView.showsHorizontalScrollIndicator = true
         textView.showsVerticalScrollIndicator = true
-        textView.isUserInteractionEnabled = true
-        textView.hoverStyle = .none
-        textView.textContainerInset = UIEdgeInsets(top: 0, left: gutterWidth, bottom: 0, right: 0)
+        textView.alwaysBounceHorizontal = false
+        textView.alwaysBounceVertical = true
+        textView.attributes = self.attributes
+        textView.insets = UIEdgeInsets(top: 0, left: gutterWidth, bottom: 0, right: 0)
+        
+        textView.delegate = self
         
         self.textView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -77,50 +69,47 @@ class VCTextEditorViewController: UIViewController, UITextViewDelegate {
             self.textView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
         ])
         
-        self.textView.delegate = self
+        self.gutterView.frame = CGRect(x: 0, y: 0, width: gutterWidth, height: 1000)
         
-        self.gutterView.backgroundColor = .white.withAlphaComponent(0.65)
+        contentObserver = self.textView.observe(\.contentSize, changeHandler: { [weak self] view, value in
+            self?.gutterView.frame = CGRect(x: 0, y:0, width: self?.gutterWidth ?? 0, height: view.contentSize.height)
+            self?.gutterView.setNeedsDisplay()
+        })
+        
+        self.gutterView.backgroundColor = .darkGray.withAlphaComponent(0.95)
         self.textView.addSubview(gutterView)
     }
     
-    func textViewDidChange(_ textView: UITextView) {
-        print("Text change")
-        self.updateGutterView()
+    deinit {
+        contentObserver?.invalidate()
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        gutterView.frame = CGRect(x: scrollView.contentOffset.x, y: gutterView.bounds.minY, width: gutterView.frame.width, height: gutterView.frame.height)
+        
+        layoutManager.textViewportLayoutController.layoutViewport()
     }
     
     override func viewDidLayoutSubviews() {
-        print("Layout")
-        self.updateGutterView()
+        layoutManager.textViewportLayoutController.layoutViewport()
     }
-    
-    func updateGutterView() {
-        var lineNumbers = [LineNumber]()
-        var lastOffset = 0
-        let newLines = textView.text.indicesOf(string: "\n")
-        for (number, offset) in newLines.enumerated() {
-            let p0 = textView.position(from: textView.beginningOfDocument, offset: lastOffset)!
-            let p1 = textView.position(from: textView.beginningOfDocument, offset: offset)!
-            let rect = textView.firstRect(for: textView.textRange(from: p0, to: p1)!)
-            lineNumbers.append(LineNumber(number: number + 1, y: rect.maxY - rect.height/2))
-            
-            lastOffset = offset + 1
-        }
-        
-        let p0 = textView.position(from: textView.beginningOfDocument, offset: lastOffset)!
-        let p1 = textView.position(from: textView.endOfDocument, offset: 0)!
-        let rect = textView.firstRect(for: textView.textRange(from: p0, to: p1)!)
-        lineNumbers.append(LineNumber(number: newLines.count + 1, y: rect.maxY - rect.height/2))
-        
-        gutterView.lineNumbers = lineNumbers
-        gutterView.frame = CGRect(x: 0, y: 0, width: gutterWidth, height: self.textView.contentSize.height)
-        gutterView.setNeedsDisplay()
-    }
-
-    
     
     func update(_ text: String) {
-        textView.text = text
+        let attributedString = NSAttributedString(string: text, attributes: attributes)
+        
+        textView.contentSize = attributedString.size()
+        
+        contentStorage.performEditingTransaction {
+            contentStorage.textStorage!.setAttributedString(attributedString)
+        }
+
+        textView.findWidestTextFragement()
+        layoutManager.textViewportLayoutController.layoutViewport()
+        
+        gutterView.lineHeight = textView.lineHeight
+        gutterView.setNeedsDisplay()
     }
+    
 }
 
 struct VCTextEditor: UIViewControllerRepresentable {

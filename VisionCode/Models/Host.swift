@@ -9,7 +9,7 @@ import Foundation
 
 struct Host {
     let name: String = "Michael's iMac"
-    let ipAddress: String = ""
+    let ipAddress: String = "192.168.88.236"
     let port: Int = 22
     let username: String = "michael"
     let password: String = "rect"
