@@ -24,9 +24,15 @@
 		D80881F92B63E23100582C41 /* EditorNavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881F82B63E23100582C41 /* EditorNavBarView.swift */; };
 		D80881FB2B63E25E00582C41 /* EditorErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881FA2B63E25E00582C41 /* EditorErrors.swift */; };
 		D80881FD2B63E27200582C41 /* Lambdas.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881FC2B63E27200582C41 /* Lambdas.swift */; };
+		D8393BAE2B6870E9004018DC /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8393BAD2B6870E9004018DC /* Models.swift */; };
+		D8393BB02B687113004018DC /* GutterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8393BAF2B687113004018DC /* GutterView.swift */; };
+		D8393BB22B6871EE004018DC /* Recycler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8393BB12B6871EE004018DC /* Recycler.swift */; };
+		D8393BB42B6872C6004018DC /* VCTextInputView+UITextInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8393BB32B6872C6004018DC /* VCTextInputView+UITextInput.swift */; };
+		D8393BB62B6902DF004018DC /* FileViewToolBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8393BB52B6902DF004018DC /* FileViewToolBar.swift */; };
 		D840A68E2B5A0A31002F3303 /* VisionCodeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D840A68D2B5A0A31002F3303 /* VisionCodeApp.swift */; };
 		D840A6922B5A0A32002F3303 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D840A6912B5A0A32002F3303 /* Assets.xcassets */; };
 		D840A6962B5A0A32002F3303 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D840A6952B5A0A32002F3303 /* Preview Assets.xcassets */; };
+		D84AAABE2B6510AF002B8E1E /* TextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84AAABD2B6510AF002B8E1E /* TextEditor.swift */; };
 		D870C6D32B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D870C6D22B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift */; };
 		D8A9BF012B63E33500115D77 /* FinderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF002B63E33500115D77 /* FinderView.swift */; };
 		D8A9BF042B63E4C900115D77 /* FinderViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF032B63E4C900115D77 /* FinderViewState.swift */; };
@@ -40,6 +46,8 @@
 		D8A9BF182B63E6D000115D77 /* FileCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF172B63E6D000115D77 /* FileCellView.swift */; };
 		D8A9BF1B2B63E6FF00115D77 /* FileCellViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF1A2B63E6FF00115D77 /* FileCellViewState.swift */; };
 		D8A9BF1D2B63E74700115D77 /* RepositoryFilesViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF1C2B63E74700115D77 /* RepositoryFilesViewState.swift */; };
+		D8CCC7092B66E21000730B45 /* TextLayoutFragmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CCC7082B66E21000730B45 /* TextLayoutFragmentView.swift */; };
+		D8CCC70B2B66EE8100730B45 /* VCTextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CCC70A2B66EE8100730B45 /* VCTextInputView.swift */; };
 		D8FC3F192B5DA5CD00C6E099 /* Terminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FC3F182B5DA5CD00C6E099 /* Terminal.swift */; };
 		D8FC3F1C2B5DD39E00C6E099 /* VCRemoteCommand in Frameworks */ = {isa = PBXBuildFile; productRef = D8FC3F1B2B5DD39E00C6E099 /* VCRemoteCommand */; };
 		D8FC3F1F2B5DF7CA00C6E099 /* TerminalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FC3F1E2B5DF7CA00C6E099 /* TerminalManager.swift */; };
@@ -64,6 +72,11 @@
 		D80881F82B63E23100582C41 /* EditorNavBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorNavBarView.swift; sourceTree = "<group>"; };
 		D80881FA2B63E25E00582C41 /* EditorErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorErrors.swift; sourceTree = "<group>"; };
 		D80881FC2B63E27200582C41 /* Lambdas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lambdas.swift; sourceTree = "<group>"; };
+		D8393BAD2B6870E9004018DC /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		D8393BAF2B687113004018DC /* GutterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutterView.swift; sourceTree = "<group>"; };
+		D8393BB12B6871EE004018DC /* Recycler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recycler.swift; sourceTree = "<group>"; };
+		D8393BB32B6872C6004018DC /* VCTextInputView+UITextInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VCTextInputView+UITextInput.swift"; sourceTree = "<group>"; };
+		D8393BB52B6902DF004018DC /* FileViewToolBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileViewToolBar.swift; sourceTree = "<group>"; };
 		D840A68A2B5A0A31002F3303 /* VisionCode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisionCode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D840A68D2B5A0A31002F3303 /* VisionCodeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionCodeApp.swift; sourceTree = "<group>"; };
 		D840A6912B5A0A32002F3303 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -71,6 +84,7 @@
 		D840A6952B5A0A32002F3303 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D840A69E2B5AE2A3002F3303 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D840A6AC2B5C4890002F3303 /* VCRemoteCommand */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = VCRemoteCommand; sourceTree = "<group>"; };
+		D84AAABD2B6510AF002B8E1E /* TextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEditor.swift; sourceTree = "<group>"; };
 		D870C6D22B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreadthFirstPathTraversal.swift; sourceTree = "<group>"; };
 		D8A9BF002B63E33500115D77 /* FinderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderView.swift; sourceTree = "<group>"; };
 		D8A9BF032B63E4C900115D77 /* FinderViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderViewState.swift; sourceTree = "<group>"; };
@@ -84,6 +98,8 @@
 		D8A9BF172B63E6D000115D77 /* FileCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCellView.swift; sourceTree = "<group>"; };
 		D8A9BF1A2B63E6FF00115D77 /* FileCellViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCellViewState.swift; sourceTree = "<group>"; };
 		D8A9BF1C2B63E74700115D77 /* RepositoryFilesViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryFilesViewState.swift; sourceTree = "<group>"; };
+		D8CCC7082B66E21000730B45 /* TextLayoutFragmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLayoutFragmentView.swift; sourceTree = "<group>"; };
+		D8CCC70A2B66EE8100730B45 /* VCTextInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTextInputView.swift; sourceTree = "<group>"; };
 		D8FC3F182B5DA5CD00C6E099 /* Terminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terminal.swift; sourceTree = "<group>"; };
 		D8FC3F1E2B5DF7CA00C6E099 /* TerminalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalManager.swift; sourceTree = "<group>"; };
 		D8FC3F202B5DF83300C6E099 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -168,6 +184,7 @@
 				D80881F42B63E16000582C41 /* EditorView.swift */,
 				D80881F62B63E1AE00582C41 /* FileView.swift */,
 				D80881F82B63E23100582C41 /* EditorNavBarView.swift */,
+				D8393BB52B6902DF004018DC /* FileViewToolBar.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -215,9 +232,24 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		D84AAABC2B651099002B8E1E /* TextEditor */ = {
+			isa = PBXGroup;
+			children = (
+				D84AAABD2B6510AF002B8E1E /* TextEditor.swift */,
+				D8CCC7082B66E21000730B45 /* TextLayoutFragmentView.swift */,
+				D8CCC70A2B66EE8100730B45 /* VCTextInputView.swift */,
+				D8393BB32B6872C6004018DC /* VCTextInputView+UITextInput.swift */,
+				D8393BAD2B6870E9004018DC /* Models.swift */,
+				D8393BAF2B687113004018DC /* GutterView.swift */,
+				D8393BB12B6871EE004018DC /* Recycler.swift */,
+			);
+			path = TextEditor;
+			sourceTree = "<group>";
+		};
 		D870C6CE2B61EB2C0063D7D4 /* Editor */ = {
 			isa = PBXGroup;
 			children = (
+				D84AAABC2B651099002B8E1E /* TextEditor */,
 				D80881F32B63E14E00582C41 /* View */,
 				D80881EC2B63E03300582C41 /* Managers */,
 				D80881EB2B63E02900582C41 /* States */,
@@ -399,24 +431,32 @@
 				D8FC3F212B5DF83300C6E099 /* Model.swift in Sources */,
 				D80881FD2B63E27200582C41 /* Lambdas.swift in Sources */,
 				D80881F52B63E16000582C41 /* EditorView.swift in Sources */,
+				D8CCC70B2B66EE8100730B45 /* VCTextInputView.swift in Sources */,
 				D8A9BF132B63E60D00115D77 /* RepositoryViewState.swift in Sources */,
 				D80881DC2B63DCF300582C41 /* RepositoryFileBrowserManager.swift in Sources */,
 				D8A9BF0A2B63E54000115D77 /* FolderHeaderView.swift in Sources */,
 				D8A9BF012B63E33500115D77 /* FinderView.swift in Sources */,
+				D8393BB62B6902DF004018DC /* FileViewToolBar.swift in Sources */,
 				D8A9BF112B63E5B700115D77 /* RepositoryView.swift in Sources */,
 				D80881E62B63DEE900582C41 /* RepositoryViewManager.swift in Sources */,
 				D8A9BF1D2B63E74700115D77 /* RepositoryFilesViewState.swift in Sources */,
 				D80881D82B63DBB500582C41 /* FinderFolderViewManager.swift in Sources */,
+				D8393BAE2B6870E9004018DC /* Models.swift in Sources */,
 				D8FC3F1F2B5DF7CA00C6E099 /* TerminalManager.swift in Sources */,
 				D870C6D32B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift in Sources */,
+				D8393BB22B6871EE004018DC /* Recycler.swift in Sources */,
 				D80881F02B63E07900582C41 /* FileViewState.swift in Sources */,
 				D80881E12B63DE1C00582C41 /* Errors.swift in Sources */,
 				D8FC3F192B5DA5CD00C6E099 /* Terminal.swift in Sources */,
 				D80881F22B63E0B300582C41 /* Host.swift in Sources */,
 				D8A9BF082B63E51800115D77 /* FolderViewState.swift in Sources */,
 				D80881E42B63DE9D00582C41 /* RepositoryWindowManager.swift in Sources */,
+				D84AAABE2B6510AF002B8E1E /* TextEditor.swift in Sources */,
 				D8A9BF062B63E4F400115D77 /* FolderView.swift in Sources */,
+				D8393BB42B6872C6004018DC /* VCTextInputView+UITextInput.swift in Sources */,
+				D8393BB02B687113004018DC /* GutterView.swift in Sources */,
 				D80881FB2B63E25E00582C41 /* EditorErrors.swift in Sources */,
+				D8CCC7092B66E21000730B45 /* TextLayoutFragmentView.swift in Sources */,
 				D8A9BF182B63E6D000115D77 /* FileCellView.swift in Sources */,
 				D80881EA2B63DFFE00582C41 /* FileViewManager.swift in Sources */,
 				D80881F72B63E1AE00582C41 /* FileView.swift in Sources */,

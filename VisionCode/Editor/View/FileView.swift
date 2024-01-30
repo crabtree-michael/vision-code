@@ -19,20 +19,12 @@ struct FileView: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             if state.isLoading {
                 ProgressView()
             } else {
                 VCTextEditor(text: $state.content)
-                if !state.isWriting {
-                    Button {
-                        state.onSave?()
-                    } label: {
-                        Text("Save")
-                    }
-                } else {
-                    ProgressView()
-                }
+                FileViewToolBar(state: state)
             }
         }
         .alert(isPresented: isShowingError, error: state.error) { _ in

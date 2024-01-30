@@ -24,10 +24,12 @@ struct Editor: View {
             if let activeState = state.activeFileState {
                 FileView(state: activeState)
             } else {
+                Spacer()
                 Text("Open a file")
+                Spacer()
             }
-            Spacer()
         }
+        .background(.ultraThickMaterial)
         .onDisappear() {
             self.state.onClose?()
         }

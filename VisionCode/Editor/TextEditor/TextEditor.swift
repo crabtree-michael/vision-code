@@ -28,8 +28,9 @@ class VCTextEditorViewController: UIViewController,
     let attributes: TextAttributes = [
         .font: UIFont(name: "Menlo", size: 12)!,
         .foregroundColor: UIColor.white
-        
     ]
+    
+    var onTextChanges: ((String) -> ())?
 
     override func viewDidLoad() {
         let container = NSTextContainer(size: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
@@ -44,6 +45,7 @@ class VCTextEditorViewController: UIViewController,
         layoutManager.replace(contentStorage)
         
         contentStorage.textStorage = NSTextStorage()
+        contentStorage.textStorage?.delegate = self
         contentStorage.addTextLayoutManager(layoutManager)
         contentStorage.primaryTextLayoutManager = layoutManager
         contentStorage.automaticallySynchronizesToBackingStore = true
@@ -98,6 +100,10 @@ class VCTextEditorViewController: UIViewController,
     }
     
     func update(_ text: String) {
+        guard text != contentStorage.textStorage?.string else {
+            return
+        }
+        
         let attributedString = NSAttributedString(string: text, attributes: attributes)
         
         contentStorage.performEditingTransaction {
@@ -111,6 +117,10 @@ class VCTextEditorViewController: UIViewController,
         gutterView.setNeedsDisplay()
     }
     
+    func textStorage(_ textStorage: NSTextStorage, didProcessEditing editedMask: NSTextStorage.EditActions, range editedRange: NSRange, changeInLength delta: Int) {
+        self.onTextChanges?(textStorage.string)
+    }
+    
 }
 
 struct VCTextEditor: UIViewControllerRepresentable {
@@ -121,6 +131,9 @@ struct VCTextEditor: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> VCTextEditorViewController {
         let controller = VCTextEditorViewController()
         controller.view.addSubview(controller.textView)
+        controller.onTextChanges = { text in
+            self.text = text
+        }
         return controller
     }
 
