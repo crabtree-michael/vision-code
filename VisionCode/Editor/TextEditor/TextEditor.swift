@@ -72,7 +72,10 @@ class VCTextEditorViewController: UIViewController,
         self.gutterView.frame = CGRect(x: 0, y: 0, width: gutterWidth, height: 1000)
         
         contentObserver = self.textView.observe(\.contentSize, changeHandler: { [weak self] view, value in
-            self?.gutterView.frame = CGRect(x: 0, y:0, width: self?.gutterWidth ?? 0, height: view.contentSize.height)
+            self?.gutterView.frame = CGRect(x: self?.textView.contentOffset.x ?? 0,
+                                            y: self?.gutterView.bounds.minY ?? 0,
+                                            width: self?.gutterWidth ?? 0,
+                                            height: view.contentSize.height)
             self?.gutterView.setNeedsDisplay()
         })
         
@@ -85,9 +88,9 @@ class VCTextEditorViewController: UIViewController,
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        gutterView.frame = CGRect(x: scrollView.contentOffset.x, y: gutterView.bounds.minY, width: gutterView.frame.width, height: gutterView.frame.height)
-        
         layoutManager.textViewportLayoutController.layoutViewport()
+        
+        gutterView.frame = CGRect(x: textView.contentOffset.x, y: gutterView.bounds.minY, width: gutterView.frame.width, height: gutterView.frame.height)
     }
     
     override func viewDidLayoutSubviews() {
