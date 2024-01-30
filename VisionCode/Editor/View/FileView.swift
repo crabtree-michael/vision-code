@@ -21,7 +21,9 @@ struct FileView: View {
     var body: some View {
         VStack(spacing: 0) {
             if state.isLoading {
+                Spacer()
                 ProgressView()
+                Spacer()
             } else {
                 VCTextEditor(text: $state.content)
                 FileViewToolBar(state: state)

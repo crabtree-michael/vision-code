@@ -58,7 +58,10 @@ extension VCTextInputView: UITextInput {
     }
 
     var endOfDocument: UITextPosition {
-        return TextPosition(location: contentStore.textStorage?.length ?? 0)
+        guard let length = contentStore.textStorage?.length, length > 0 else {
+            return TextPosition(location: 0)
+        }
+        return TextPosition(location: length - 1)
     }
     
     func textRange(from fromPosition: UITextPosition, to toPosition: UITextPosition) -> UITextRange? {

@@ -69,6 +69,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
         if created {
             self.contentView.addSubview(view)
         }
+        
+        view.frame = textLayoutFragment.layoutFragmentFrame
     }
     
     func textViewportLayoutControllerDidLayout(_ textViewportLayoutController: NSTextViewportLayoutController) {
@@ -79,7 +81,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
         let currentHeight = bounds.height
         let currentWidth = bounds.width
         var height: CGFloat = currentHeight
-        let width: CGFloat = max(currentWidth, self.widestTextFragement?.layoutFragmentFrame.width ?? 0)
+        let width: CGFloat = max(currentWidth, (self.widestTextFragement?.layoutFragmentFrame.width ?? 0) + (self.insets?.left ?? 0) + (self.insets?.right ?? 0))
         layoutManager.enumerateTextLayoutFragments(from: layoutManager.documentRange.endLocation,
                                                         options: [.reverse, .ensuresLayout]) { layoutFragment in
             height = layoutFragment.layoutFragmentFrame.maxY

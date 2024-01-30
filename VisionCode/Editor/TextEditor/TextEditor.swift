@@ -59,7 +59,7 @@ class VCTextEditorViewController: UIViewController,
         textView.alwaysBounceHorizontal = false
         textView.alwaysBounceVertical = true
         textView.attributes = self.attributes
-        textView.insets = UIEdgeInsets(top: 0, left: gutterWidth, bottom: 0, right: 0)
+        textView.insets = UIEdgeInsets(top: 0, left: gutterWidth, bottom: 0, right: 10)
         
         textView.delegate = self
         
