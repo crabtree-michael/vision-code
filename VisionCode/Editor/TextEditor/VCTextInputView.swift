@@ -72,6 +72,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
     }
     
     func textViewportLayoutControllerDidLayout(_ textViewportLayoutController: NSTextViewportLayoutController) {
+        self.updateContentSizeIfNeeded()
     }
     
     func updateContentSizeIfNeeded() {

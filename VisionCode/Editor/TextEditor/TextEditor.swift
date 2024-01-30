@@ -97,8 +97,6 @@ class VCTextEditorViewController: UIViewController,
     func update(_ text: String) {
         let attributedString = NSAttributedString(string: text, attributes: attributes)
         
-        textView.contentSize = attributedString.size()
-        
         contentStorage.performEditingTransaction {
             contentStorage.textStorage!.setAttributedString(attributedString)
         }
