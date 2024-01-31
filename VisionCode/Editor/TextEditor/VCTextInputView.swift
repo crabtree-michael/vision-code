@@ -145,13 +145,18 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
         var closestXDelta = abs(adjustedLocation.x - closestX)
         var closestTextLocation = lineFragement.rangeInElement.location
         
-        self.layoutManager.enumerateCaretOffsetsInLineFragment(at: lineFragement.rangeInElement.location) { x, textLocation, _, _ in
-            let delta = abs(adjustedLocation.x - x)
-            if delta < closestXDelta {
-                closestX = x
-                closestXDelta = delta
-                closestTextLocation = textLocation
+        self.layoutManager.enumerateCaretOffsetsInLineFragment(at: lineFragement.rangeInElement.location) { x, textLocation, le, _ in
+            if le {
+                let delta = abs(adjustedLocation.x - x)
+                if delta < closestXDelta {
+                    closestX = x
+                    closestXDelta = delta
+                    closestTextLocation = textLocation
+                }
             }
+        }
+        if closestXDelta > 10 {
+            closestTextLocation = contentStore.location(closestTextLocation, offsetBy: 1)!
         }
         
         return closestTextLocation
@@ -171,16 +176,16 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
             return
         }
         
-        let offset = contentStore.offset(from: contentStore.documentRange.location, to: carrotLocation) + 1
+        let offset = contentStore.offset(from: contentStore.documentRange.location, to: carrotLocation)
     
         textStore.beginEditing()
         textStore.insert(NSAttributedString(string: text, attributes: self.attributes), at: offset)
         textStore.endEditing()
         
+        layoutManager.textViewportLayoutController.layoutViewport()
+        
         self.carrotLocation = contentStore.location(carrotLocation, offsetBy: 1)
         self.updateCarrotLocation()
-        
-        layoutManager.textViewportLayoutController.layoutViewport()
     }
     
     func deleteBackward() {
@@ -189,31 +194,39 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
             return
         }
 
-        if let end = contentStore.location(carrotLocation, offsetBy: 1),
-            let range = NSTextRange(location: carrotLocation, end: end) {
+        if let start = contentStore.location(carrotLocation, offsetBy: -1),
+            let range = NSTextRange(location: start, end: carrotLocation) {
             
             textStore.beginEditing()
             textStore.deleteCharacters(in: NSRange(range, provider: contentStore))
             textStore.endEditing()
             
+            layoutManager.textViewportLayoutController.layoutViewport()
+            
             self.carrotLocation = contentStore.location(carrotLocation, offsetBy: -1)
             updateCarrotLocation()
-            
-            layoutManager.textViewportLayoutController.layoutViewport()
         }
     }
     
     func updateCarrotLocation() {
         guard let carrotLocation = self.carrotLocation,
-              let lineFragment = self.layoutManager.textLayoutFragment(for: carrotLocation)else {
+              let lineFragment = self.layoutManager.textLayoutFragment(for: carrotLocation) else {
             return
         }
-        
-        self.layoutManager.enumerateCaretOffsetsInLineFragment(at: carrotLocation, using: { x, location, _, _ in
+    
+        var found = false
+        self.layoutManager.enumerateCaretOffsetsInLineFragment(at: carrotLocation, using: { x, location, le, _ in
             if location.compare(carrotLocation) == .orderedSame {
-                self.carrot.frame = CGRect(x: x, y: lineFragment.layoutFragmentFrame.minY, width: self.carrot.frame.width, height: lineFragment.layoutFragmentFrame.height)
+                if le {
+                    found = true
+                    self.carrot.frame = CGRect(x: x, y: lineFragment.layoutFragmentFrame.minY, width: self.carrot.frame.width, height: lineFragment.layoutFragmentFrame.height)
+                }
             }
         })
+        
+        if !found {
+            self.carrot.frame = CGRect(x: lineFragment.layoutFragmentFrame.maxX, y: lineFragment.layoutFragmentFrame.minY, width: self.carrot.frame.width, height: lineFragment.layoutFragmentFrame.height)
+        }
     }
     
     func prepareForReplacement() {
