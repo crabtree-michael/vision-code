@@ -33,6 +33,7 @@
 		D840A6922B5A0A32002F3303 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D840A6912B5A0A32002F3303 /* Assets.xcassets */; };
 		D840A6962B5A0A32002F3303 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D840A6952B5A0A32002F3303 /* Preview Assets.xcassets */; };
 		D84AAABE2B6510AF002B8E1E /* TextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84AAABD2B6510AF002B8E1E /* TextEditor.swift */; };
+		D84FF79B2B691686008D99F7 /* Carrot.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84FF79A2B691686008D99F7 /* Carrot.swift */; };
 		D870C6D32B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D870C6D22B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift */; };
 		D8A9BF012B63E33500115D77 /* FinderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF002B63E33500115D77 /* FinderView.swift */; };
 		D8A9BF042B63E4C900115D77 /* FinderViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF032B63E4C900115D77 /* FinderViewState.swift */; };
@@ -85,6 +86,7 @@
 		D840A69E2B5AE2A3002F3303 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D840A6AC2B5C4890002F3303 /* VCRemoteCommand */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = VCRemoteCommand; sourceTree = "<group>"; };
 		D84AAABD2B6510AF002B8E1E /* TextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEditor.swift; sourceTree = "<group>"; };
+		D84FF79A2B691686008D99F7 /* Carrot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carrot.swift; sourceTree = "<group>"; };
 		D870C6D22B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreadthFirstPathTraversal.swift; sourceTree = "<group>"; };
 		D8A9BF002B63E33500115D77 /* FinderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderView.swift; sourceTree = "<group>"; };
 		D8A9BF032B63E4C900115D77 /* FinderViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderViewState.swift; sourceTree = "<group>"; };
@@ -242,6 +244,7 @@
 				D8393BAD2B6870E9004018DC /* Models.swift */,
 				D8393BAF2B687113004018DC /* GutterView.swift */,
 				D8393BB12B6871EE004018DC /* Recycler.swift */,
+				D84FF79A2B691686008D99F7 /* Carrot.swift */,
 			);
 			path = TextEditor;
 			sourceTree = "<group>";
@@ -431,6 +434,7 @@
 				D8FC3F212B5DF83300C6E099 /* Model.swift in Sources */,
 				D80881FD2B63E27200582C41 /* Lambdas.swift in Sources */,
 				D80881F52B63E16000582C41 /* EditorView.swift in Sources */,
+				D84FF79B2B691686008D99F7 /* Carrot.swift in Sources */,
 				D8CCC70B2B66EE8100730B45 /* VCTextInputView.swift in Sources */,
 				D8A9BF132B63E60D00115D77 /* RepositoryViewState.swift in Sources */,
 				D80881DC2B63DCF300582C41 /* RepositoryFileBrowserManager.swift in Sources */,

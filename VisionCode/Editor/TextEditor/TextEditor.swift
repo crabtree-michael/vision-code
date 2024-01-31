@@ -103,6 +103,8 @@ class VCTextEditorViewController: UIViewController,
             return
         }
         
+        textView.prepareForReplacement()
+        
         let attributedString = NSAttributedString(string: text, attributes: attributes)
         
         contentStorage.performEditingTransaction {
@@ -130,13 +132,14 @@ struct VCTextEditor: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> VCTextEditorViewController {
         let controller = VCTextEditorViewController()
         controller.view.addSubview(controller.textView)
-        controller.onTextChanges = { text in
-            self.text = text
-        }
+
         return controller
     }
 
     func updateUIViewController(_ uiViewController: VCTextEditorViewController, context: Context) {
+        uiViewController.onTextChanges = { text in
+            self.text = text
+        }
         uiViewController.update(text)
     }
 }

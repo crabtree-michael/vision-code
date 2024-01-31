@@ -24,7 +24,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
     
     var attributes: TextAttributes = [:]
     
-    let recycler = TextLayoutFragmentViewRecycler()
+    var recycler = TextLayoutFragmentViewRecycler()
     
     var selectedTextRange: UITextRange?
     var markedTextStyle: [NSAttributedString.Key : Any]?
@@ -159,7 +159,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
     
     @objc func onTap(_ gesture: UITapGestureRecognizer) {
         if !self.isFirstResponder {
-            self.becomeFirstResponder()
+            _ = self.becomeFirstResponder()
         }
         
         self.carrotLocation = closestLocation(to: gesture.location(in: self))
@@ -214,6 +214,16 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
                 self.carrot.frame = CGRect(x: x, y: lineFragment.layoutFragmentFrame.minY, width: self.carrot.frame.width, height: lineFragment.layoutFragmentFrame.height)
             }
         })
+    }
+    
+    func prepareForReplacement() {
+        self.contentOffset = .zero
+        _ = self.resignFirstResponder()
+        for view in self.contentView.subviews {
+            view.removeFromSuperview()
+        }
+        self.contentView.addSubview(carrot)
+        recycler = TextLayoutFragmentViewRecycler()
     }
     
     override func becomeFirstResponder() -> Bool {

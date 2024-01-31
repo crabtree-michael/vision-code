@@ -8,8 +8,6 @@
 import Foundation
 import SwiftUI
 
-
-
 struct FileViewToolBar: View {
     @ObservedObject var state: FileViewState
     
