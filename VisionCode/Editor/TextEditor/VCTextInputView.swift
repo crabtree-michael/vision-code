@@ -174,7 +174,9 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         var closestXDelta = abs(location.x - closestX)
         var closestTextLocation = lineFragement.rangeInElement.location
         
+        print(lineFragement.rangeInElement)
         self.layoutManager.enumerateCaretOffsetsInLineFragment(at: lineFragement.rangeInElement.location) { x, textLocation, le, _ in
+            print(x, le, textLocation)
             if le {
                 let delta = abs(location.x - x)
                 if delta < closestXDelta {
@@ -184,7 +186,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
                 }
             }
         }
-        if closestXDelta > 10 {
+        if closestXDelta > 10 && contentStore.offset(from: lineFragement.rangeInElement.location, to: lineFragement.rangeInElement.endLocation) > 1 {
             closestTextLocation = contentStore.location(closestTextLocation, offsetBy: 1)!
         }
         
@@ -323,7 +325,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         
         self.carrotLocation = closestLocation(to: 
                                                 CGPoint(x: self.verticalKeyPressStartX!,
-                                                          y: carrot.frame.minY - CGFloat(lines) * self.lineHeight))
+                                                        y: carrot.frame.minY - CGFloat(lines) * carrot.frame.height))
         self.updateCarrotLocation()
     }
 }
