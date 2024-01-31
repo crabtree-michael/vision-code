@@ -31,6 +31,10 @@ class VCTextEditorViewController: UIViewController,
     ]
     
     var onTextChanges: ((String) -> ())?
+    
+    let editMenu = EditMenu()
+    
+    let editMenuSize = CGSize(width: 93, height: 25)
 
     override func viewDidLoad() {
         let container = NSTextContainer(size: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
@@ -50,8 +54,8 @@ class VCTextEditorViewController: UIViewController,
         contentStorage.primaryTextLayoutManager = layoutManager
         contentStorage.automaticallySynchronizesToBackingStore = true
         contentStorage.automaticallySynchronizesTextLayoutManagers = true
-        self.view.addSubview(textView)
         
+        self.view.addSubview(textView)
         textView.isScrollEnabled = true
         textView.showsHorizontalScrollIndicator = true
         textView.showsVerticalScrollIndicator = true
@@ -82,6 +86,32 @@ class VCTextEditorViewController: UIViewController,
         
         self.gutterView.backgroundColor = .darkGray.withAlphaComponent(0.95)
         self.textView.addSubview(gutterView)
+        
+        self.textView.addSubview(editMenu)
+        self.editMenu.frame = CGRect(x: 100, y: 100, width: editMenuSize.width, height: editMenuSize.height)
+        self.textView.bringSubviewToFront(self.editMenu)
+       self.editMenu.isHidden = true
+        
+        self.editMenu.copyButton.addAction(UIAction(title: "Copy") { _ in
+            self.textView.copySelection()
+        }, for: .touchDown)
+        
+        self.editMenu.pasteButton.addAction(UIAction(title: "Paste") { _ in
+            self.textView.pasteText()
+        }, for: .touchDown)
+        
+        self.editMenu.cutButton.addAction(UIAction(title: "Cut") { _ in
+            self.textView.cutSelection()
+        }, for: .touchDown)
+        
+        
+        self.textView.onDidSelectText = {
+            self.editMenu.isHidden = false
+        }
+        
+        self.textView.onDidDeslectText = {
+            self.editMenu.isHidden = true
+        }
     }
     
     deinit {
@@ -92,10 +122,18 @@ class VCTextEditorViewController: UIViewController,
         layoutManager.textViewportLayoutController.layoutViewport()
         
         gutterView.frame = CGRect(x: textView.contentOffset.x, y: gutterView.bounds.minY, width: gutterView.frame.width, height: gutterView.frame.height)
+        forceEditMenuToBottom()
     }
     
     override func viewDidLayoutSubviews() {
         layoutManager.textViewportLayoutController.layoutViewport()
+        forceEditMenuToBottom()
+    }
+    
+    func forceEditMenuToBottom() {
+        let y = textView.contentOffset.y + textView.frame.height - 50
+        let x = textView.contentOffset.x + textView.frame.width/2 - 50
+        self.editMenu.frame = CGRect(x: x, y: y, width: editMenuSize.width, height: editMenuSize.height)
     }
     
     func update(_ text: String) {

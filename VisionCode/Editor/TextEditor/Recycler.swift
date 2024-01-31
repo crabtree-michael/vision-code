@@ -25,6 +25,7 @@ class TextLayoutFragmentViewRecycler {
         
         if let availableView = fragmentReuseMap[fragment] {
             hits += 1
+            availableView.change(to: fragment)
             return (availableView, false)
         }
         
@@ -32,6 +33,7 @@ class TextLayoutFragmentViewRecycler {
             let view = availableViews[index] {
             hits += 1
             availableViews[index] = nil
+            view.change(to: fragment)
             return (view, false)
         }
         

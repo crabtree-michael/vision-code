@@ -31,10 +31,8 @@ class TextLayoutFragmentView: UIView {
     }
     
     func change(to fragment: NSTextLayoutFragment) {
-        if fragment != layoutFragment || fragment.layoutFragmentFrame != layoutFragment?.layoutFragmentFrame {
-            self.layoutFragment = fragment
-            self.frame = layoutFragment!.layoutFragmentFrame
-            self.setNeedsDisplay()
-        }
+        self.layoutFragment = fragment
+        self.frame = layoutFragment!.layoutFragmentFrame
+        self.setNeedsDisplay()
     }
 }

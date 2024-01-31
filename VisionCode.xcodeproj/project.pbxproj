@@ -35,6 +35,7 @@
 		D84AAABE2B6510AF002B8E1E /* TextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84AAABD2B6510AF002B8E1E /* TextEditor.swift */; };
 		D84FF79B2B691686008D99F7 /* Carrot.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84FF79A2B691686008D99F7 /* Carrot.swift */; };
 		D870C6D32B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D870C6D22B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift */; };
+		D87BB58A2B6ABBEB004222F8 /* EditMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB5892B6ABBEB004222F8 /* EditMenu.swift */; };
 		D8A9BF012B63E33500115D77 /* FinderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF002B63E33500115D77 /* FinderView.swift */; };
 		D8A9BF042B63E4C900115D77 /* FinderViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF032B63E4C900115D77 /* FinderViewState.swift */; };
 		D8A9BF062B63E4F400115D77 /* FolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF052B63E4F400115D77 /* FolderView.swift */; };
@@ -88,6 +89,7 @@
 		D84AAABD2B6510AF002B8E1E /* TextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEditor.swift; sourceTree = "<group>"; };
 		D84FF79A2B691686008D99F7 /* Carrot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carrot.swift; sourceTree = "<group>"; };
 		D870C6D22B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreadthFirstPathTraversal.swift; sourceTree = "<group>"; };
+		D87BB5892B6ABBEB004222F8 /* EditMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMenu.swift; sourceTree = "<group>"; };
 		D8A9BF002B63E33500115D77 /* FinderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderView.swift; sourceTree = "<group>"; };
 		D8A9BF032B63E4C900115D77 /* FinderViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderViewState.swift; sourceTree = "<group>"; };
 		D8A9BF052B63E4F400115D77 /* FolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderView.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 				D8393BAF2B687113004018DC /* GutterView.swift */,
 				D8393BB12B6871EE004018DC /* Recycler.swift */,
 				D84FF79A2B691686008D99F7 /* Carrot.swift */,
+				D87BB5892B6ABBEB004222F8 /* EditMenu.swift */,
 			);
 			path = TextEditor;
 			sourceTree = "<group>";
@@ -456,6 +459,7 @@
 				D8A9BF082B63E51800115D77 /* FolderViewState.swift in Sources */,
 				D80881E42B63DE9D00582C41 /* RepositoryWindowManager.swift in Sources */,
 				D84AAABE2B6510AF002B8E1E /* TextEditor.swift in Sources */,
+				D87BB58A2B6ABBEB004222F8 /* EditMenu.swift in Sources */,
 				D8A9BF062B63E4F400115D77 /* FolderView.swift in Sources */,
 				D8393BB42B6872C6004018DC /* VCTextInputView+UITextInput.swift in Sources */,
 				D8393BB02B687113004018DC /* GutterView.swift in Sources */,

@@ -18,6 +18,11 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     var selectionRange: NSTextRange? = nil {
         didSet {
             self.updateTextForSelectionRangeChanges(old: oldValue, new: self.selectionRange)
+            if self.selectionRange != nil {
+                self.onDidSelectText?()
+            } else {
+                self.onDidDeslectText?()
+            }
         }
     }
     var selectionStart: NSTextLocation?
@@ -34,7 +39,24 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     
     var recycler = TextLayoutFragmentViewRecycler()
     
-    var selectedTextRange: UITextRange?
+    var onDidSelectText: VoidLambda? = nil
+    var onDidDeslectText: VoidLambda? = nil
+    
+    var selectedTextRange: UITextRange? {
+        get {
+            // TODO: Get working
+//            guard let range = self.selectionRange else {
+//                return nil
+//            }
+//            return TextRange(range: range, provider: self.contentStore)
+            
+            return nil
+        }
+        set {
+            print("Attempt to set selected text range ignored")
+        }
+
+    }
     var markedTextStyle: [NSAttributedString.Key : Any]?
     var inputDelegate: UITextInputDelegate?
     
@@ -152,7 +174,6 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     }
     
     init(manager: NSTextLayoutManager, content: NSTextContentStorage) {
-        self.selectedTextRange = nil
         self.layoutManager = manager
         self.contentStore = content
         self.fragmentLayerMap = .weakToWeakObjects()
@@ -209,7 +230,6 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         }
         
         if selectionRange != nil {
-            print("Clear selection range")
             self.selectionRange = nil
             self.layoutManager.textViewportLayoutController.layoutViewport()
         }
@@ -292,22 +312,22 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             return
         }
         
-        guard let storage = self.contentStore.textStorage else {
-            return
-        }
+        self.inputDelegate?.selectionWillChange(self)
 
-        let oldRange = NSRange(old, provider: self.contentStore)
-        let range = NSRange(new, provider: self.contentStore)
-        self.contentStore.textStorage?.beginEditing()
-        storage.removeAttribute(.backgroundColor, range: oldRange)
-        storage.addAttributes([.backgroundColor: self.highlightColor], range: range)
-        storage.endEditing()
+        layoutManager.removeRenderingAttribute(.backgroundColor, for: old)
+        layoutManager.addRenderingAttribute(.backgroundColor, value: self.highlightColor, for: new)
+        layoutManager.invalidateLayout(for: old)
+        layoutManager.invalidateLayout(for: new)
+        
+        self.inputDelegate?.selectionDidChange(self)
     }
     
     func insertText(_ text: String) {
         guard let carrotLocation = self.carrotLocation, let textStore = self.contentStore.textStorage else {
             return
         }
+        
+        self.inputDelegate?.textWillChange(self)
         
         let selectionRange = self.selectionRange
         self.selectionRange = nil
@@ -326,12 +346,14 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         
         // Update teh carret
         if let selectionRange = selectionRange {
-            self.carrotLocation = contentStore.location(selectionRange.location, offsetBy: 1)
+            self.carrotLocation = contentStore.location(selectionRange.location, offsetBy: text.count)
         } else {
-            self.carrotLocation = contentStore.location(carrotLocation, offsetBy: 1)
+            self.carrotLocation = contentStore.location(carrotLocation, offsetBy: text.count)
         }
         
         self.updateCarrotLocation()
+        
+        self.inputDelegate?.textDidChange(self)
     }
     
     func deleteBackward() {
@@ -339,6 +361,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             let carrotLocation = self.carrotLocation else {
             return
         }
+        
+        self.inputDelegate?.textWillChange(self)
         
         var range: NSTextRange? = nil
         if let selectionRange = self.selectionRange {
@@ -359,6 +383,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         
         self.carrotLocation = range.location
         updateCarrotLocation()
+        
+        self.inputDelegate?.textDidChange(self)
     }
     
     func updateCarrotLocation() {
@@ -452,6 +478,56 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     func clearSelectionRange() {
         self.selectionRange = nil
         self.layoutManager.textViewportLayoutController.layoutViewport()
+    }
+    
+    @objc func copySelection() {
+        guard let selection = selectionRange,
+              let store = contentStore.textStorage else {
+            return
+        }
+        
+        let string = store.attributedSubstring(from: NSRange(selection, provider: self.contentStore))
+        UIPasteboard.general.string = string.string
+    }
+    
+    @objc func pasteText() {
+        guard UIPasteboard.general.hasStrings, let string = UIPasteboard.general.string else {
+            return
+        }
+        
+        self.insertText(string)
+    }
+    
+    override func paste(_ sender: Any?) {
+        self.pasteText()
+    }
+    
+    @objc func cutSelection() {
+        self.copySelection()
+        self.deleteBackward()
+    }
+    
+    override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        guard let press = presses.first else {
+            super.pressesBegan(presses, with: event)
+            return
+        }
+    
+        switch (press.key?.keyCode) {
+        case .keyboardC:
+            if press.key?.modifierFlags == .command {
+                self.copySelection()
+                return
+            }
+        case .keyboardX:
+            if press.key?.modifierFlags == .command {
+                self.cutSelection()
+                return
+            }
+        default: break
+        }
+        
+        super.pressesBegan(presses, with: event)
     }
 }
 

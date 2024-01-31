@@ -44,4 +44,9 @@ class TextRange: UITextRange {
         self._start = start
         self._end = end
     }
+    
+    init(range: NSTextRange, provider: NSTextElementProvider) {
+        self._start = TextPosition(location: range.location, provider: provider)
+        self._end = TextPosition(location: range.endLocation, provider: provider)
+    }
 }
