@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
+class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UITextInputTraits {
     let contentView = UIView()
     var layoutManager: NSTextLayoutManager
     var contentStore: NSTextContentStorage
@@ -30,6 +30,22 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
     var markedTextStyle: [NSAttributedString.Key : Any]?
     var inputDelegate: UITextInputDelegate?
     
+    var verticalKeyPressStartX: CGFloat? = nil
+    
+    var autocorrectionType: UITextAutocorrectionType {
+        get {
+            return .no
+        }
+        set {}
+    }
+    
+    var autocapitalizationType: UITextAutocapitalizationType {
+        get {
+            return .none
+        }
+        set {}
+    }
+    
     var insets: UIEdgeInsets? = nil {
         didSet {
             let left = CGFloat(insets?.left ?? 0)
@@ -47,6 +63,21 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
         }
         
         return height
+    }
+    
+    override var keyCommands: [UIKeyCommand]? {
+        return [
+            VCTextInputView.makeCommand(input: UIKeyCommand.inputUpArrow, modifierFlags: [], action: #selector(self.upPressed)),
+            VCTextInputView.makeCommand(input: UIKeyCommand.inputDownArrow, modifierFlags: [], action: #selector(self.downPressed)),
+            VCTextInputView.makeCommand(input: UIKeyCommand.inputLeftArrow, modifierFlags: [], action: #selector(self.leftPressed)),
+            VCTextInputView.makeCommand(input: UIKeyCommand.inputRightArrow, modifierFlags: [], action: #selector(self.rightPressed))
+        ]
+    }
+    
+    static func makeCommand(input: String, modifierFlags: UIKeyModifierFlags, action: Selector) -> UIKeyCommand {
+        let command = UIKeyCommand(input: input, modifierFlags: modifierFlags, action: action)
+        command.wantsPriorityOverSystemBehavior = true
+        return command
     }
     
     func viewportBounds(for textViewportLayoutController: NSTextViewportLayoutController) -> CGRect {
@@ -139,18 +170,18 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
             return nil
         }
         
-        let adjustedLocation = CGPoint(x: location.x - CGFloat(self.insets?.left ?? 0),
-                                     y: location.y - CGFloat(self.insets?.top ?? 0))
         var closestX = lineFragement.layoutFragmentFrame.minX
-        var closestXDelta = abs(adjustedLocation.x - closestX)
+        var closestXDelta = abs(location.x - closestX)
         var closestTextLocation = lineFragement.rangeInElement.location
         
-        self.layoutManager.enumerateCaretOffsetsInLineFragment(at: lineFragement.rangeInElement.location) { x, textLocation, _, _ in
-            let delta = abs(adjustedLocation.x - x)
-            if delta < closestXDelta {
-                closestX = x
-                closestXDelta = delta
-                closestTextLocation = textLocation
+        self.layoutManager.enumerateCaretOffsetsInLineFragment(at: lineFragement.rangeInElement.location) { x, textLocation, le, _ in
+            if le {
+                let delta = abs(location.x - x)
+                if delta < closestXDelta {
+                    closestX = x
+                    closestXDelta = delta
+                    closestTextLocation = textLocation
+                }
             }
         }
         
@@ -162,8 +193,14 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
             _ = self.becomeFirstResponder()
         }
         
-        self.carrotLocation = closestLocation(to: gesture.location(in: self))
+        let location = gesture.location(in: self)
+        let adjustedLocation = CGPoint(x: location.x - CGFloat(self.insets?.left ?? 0),
+                                     y: location.y - CGFloat(self.insets?.top ?? 0))
+        
+        self.carrotLocation = closestLocation(to: adjustedLocation)
         self.updateCarrotLocation()
+        
+        self.verticalKeyPressStartX = self.carrot.frame.minX
     }
     
     func insertText(_ text: String) {
@@ -236,6 +273,47 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate {
         self.carrot.stopBlinking()
         self.carrot.isHidden = true
         return super.resignFirstResponder()
+    }
+    
+    @objc func upPressed() {
+        if self.verticalKeyPressStartX == nil {
+            self.verticalKeyPressStartX = self.carrot.frame.minX
+        }
+        self.moveCursorVertically(lines: 1)
+    }
+    
+    @objc func downPressed() {
+        if self.verticalKeyPressStartX == nil {
+            self.verticalKeyPressStartX = self.carrot.frame.minX
+        }
+        self.moveCursorVertically(lines: -1)
+    }
+    
+    @objc func rightPressed() {
+        self.moveCursorHorizontially(offset: 1)
+        self.verticalKeyPressStartX = self.carrot.frame.minX
+    }
+    @objc func leftPressed() {
+        self.moveCursorHorizontially(offset: -1)
+        self.verticalKeyPressStartX = self.carrot.frame.minX
+    }
+    
+    func moveCursorHorizontially(offset: Int) {
+        if let location = self.carrotLocation {
+            self.carrotLocation = contentStore.location(location, offsetBy: offset)
+            self.updateCarrotLocation()
+        }
+    }
+    
+    func moveCursorVertically(lines: Int) {
+        guard isFirstResponder else {
+            return
+        }
+        
+        self.carrotLocation = closestLocation(to: 
+                                                CGPoint(x: self.verticalKeyPressStartX!,
+                                                          y: carrot.frame.minY - CGFloat(lines) * self.lineHeight))
+        self.updateCarrotLocation()
     }
 }
 
