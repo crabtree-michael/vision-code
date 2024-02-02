@@ -7,45 +7,23 @@
 
 import SwiftUI
 import VCRemoteCommandCore
+import RealmSwift
+
 
 @main
-struct VisionCodeApp: App {
-    let host = Host()
-    
-    let browserManager: FinderViewManager
+struct VisionCodeApp: SwiftUI.App {
+    let realm:Realm
+    let connectionManager = ConnectionManager()
     
     init() {
-        let connection = RCConnection(host: host.ipAddress, port: host.port, username: host.username, password: host.password)
-        
-        self.browserManager = FinderViewManager(connection: connection, root: "/Users/michael")
-        WindowManager.instance.connection = connection
-        
-    
-        let bManager = self.browserManager
-        Task {
-            do {
-                try await connection.connect()
-                await bManager.connect()
-            } catch {
-                print("Failed to make connection \(error)")
-            }
-        }
+        realm = try! Realm()
         
     }
     
     var body: some Scene {
-        WindowGroup(id: "browser") {
-            FinderView(state: self.browserManager.state)
-        }
-        .defaultSize(CGSize(width: 400, height: 250))
-        .windowResizability(.contentMinSize)
-        
-        WindowGroup(id: "editor", for: String.self) { input in
-            if let value = input.wrappedValue {
-                let manager = WindowManager.instance.manager(forPath: value)
-                RepositoryView(state: manager.state)
-            }
-            
+        WindowGroup(id: "editor", for: ObjectId.self) { input in
+            let manager = RepositoryViewManager(realm: self.realm, connectionManager: self.connectionManager, openProject: input.wrappedValue)
+            RepositoryView(state: manager.state)
         }
         .defaultSize(CGSize(width: 1200, height: 700))
         .windowResizability(.contentSize)

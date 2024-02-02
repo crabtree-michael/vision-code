@@ -7,6 +7,22 @@
 
 import Foundation
 
-enum CommonError: Error {
+enum CommonError: LocalizedError {
     case notPrepared
+    case invalidPort
+    case objectNotFound
+    case genericError(Error)
+    
+    var errorDescription: String? {
+        switch(self) {
+        case .notPrepared:
+            return "System is not prepared"
+        case .invalidPort:
+            return "Port is invalid"
+        case .objectNotFound:
+            return "Object not found"
+        case .genericError(let error):
+            return "Failed \(error)"
+        }
+    }
 }

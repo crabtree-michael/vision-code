@@ -2,71 +2,90 @@
 //  RepositoryViewManager.swift
 //  VisionCode
 //
-//  Created by Michael Crabtree on 1/26/24.
+//  Created by Michael Crabtree on 2/2/24.
 //
 
 import Foundation
+import RealmSwift
 import VCRemoteCommandCore
+import SwiftUI
+import Combine
 
 class RepositoryViewManager {
-    let connection: RCConnection
-    let path: String
-    let editor: EditorViewManager
-    let browser: RepositoryFileBrowserManager
-    let terminal: TerminalManager
-    let state: RepositoryViewState
+    let realm: Realm
     
-    var didClose: ((RepositoryViewManager) -> ())? = nil
-    
-    init(path: String, connection: RCConnection) {
-        self.connection = connection
-        self.editor = EditorViewManager(path: path)
-        self.browser = RepositoryFileBrowserManager(path: path)
+    let managmentManager: RepositoryManagmentViewManager
+    var editorManager: RepositoryEditorViewManager?
+    let connectionManager: ConnectionManager
 
-        self.terminal = TerminalManager(title: (path as NSString).lastPathComponent, connection: connection)
-        self.terminal.state.showTitle = false
-        
-        self.state = RepositoryViewState(editorState: editor.state, browserState: browser.state, terminalState: self.terminal.state)
-        self.path = path
-        
-        self.state.onClose = self.onClose
-        
-        self.browser.state.onOpenFile = self.openFile
-    }
+    let state = RepositoryViewState()
     
-    func load() {
-        Task {
-            do {
-                let editorClient = try await self.connection.createSFTPClient()
-                self.editor.client = editorClient
-                self.editor.loadIfNeeded()
-                
-                let browserClient = try await self.connection.createSFTPClient()
-                self.browser.client = browserClient
-                self.browser.load()
-                
-                await self.terminal.connect()
-            } catch {
-                print("Failed to load \(error)")
-            }
-
+    var connectionCancellable: AnyCancellable? = nil
+    
+    var isOpeningProject: Bool = false {
+        didSet {
+            state.managerState.projectsManagmentState?.isOpeningProject = self.isOpeningProject
         }
     }
     
-    private func onClose() {
-        self.didClose?(self)
+    @Environment(\.openWindow) private var openWindow
+    
+    init(realm: Realm,
+         connectionManager: ConnectionManager,
+         openProject: ObjectId? = nil) {
+        self.realm = realm
+        self.managmentManager = RepositoryManagmentViewManager(realm: realm)
+        self.editorManager = nil
+        self.connectionManager = connectionManager
+        self.state.managerState = self.managmentManager.state
+        self.managmentManager.projectManager.onOpened = self.open
         
-        Task {
-            do {
-                try await self.editor.client?.close()
-                try await self.browser.client?.close()
-            } catch {
-                print("Failed to close clients \(error)")
-            }
+        if let id = openProject,
+           let project = realm.object(ofType: Project.self, forPrimaryKey: id) {
+            self.open(project: project)
         }
     }
     
-    func openFile(_ file:File) {
-        self.editor.open(path: file.path)
+    func open(project: Project) {
+        guard let hostID = project.host?.id else {
+            print("Attempt to open project with no host")
+            return
+        }
+        guard self.editorManager == nil else {
+            openWindow(id: "editor", value: project.id)
+            return
+        }
+        
+        self.isOpeningProject = true
+        self.connectionCancellable = self.connectionManager.connection(for: hostID).mapError({ error in
+            return CommonError.genericError(error)
+        }).sink(receiveCompletion: { completion in
+            DispatchQueue.main.async {
+                switch(completion) {
+                case .failure(let error):
+                    self.state.error = error
+                case .finished: break
+                }
+                
+                self.isOpeningProject = false
+            }
+
+        }, receiveValue: { connection in
+            DispatchQueue.main.async {
+                self.open(project: project, connection: connection)
+            }
+        })
     }
+    
+    private func open(project: Project, connection: RCConnection) {
+        let manager = RepositoryEditorViewManager(path: project.root, connection: connection)
+        if editorManager == nil {
+            self.editorManager = manager
+            manager.load()
+            self.state.editorState = manager.state
+            self.isOpeningProject = false
+            self.state.tabSelection = .repository
+        }
+    }
+    
 }

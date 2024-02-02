@@ -108,7 +108,6 @@ class BreadthFirstPathTraversal {
         let parent = parents[currentParentIndex]
         parent.node.subnodes.append(node)
         if parent.node.subnodes.count == parent.childCount {
-            print("Loaded \(parent.node.file.path)")
             parent.node.loaded = true
             self.onNodeLoaded?(self)
             currentParentIndex += 1

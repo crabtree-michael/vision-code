@@ -2,21 +2,20 @@
 //  RepositoryViewState.swift
 //  VisionCode
 //
-//  Created by Michael Crabtree on 1/26/24.
+//  Created by Michael Crabtree on 2/1/24.
 //
 
-import SwiftUI
+import Foundation
+
+enum RepositoryViewTab {
+    case managment
+    case repository
+}
 
 class RepositoryViewState: ObservableObject {
-    let editorState: EditorViewState
-    let browserState: RepositoryFilesViewState
-    let terminalState: TerminalViewState
+    var managerState = RepositoryManagmentViewState()
+    @Published var editorState: RepositoryEditorViewState?
+    @Published var tabSelection: RepositoryViewTab = .managment
     
-    var onClose: VoidLambda? = nil
-    
-    init(editorState: EditorViewState, browserState: RepositoryFilesViewState, terminalState: TerminalViewState) {
-        self.editorState = editorState
-        self.browserState = browserState
-        self.terminalState = terminalState
-    }
+    var error: CommonError? = nil
 }

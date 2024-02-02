@@ -12,8 +12,7 @@
 		D80881DC2B63DCF300582C41 /* RepositoryFileBrowserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881DB2B63DCF300582C41 /* RepositoryFileBrowserManager.swift */; };
 		D80881DF2B63DD3A00582C41 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881DE2B63DD3A00582C41 /* File.swift */; };
 		D80881E12B63DE1C00582C41 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881E02B63DE1C00582C41 /* Errors.swift */; };
-		D80881E42B63DE9D00582C41 /* RepositoryWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881E32B63DE9D00582C41 /* RepositoryWindowManager.swift */; };
-		D80881E62B63DEE900582C41 /* RepositoryViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881E52B63DEE900582C41 /* RepositoryViewManager.swift */; };
+		D80881E62B63DEE900582C41 /* RepositoryEditorViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881E52B63DEE900582C41 /* RepositoryEditorViewManager.swift */; };
 		D80881E82B63DFB300582C41 /* EditorViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881E72B63DFB300582C41 /* EditorViewManager.swift */; };
 		D80881EA2B63DFFE00582C41 /* FileViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881E92B63DFFE00582C41 /* FileViewManager.swift */; };
 		D80881EE2B63E06100582C41 /* EditorViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881ED2B63E06100582C41 /* EditorViewState.swift */; };
@@ -36,14 +35,29 @@
 		D84FF79B2B691686008D99F7 /* Carrot.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84FF79A2B691686008D99F7 /* Carrot.swift */; };
 		D870C6D32B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D870C6D22B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift */; };
 		D87BB58A2B6ABBEB004222F8 /* EditMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB5892B6ABBEB004222F8 /* EditMenu.swift */; };
+		D87BB58D2B6BB777004222F8 /* RepositoryManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB58C2B6BB777004222F8 /* RepositoryManagerView.swift */; };
+		D87BB58F2B6BBB25004222F8 /* RepositoryManagmentViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB58E2B6BBB25004222F8 /* RepositoryManagmentViewState.swift */; };
+		D87BB5912B6BBBC7004222F8 /* RepositoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB5902B6BBBC7004222F8 /* RepositoryView.swift */; };
+		D87BB5932B6BBC63004222F8 /* RepositoryViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB5922B6BBC63004222F8 /* RepositoryViewState.swift */; };
+		D87BB5952B6BCE71004222F8 /* HostManagmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB5942B6BCE71004222F8 /* HostManagmentView.swift */; };
+		D87BB5972B6BCEB0004222F8 /* HostManagamentViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB5962B6BCEB0004222F8 /* HostManagamentViewState.swift */; };
+		D87BB5992B6C1BB7004222F8 /* HostManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB5982B6C1BB7004222F8 /* HostManager.swift */; };
+		D87BB59C2B6C1C41004222F8 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = D87BB59B2B6C1C41004222F8 /* Realm */; };
+		D87BB59E2B6C1C41004222F8 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D87BB59D2B6C1C41004222F8 /* RealmSwift */; };
+		D87BB5A02B6C20DC004222F8 /* RepositoryManagmentViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB59F2B6C20DC004222F8 /* RepositoryManagmentViewManager.swift */; };
+		D8874E5F2B6C6A350062A920 /* ProjectsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8874E5E2B6C6A350062A920 /* ProjectsManager.swift */; };
+		D8874E612B6C6A4E0062A920 /* ProjectManagementViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8874E602B6C6A4E0062A920 /* ProjectManagementViewState.swift */; };
+		D8874E632B6C6C6C0062A920 /* ProjectManagmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8874E622B6C6C6C0062A920 /* ProjectManagmentView.swift */; };
+		D8874E652B6CEED10062A920 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8874E642B6CEED10062A920 /* ConnectionManager.swift */; };
+		D8874E672B6CF2280062A920 /* RepositoryViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8874E662B6CF2280062A920 /* RepositoryViewManager.swift */; };
 		D8A9BF012B63E33500115D77 /* FinderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF002B63E33500115D77 /* FinderView.swift */; };
 		D8A9BF042B63E4C900115D77 /* FinderViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF032B63E4C900115D77 /* FinderViewState.swift */; };
 		D8A9BF062B63E4F400115D77 /* FolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF052B63E4F400115D77 /* FolderView.swift */; };
 		D8A9BF082B63E51800115D77 /* FolderViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF072B63E51800115D77 /* FolderViewState.swift */; };
 		D8A9BF0A2B63E54000115D77 /* FolderHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF092B63E54000115D77 /* FolderHeaderView.swift */; };
 		D8A9BF0C2B63E55100115D77 /* FileThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF0B2B63E55100115D77 /* FileThumbnailView.swift */; };
-		D8A9BF112B63E5B700115D77 /* RepositoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF102B63E5B700115D77 /* RepositoryView.swift */; };
-		D8A9BF132B63E60D00115D77 /* RepositoryViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF122B63E60D00115D77 /* RepositoryViewState.swift */; };
+		D8A9BF112B63E5B700115D77 /* RepositoryEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF102B63E5B700115D77 /* RepositoryEditorView.swift */; };
+		D8A9BF132B63E60D00115D77 /* RepositoryEditorViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF122B63E60D00115D77 /* RepositoryEditorViewState.swift */; };
 		D8A9BF162B63E66C00115D77 /* RepositoryFilesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF152B63E66C00115D77 /* RepositoryFilesView.swift */; };
 		D8A9BF182B63E6D000115D77 /* FileCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF172B63E6D000115D77 /* FileCellView.swift */; };
 		D8A9BF1B2B63E6FF00115D77 /* FileCellViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF1A2B63E6FF00115D77 /* FileCellViewState.swift */; };
@@ -62,8 +76,7 @@
 		D80881DB2B63DCF300582C41 /* RepositoryFileBrowserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryFileBrowserManager.swift; sourceTree = "<group>"; };
 		D80881DE2B63DD3A00582C41 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		D80881E02B63DE1C00582C41 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
-		D80881E32B63DE9D00582C41 /* RepositoryWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryWindowManager.swift; sourceTree = "<group>"; };
-		D80881E52B63DEE900582C41 /* RepositoryViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryViewManager.swift; sourceTree = "<group>"; };
+		D80881E52B63DEE900582C41 /* RepositoryEditorViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryEditorViewManager.swift; sourceTree = "<group>"; };
 		D80881E72B63DFB300582C41 /* EditorViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorViewManager.swift; sourceTree = "<group>"; };
 		D80881E92B63DFFE00582C41 /* FileViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileViewManager.swift; sourceTree = "<group>"; };
 		D80881ED2B63E06100582C41 /* EditorViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorViewState.swift; sourceTree = "<group>"; };
@@ -90,14 +103,27 @@
 		D84FF79A2B691686008D99F7 /* Carrot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carrot.swift; sourceTree = "<group>"; };
 		D870C6D22B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreadthFirstPathTraversal.swift; sourceTree = "<group>"; };
 		D87BB5892B6ABBEB004222F8 /* EditMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMenu.swift; sourceTree = "<group>"; };
+		D87BB58C2B6BB777004222F8 /* RepositoryManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryManagerView.swift; sourceTree = "<group>"; };
+		D87BB58E2B6BBB25004222F8 /* RepositoryManagmentViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryManagmentViewState.swift; sourceTree = "<group>"; };
+		D87BB5902B6BBBC7004222F8 /* RepositoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryView.swift; sourceTree = "<group>"; };
+		D87BB5922B6BBC63004222F8 /* RepositoryViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryViewState.swift; sourceTree = "<group>"; };
+		D87BB5942B6BCE71004222F8 /* HostManagmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostManagmentView.swift; sourceTree = "<group>"; };
+		D87BB5962B6BCEB0004222F8 /* HostManagamentViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostManagamentViewState.swift; sourceTree = "<group>"; };
+		D87BB5982B6C1BB7004222F8 /* HostManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostManager.swift; sourceTree = "<group>"; };
+		D87BB59F2B6C20DC004222F8 /* RepositoryManagmentViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryManagmentViewManager.swift; sourceTree = "<group>"; };
+		D8874E5E2B6C6A350062A920 /* ProjectsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsManager.swift; sourceTree = "<group>"; };
+		D8874E602B6C6A4E0062A920 /* ProjectManagementViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectManagementViewState.swift; sourceTree = "<group>"; };
+		D8874E622B6C6C6C0062A920 /* ProjectManagmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectManagmentView.swift; sourceTree = "<group>"; };
+		D8874E642B6CEED10062A920 /* ConnectionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionManager.swift; sourceTree = "<group>"; };
+		D8874E662B6CF2280062A920 /* RepositoryViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryViewManager.swift; sourceTree = "<group>"; };
 		D8A9BF002B63E33500115D77 /* FinderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderView.swift; sourceTree = "<group>"; };
 		D8A9BF032B63E4C900115D77 /* FinderViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderViewState.swift; sourceTree = "<group>"; };
 		D8A9BF052B63E4F400115D77 /* FolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderView.swift; sourceTree = "<group>"; };
 		D8A9BF072B63E51800115D77 /* FolderViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderViewState.swift; sourceTree = "<group>"; };
 		D8A9BF092B63E54000115D77 /* FolderHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderHeaderView.swift; sourceTree = "<group>"; };
 		D8A9BF0B2B63E55100115D77 /* FileThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileThumbnailView.swift; sourceTree = "<group>"; };
-		D8A9BF102B63E5B700115D77 /* RepositoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryView.swift; sourceTree = "<group>"; };
-		D8A9BF122B63E60D00115D77 /* RepositoryViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryViewState.swift; sourceTree = "<group>"; };
+		D8A9BF102B63E5B700115D77 /* RepositoryEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryEditorView.swift; sourceTree = "<group>"; };
+		D8A9BF122B63E60D00115D77 /* RepositoryEditorViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryEditorViewState.swift; sourceTree = "<group>"; };
 		D8A9BF152B63E66C00115D77 /* RepositoryFilesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryFilesView.swift; sourceTree = "<group>"; };
 		D8A9BF172B63E6D000115D77 /* FileCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCellView.swift; sourceTree = "<group>"; };
 		D8A9BF1A2B63E6FF00115D77 /* FileCellViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCellViewState.swift; sourceTree = "<group>"; };
@@ -114,6 +140,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D87BB59E2B6C1C41004222F8 /* RealmSwift in Frameworks */,
+				D87BB59C2B6C1C41004222F8 /* Realm in Frameworks */,
 				D8FC3F1C2B5DD39E00C6E099 /* VCRemoteCommand in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -296,7 +324,11 @@
 		D8A9BF0D2B63E59700115D77 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D8A9BF102B63E5B700115D77 /* RepositoryView.swift */,
+				D8A9BF102B63E5B700115D77 /* RepositoryEditorView.swift */,
+				D87BB58C2B6BB777004222F8 /* RepositoryManagerView.swift */,
+				D87BB5902B6BBBC7004222F8 /* RepositoryView.swift */,
+				D87BB5942B6BCE71004222F8 /* HostManagmentView.swift */,
+				D8874E622B6C6C6C0062A920 /* ProjectManagmentView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -304,7 +336,11 @@
 		D8A9BF0E2B63E59C00115D77 /* States */ = {
 			isa = PBXGroup;
 			children = (
-				D8A9BF122B63E60D00115D77 /* RepositoryViewState.swift */,
+				D8A9BF122B63E60D00115D77 /* RepositoryEditorViewState.swift */,
+				D87BB58E2B6BBB25004222F8 /* RepositoryManagmentViewState.swift */,
+				D87BB5922B6BBC63004222F8 /* RepositoryViewState.swift */,
+				D87BB5962B6BCEB0004222F8 /* HostManagamentViewState.swift */,
+				D8874E602B6C6A4E0062A920 /* ProjectManagementViewState.swift */,
 			);
 			path = States;
 			sourceTree = "<group>";
@@ -312,8 +348,12 @@
 		D8A9BF0F2B63E5A100115D77 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				D80881E32B63DE9D00582C41 /* RepositoryWindowManager.swift */,
-				D80881E52B63DEE900582C41 /* RepositoryViewManager.swift */,
+				D80881E52B63DEE900582C41 /* RepositoryEditorViewManager.swift */,
+				D87BB5982B6C1BB7004222F8 /* HostManager.swift */,
+				D87BB59F2B6C20DC004222F8 /* RepositoryManagmentViewManager.swift */,
+				D8874E5E2B6C6A350062A920 /* ProjectsManager.swift */,
+				D8874E642B6CEED10062A920 /* ConnectionManager.swift */,
+				D8874E662B6CF2280062A920 /* RepositoryViewManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -371,6 +411,8 @@
 			name = VisionCode;
 			packageProductDependencies = (
 				D8FC3F1B2B5DD39E00C6E099 /* VCRemoteCommand */,
+				D87BB59B2B6C1C41004222F8 /* Realm */,
+				D87BB59D2B6C1C41004222F8 /* RealmSwift */,
 			);
 			productName = VisionCode;
 			productReference = D840A68A2B5A0A31002F3303 /* VisionCode.app */;
@@ -404,6 +446,7 @@
 				D840A6AD2B5C48AB002F3303 /* XCLocalSwiftPackageReference "VCRemoteCommand" */,
 				D840A6B02B5C4BB3002F3303 /* XCRemoteSwiftPackageReference "swift-nio" */,
 				D840A6B12B5C4C26002F3303 /* XCRemoteSwiftPackageReference "swift-nio-ssh" */,
+				D87BB59A2B6C1C41004222F8 /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			productRefGroup = D840A68B2B5A0A31002F3303 /* Products */;
 			projectDirPath = "";
@@ -431,36 +474,43 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D87BB5932B6BBC63004222F8 /* RepositoryViewState.swift in Sources */,
 				D8A9BF042B63E4C900115D77 /* FinderViewState.swift in Sources */,
 				D80881DA2B63DC8300582C41 /* FinderViewManager.swift in Sources */,
 				D8A9BF162B63E66C00115D77 /* RepositoryFilesView.swift in Sources */,
 				D8FC3F212B5DF83300C6E099 /* Model.swift in Sources */,
 				D80881FD2B63E27200582C41 /* Lambdas.swift in Sources */,
 				D80881F52B63E16000582C41 /* EditorView.swift in Sources */,
+				D8874E672B6CF2280062A920 /* RepositoryViewManager.swift in Sources */,
 				D84FF79B2B691686008D99F7 /* Carrot.swift in Sources */,
 				D8CCC70B2B66EE8100730B45 /* VCTextInputView.swift in Sources */,
-				D8A9BF132B63E60D00115D77 /* RepositoryViewState.swift in Sources */,
+				D8A9BF132B63E60D00115D77 /* RepositoryEditorViewState.swift in Sources */,
 				D80881DC2B63DCF300582C41 /* RepositoryFileBrowserManager.swift in Sources */,
 				D8A9BF0A2B63E54000115D77 /* FolderHeaderView.swift in Sources */,
 				D8A9BF012B63E33500115D77 /* FinderView.swift in Sources */,
 				D8393BB62B6902DF004018DC /* FileViewToolBar.swift in Sources */,
-				D8A9BF112B63E5B700115D77 /* RepositoryView.swift in Sources */,
-				D80881E62B63DEE900582C41 /* RepositoryViewManager.swift in Sources */,
+				D8A9BF112B63E5B700115D77 /* RepositoryEditorView.swift in Sources */,
+				D80881E62B63DEE900582C41 /* RepositoryEditorViewManager.swift in Sources */,
 				D8A9BF1D2B63E74700115D77 /* RepositoryFilesViewState.swift in Sources */,
 				D80881D82B63DBB500582C41 /* FinderFolderViewManager.swift in Sources */,
+				D8874E5F2B6C6A350062A920 /* ProjectsManager.swift in Sources */,
 				D8393BAE2B6870E9004018DC /* Models.swift in Sources */,
 				D8FC3F1F2B5DF7CA00C6E099 /* TerminalManager.swift in Sources */,
 				D870C6D32B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift in Sources */,
+				D87BB58D2B6BB777004222F8 /* RepositoryManagerView.swift in Sources */,
 				D8393BB22B6871EE004018DC /* Recycler.swift in Sources */,
 				D80881F02B63E07900582C41 /* FileViewState.swift in Sources */,
 				D80881E12B63DE1C00582C41 /* Errors.swift in Sources */,
+				D87BB5952B6BCE71004222F8 /* HostManagmentView.swift in Sources */,
 				D8FC3F192B5DA5CD00C6E099 /* Terminal.swift in Sources */,
 				D80881F22B63E0B300582C41 /* Host.swift in Sources */,
 				D8A9BF082B63E51800115D77 /* FolderViewState.swift in Sources */,
-				D80881E42B63DE9D00582C41 /* RepositoryWindowManager.swift in Sources */,
+				D8874E632B6C6C6C0062A920 /* ProjectManagmentView.swift in Sources */,
 				D84AAABE2B6510AF002B8E1E /* TextEditor.swift in Sources */,
 				D87BB58A2B6ABBEB004222F8 /* EditMenu.swift in Sources */,
+				D8874E612B6C6A4E0062A920 /* ProjectManagementViewState.swift in Sources */,
 				D8A9BF062B63E4F400115D77 /* FolderView.swift in Sources */,
+				D87BB5972B6BCEB0004222F8 /* HostManagamentViewState.swift in Sources */,
 				D8393BB42B6872C6004018DC /* VCTextInputView+UITextInput.swift in Sources */,
 				D8393BB02B687113004018DC /* GutterView.swift in Sources */,
 				D80881FB2B63E25E00582C41 /* EditorErrors.swift in Sources */,
@@ -468,11 +518,16 @@
 				D8A9BF182B63E6D000115D77 /* FileCellView.swift in Sources */,
 				D80881EA2B63DFFE00582C41 /* FileViewManager.swift in Sources */,
 				D80881F72B63E1AE00582C41 /* FileView.swift in Sources */,
+				D87BB58F2B6BBB25004222F8 /* RepositoryManagmentViewState.swift in Sources */,
+				D8874E652B6CEED10062A920 /* ConnectionManager.swift in Sources */,
+				D87BB5912B6BBBC7004222F8 /* RepositoryView.swift in Sources */,
 				D8A9BF0C2B63E55100115D77 /* FileThumbnailView.swift in Sources */,
 				D80881F92B63E23100582C41 /* EditorNavBarView.swift in Sources */,
+				D87BB5992B6C1BB7004222F8 /* HostManager.swift in Sources */,
 				D8A9BF1B2B63E6FF00115D77 /* FileCellViewState.swift in Sources */,
 				D840A68E2B5A0A31002F3303 /* VisionCodeApp.swift in Sources */,
 				D80881DF2B63DD3A00582C41 /* File.swift in Sources */,
+				D87BB5A02B6C20DC004222F8 /* RepositoryManagmentViewManager.swift in Sources */,
 				D80881E82B63DFB300582C41 /* EditorViewManager.swift in Sources */,
 				D80881EE2B63E06100582C41 /* EditorViewState.swift in Sources */,
 			);
@@ -720,9 +775,27 @@
 				minimumVersion = 0.8.0;
 			};
 		};
+		D87BB59A2B6C1C41004222F8 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D87BB59B2B6C1C41004222F8 /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D87BB59A2B6C1C41004222F8 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		D87BB59D2B6C1C41004222F8 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D87BB59A2B6C1C41004222F8 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
 		D8FC3F1B2B5DD39E00C6E099 /* VCRemoteCommand */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D840A6AD2B5C48AB002F3303 /* XCLocalSwiftPackageReference "VCRemoteCommand" */;

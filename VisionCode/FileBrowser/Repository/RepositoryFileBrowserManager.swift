@@ -50,7 +50,7 @@ class RepositoryFileBrowserManager {
                     self.loading = false
                 }
             } catch {
-                print("Traversal failed")
+                print("Traversal failed: \(error)")
             }
         }
     }

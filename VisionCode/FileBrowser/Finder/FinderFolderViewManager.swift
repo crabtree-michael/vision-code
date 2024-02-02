@@ -66,8 +66,8 @@ class FinderFolderViewManager {
             self.openFolder(file)
             return
         }
-        
-        WindowManager.instance.openEditor(file: file.path)
+
+        print("File opening disabled")
     }
     
     func openFolder(_ folder: File) {
