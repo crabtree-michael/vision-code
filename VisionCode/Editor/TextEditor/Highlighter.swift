@@ -89,22 +89,15 @@ class Highlighter: TextInputObserver {
         let cursor = self.highlightQuery.execute(in: self.tree!)
         let highlights = cursor.resolve(with: .init(string: text)).highlights()
         
-        var count = 0
         for namedRange in highlights {
             if let color = theme[namedRange.name],
                let start = provider.location?(provider.documentRange.location, offsetBy: namedRange.range.location),
                 let end = provider.location?(start, offsetBy: namedRange.range.length),
                let range = NSTextRange(location: start, end: end)
             {
-                count += 1
                 self.addAttribute(.foregroundColor, value: color, for: range)
             }
-
-            
-//            print("\(namedRange.name): \(namedRange.range)")
         }
-        
-        print("Add \(count)")
     }
     
     private func addAttribute(_ attribute: NSAttributedString.Key, value: Any, for range: NSTextRange) 
@@ -114,7 +107,6 @@ class Highlighter: TextInputObserver {
     }
     
     private func removeAllAttributes() {
-        print("Remove \(self.allActiveAttributes.count)")
         for range in self.allActiveAttributes {
             layoutManager.removeRenderingAttribute(range.attribute, for: range.range)
         }
