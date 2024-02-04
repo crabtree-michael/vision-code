@@ -8,6 +8,15 @@
 import Foundation
 import UIKit
 
+@objc protocol TextInputObserver {
+    @objc optional func textDidChange(in textView: VCTextInputView,
+                                      oldRange: NSTextRange,
+                                      newRange: NSTextRange,
+                                      newValue: String)
+    
+    @objc optional func textWillChange(in textView: VCTextInputView)
+}
+
 class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UITextInputTraits {
     let contentView = UIView()
     var layoutManager: NSTextLayoutManager
@@ -41,6 +50,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     
     var onDidSelectText: VoidLambda? = nil
     var onDidDeslectText: VoidLambda? = nil
+    
+    private var textObservers: [TextInputObserver] = []
     
     var selectedTextRange: UITextRange? {
         get {
@@ -116,6 +127,10 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         rect.size = CGSize(width: frame.width, height: frame.height + buffer/2)
         rect.origin = CGPoint(x: contentOffset.x, y: contentOffset.y - buffer/2)
         return rect
+    }
+    
+    func add(observer: TextInputObserver) {
+        self.textObservers.append(observer)
     }
     
     func textViewportLayoutControllerWillLayout(_ textViewportLayoutController: NSTextViewportLayoutController) {
@@ -329,6 +344,10 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         
         self.inputDelegate?.textWillChange(self)
         
+        for observer in textObservers {
+            observer.textWillChange?(in: self)
+        }
+    
         let selectionRange = self.selectionRange
         self.selectionRange = nil
     
@@ -342,6 +361,20 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             textStore.insert(NSAttributedString(string: text, attributes: self.attributes), at: offset)
         }
         textStore.endEditing()
+        
+        for observer in textObservers {
+            if let selectionRange = selectionRange {
+                let end = contentStore.location(selectionRange.location, offsetBy: text.count)
+                let newRange = NSTextRange(location: selectionRange.location, end: end)!
+                observer.textDidChange?(in: self, oldRange: selectionRange, newRange: newRange, newValue: textStore.string)
+            } else {
+                let end = contentStore.location(carrotLocation, offsetBy: text.count)
+                let newRange = NSTextRange(location: carrotLocation, end: end)!
+                observer.textDidChange?(in: self, oldRange: NSTextRange(location: carrotLocation), newRange: newRange, newValue: textStore.string)
+            }
+
+        }
+    
         layoutManager.textViewportLayoutController.layoutViewport()
         
         // Update teh carret
@@ -363,6 +396,9 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         }
         
         self.inputDelegate?.textWillChange(self)
+        for observer in textObservers {
+            observer.textWillChange?(in: self)
+        }
         
         var range: NSTextRange? = nil
         if let selectionRange = self.selectionRange {
@@ -379,6 +415,11 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         textStore.beginEditing()
         textStore.deleteCharacters(in: NSRange(range, provider: contentStore))
         textStore.endEditing()
+        
+        for observer in textObservers {
+            observer.textDidChange?(in: self, oldRange: range, newRange: NSTextRange(location: range.location), newValue: textStore.string)
+        }
+        
         layoutManager.textViewportLayoutController.layoutViewport()
         
         self.carrotLocation = range.location
@@ -548,6 +589,16 @@ public extension NSRange {
         }
 
         self.init(start..<end)
+    }
+}
+
+public extension NSTextRange {
+    func offset(provider: NSTextElementProvider) -> Int? {
+        return provider.offset?(from: provider.documentRange.location, to: self.location)
+    }
+    
+    func endOffset(provider: NSTextElementProvider) -> Int? {
+        return provider.offset?(from: provider.documentRange.location, to: self.endLocation)
     }
 }
 

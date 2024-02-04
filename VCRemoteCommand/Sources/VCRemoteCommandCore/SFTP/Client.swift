@@ -180,7 +180,7 @@ class SFTPHandler: ChannelDuplexHandler {
             print("Got response for unknown request \(message.requestID)")
             return
         }
-        
+
         do {
             try response.complete(with: message)
         } catch (let error) {
@@ -286,12 +286,10 @@ public class RCSFTPClient {
             result.append(response.data)
         }
         
-        Task {
-            do {
-                _ = try await self.handler.close(handle: handle.handle)
-            } catch {
-                print("Failed to close handle for \(file)")
-            }
+        do {
+            _ = try await self.handler.close(handle: handle.handle)
+        } catch {
+            print("Failed to close handle for \(file)")
         }
 
         
@@ -302,12 +300,10 @@ public class RCSFTPClient {
         let handle = try await self.handler.open(path: file, permissions: permissions)
         _ = try await self.handler.write(to: handle.handle, data: data, offset: 0)
         
-        Task {
-            do {
-                _ = try await self.handler.close(handle: handle.handle)
-            } catch {
-                print("Failed to close handle for file \(file)")
-            }
+        do {
+            _ = try await self.handler.close(handle: handle.handle)
+        } catch {
+            print("Failed to close handle for file \(file)")
         }
 
     }
@@ -318,13 +314,11 @@ public class RCSFTPClient {
         let finalResult = try await self.handler.readDir(handle: handle.handle)
         var resultHandle: String? = handle.handle
         if finalResult.loadedAllFiles {
-            Task {
-                do {
-                    _ = try await self.handler.close(handle: handle.handle)
-                    
-                } catch (let error) {
-                    print("Failed to close handle for \(path): \(error)")
-                }
+            do {
+                _ = try await self.handler.close(handle: handle.handle)
+                
+            } catch (let error) {
+                print("Failed to close handle for \(path): \(error)")
             }
 
             

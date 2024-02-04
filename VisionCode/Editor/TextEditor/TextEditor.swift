@@ -35,6 +35,8 @@ class VCTextEditorViewController: UIViewController,
     let editMenu = EditMenu()
     
     let editMenuSize = CGSize(width: 93, height: 25)
+    
+    var highlighter: Highlighter?
 
     override func viewDidLoad() {
         let container = NSTextContainer(size: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
@@ -90,7 +92,7 @@ class VCTextEditorViewController: UIViewController,
         self.textView.addSubview(editMenu)
         self.editMenu.frame = CGRect(x: 100, y: 100, width: editMenuSize.width, height: editMenuSize.height)
         self.textView.bringSubviewToFront(self.editMenu)
-       self.editMenu.isHidden = true
+        self.editMenu.isHidden = true
         
         self.editMenu.copyButton.addAction(UIAction(title: "Copy") { _ in
             self.textView.copySelection()
@@ -112,6 +114,9 @@ class VCTextEditorViewController: UIViewController,
         self.textView.onDidDeslectText = {
             self.editMenu.isHidden = true
         }
+        
+        self.highlighter = try! Highlighter(layoutManager: layoutManager, provider: contentStorage, language: .swift)
+        self.textView.add(observer: highlighter!)
     }
     
     deinit {
@@ -154,6 +159,8 @@ class VCTextEditorViewController: UIViewController,
         
         gutterView.lineHeight = textView.lineHeight
         gutterView.setNeedsDisplay()
+        
+        self.highlighter?.set(text: text)
     }
     
     func textStorage(_ textStorage: NSTextStorage, didProcessEditing editedMask: NSTextStorage.EditActions, range editedRange: NSRange, changeInLength delta: Int) {
