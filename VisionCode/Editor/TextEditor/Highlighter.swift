@@ -16,12 +16,6 @@ enum EditorLanguage: String {
     case swift = "Swift"
 }
 
-let theme = [
-    "variable": UIColor.red,
-    "string": UIColor.blue,
-    "comment": UIColor.darkGray
-]
-
 class RangedAttribute {
     let attribute: NSAttributedString.Key
     let range: NSTextRange
@@ -42,6 +36,8 @@ class Highlighter: TextInputObserver {
     private var highlightQuery: Query
     private var provider: NSTextElementProvider
     
+    private let theme: Theme?
+    
     private var allActiveAttributes = [RangedAttribute]()
     
     init(layoutManager: NSTextLayoutManager, provider: NSTextElementProvider, language: EditorLanguage) throws {
@@ -55,6 +51,8 @@ class Highlighter: TextInputObserver {
         self.parser = Parser()
         try self.parser.setLanguage(config.language)
         self.highlightQuery = config.queries[.highlights]!
+        
+        self.theme = try? Theme(name: "theme")
     }
     
     func set(text: String) {
@@ -90,13 +88,17 @@ class Highlighter: TextInputObserver {
         let highlights = cursor.resolve(with: .init(string: text)).highlights()
         
         for namedRange in highlights {
-            if let color = theme[namedRange.name],
+            if
                let start = provider.location?(provider.documentRange.location, offsetBy: namedRange.range.location),
                 let end = provider.location?(start, offsetBy: namedRange.range.length),
                let range = NSTextRange(location: start, end: end)
             {
-                self.addAttribute(.foregroundColor, value: color, for: range)
+                if let color = theme?.color(forHighlight: namedRange.name) {
+                    self.addAttribute(.foregroundColor, value: color, for: range)
+                }
             }
+            
+            
         }
     }
     
@@ -119,5 +121,43 @@ class Highlighter: TextInputObserver {
 extension Point {
     static func zero() -> Point {
         return .init(row: 0, column: 0)
+    }
+}
+
+extension LanguageConfiguration {
+    init(language: Language, name: String) throws {
+        guard let bundlePath = Bundle.main.path(forResource: "TreeSitterSwift_TreeSitterSwift", ofType: "bundle"),
+              let bundle = Bundle(path: bundlePath) else {
+            throw CommonError.objectNotFound
+        }
+        
+        try self.init(language, name: name, bundle: bundle)
+    }
+    
+    init(_ l: Language, name: String, bundle:Bundle) throws {
+        var queries: [SwiftTreeSitter.Query.Definition: SwiftTreeSitter.Query] = [:]
+        if let queriesFolderPath = bundle.path(forResource: "queries", ofType: nil) {
+            let queriesFiles = try FileManager.default.contentsOfDirectory(atPath: queriesFolderPath)
+            
+            for file in queriesFiles {
+                let url = URL(string: queriesFolderPath)!.appending(path: file)
+                if let data = FileManager.default.contents(atPath: url.absoluteString) {
+                    let query = try Query(language: l, data: data)
+                    
+                    switch(file) {
+                    case "highlights.scm":
+                        queries[.highlights] = query
+                    case "locals.scm":
+                        queries[.locals] = query
+                    case "injections.scm":
+                        queries[.injections] = query
+                    default: break
+                    }
+                }
+
+            }
+        }
+        
+        self.init(l, name: name, queries: queries)
     }
 }
