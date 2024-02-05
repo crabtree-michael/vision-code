@@ -55,6 +55,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     
     private var textObservers: [TextInputObserver] = []
     
+    private var updateCursorLocationOnNextLayout: Bool = true
+    
     var selectedTextRange: UITextRange? {
         get {
             // TODO: Get working
@@ -159,6 +161,9 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     
     func textViewportLayoutControllerDidLayout(_ textViewportLayoutController: NSTextViewportLayoutController) {
         self.updateContentSizeIfNeeded()
+        if self.updateCursorLocationOnNextLayout {
+            self.updateCarrotLocation(scrollToCarrot: false)
+        }
     }
     
     func updateContentSizeIfNeeded() {
@@ -436,7 +441,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         self.inputDelegate?.textDidChange(self)
     }
     
-    func updateCarrotLocation() {
+    func updateCarrotLocation(scrollToCarrot: Bool = true) {
         guard let carrotLocation = self.carrotLocation,
               let lineFragment = self.layoutManager.textLayoutFragment(for: carrotLocation) else {
             return
@@ -454,6 +459,11 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         
         if !found {
             self.carrot.frame = CGRect(x: lineFragment.layoutFragmentFrame.maxX, y: lineFragment.layoutFragmentFrame.minY, width: self.carrot.frame.width, height: lineFragment.layoutFragmentFrame.height)
+        }
+        
+        if (self.carrot.frame.origin.y < self.contentOffset.y ||  self.carrot.frame.origin.y > self.contentOffset.y + self.frame.height) && scrollToCarrot {
+            self.updateCursorLocationOnNextLayout = true
+            self.scrollRectToVisible(self.carrot.frame, animated: true)
         }
     }
     
