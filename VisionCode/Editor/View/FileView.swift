@@ -45,6 +45,7 @@ struct FileView: View {
                 Text(description)
             }
         }
+        .frame(maxWidth: .infinity)
         .background(Color(.darkGray))
     }
 }
