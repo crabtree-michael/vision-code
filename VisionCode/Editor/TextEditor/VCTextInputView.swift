@@ -9,6 +9,8 @@ import Foundation
 import UIKit
 
 @objc protocol TextInputObserver {
+    @objc func id() -> String
+    
     @objc optional func textDidChange(in textView: VCTextInputView,
                                       oldRange: NSTextRange,
                                       newRange: NSTextRange,
@@ -56,17 +58,17 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     var selectedTextRange: UITextRange? {
         get {
             // TODO: Get working
-//            guard let range = self.selectionRange else {
-//                return nil
-//            }
-//            return TextRange(range: range, provider: self.contentStore)
+            //            guard let range = self.selectionRange else {
+            //                return nil
+            //            }
+            //            return TextRange(range: range, provider: self.contentStore)
             
             return nil
         }
         set {
             print("Attempt to set selected text range ignored")
         }
-
+        
     }
     var markedTextStyle: [NSAttributedString.Key : Any]?
     var inputDelegate: UITextInputDelegate?
@@ -131,6 +133,12 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     
     func add(observer: TextInputObserver) {
         self.textObservers.append(observer)
+    }
+    
+    func remove(observer: TextInputObserver) {
+        self.textObservers.removeAll { o in
+            o.id() == observer.id()
+        }
     }
     
     func textViewportLayoutControllerWillLayout(_ textViewportLayoutController: NSTextViewportLayoutController) {

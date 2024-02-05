@@ -28,7 +28,7 @@ class GutterView: UIView {
             .paragraphStyle: paragraphStyle
         ]
         
-        var number = 0
+        var number = 1
         var height:CGFloat = 0
         while height < rect.height {
             let line = "\(number)"

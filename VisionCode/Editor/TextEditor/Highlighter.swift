@@ -9,12 +9,8 @@ import Foundation
 import UIKit
 
 import SwiftTreeSitter
-import TreeSitterGo
 import TreeSitterSwift
-
-enum EditorLanguage: String {
-    case swift = "Swift"
-}
+import CodeEditLanguages
 
 class RangedAttribute {
     let attribute: NSAttributedString.Key
@@ -28,7 +24,8 @@ class RangedAttribute {
 
 class Highlighter: TextInputObserver {
     let layoutManager: NSTextLayoutManager
-    let language: EditorLanguage
+    let language: CodeLanguage
+    let observerId = UUID().uuidString
     
     private let tsLanguage: Language
     private let parser: Parser
@@ -40,14 +37,13 @@ class Highlighter: TextInputObserver {
     
     private var allActiveAttributes = [RangedAttribute]()
     
-    init(layoutManager: NSTextLayoutManager, provider: NSTextElementProvider, language: EditorLanguage) throws {
+    init(layoutManager: NSTextLayoutManager, provider: NSTextElementProvider, language: CodeLanguage) throws {
         self.layoutManager = layoutManager
         self.language = language
         self.provider = provider
         
-        self.tsLanguage = Language(tree_sitter_swift())
-        let config = try LanguageConfiguration(language: self.tsLanguage,
-                                               name: language.rawValue)
+        self.tsLanguage = language.language!
+        let config = try LanguageConfiguration(language)
         self.parser = Parser()
         try self.parser.setLanguage(config.language)
         self.highlightQuery = config.queries[.highlights]!
@@ -58,6 +54,10 @@ class Highlighter: TextInputObserver {
     func set(text: String) {
         self.tree = parser.parse(text)
         self.setHighlightsFromTree(text)
+    }
+    
+    @objc func id() -> String {
+        return self.observerId
     }
     
     @objc func textWillChange(in textView: VCTextInputView) {
@@ -159,5 +159,28 @@ extension LanguageConfiguration {
         }
         
         self.init(l, name: name, queries: queries)
+    }
+    
+    init(_ language: CodeLanguage) throws {
+        var queries: [SwiftTreeSitter.Query.Definition: SwiftTreeSitter.Query] = [:]
+        
+        guard let l = language.language else {
+            throw CommonError.objectNotFound
+        }
+        
+        let queryTypes: [Query.Definition] = [.highlights, .injections, .locals]
+        for t in queryTypes {
+            if let data = FileManager.default.contents(atPath: language.url(for: t)) {
+                queries[t] = try Query(language: l, data: data)
+            }
+        }
+        
+        self.init(l, name: language.tsName, queries: queries)
+    }
+}
+
+extension CodeLanguage {
+    func url(for query: Query.Definition) -> String {
+        return Bundle.main.bundlePath.appending("/CodeEditLanguages_CodeEditLanguages.bundle/Languages/tree-sitter-\(self.tsName)/\(query.name).scm")
     }
 }

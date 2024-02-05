@@ -593,3 +593,257 @@ enum EditorError: LocalizedError {
 }
 """
 
+let goFile =
+"""
+package commerce
+
+import (
+    "context"
+    "fmt"
+
+    logger "github.com/getfliff/common-go/instrumentation/log"
+    "github.com/getfliff/fantasy-backend/internal/commerce/models"
+
+    catalog "github.com/getfliff/fantasy-backend/internal/catalog/models"
+)
+
+type Service struct {
+    repository Repository
+    catalog    Catalog
+    contest    Contest
+}
+
+type Catalog interface {
+    GetProposals(ctx context.Context, IDs []string) ([]catalog.Proposal, error)
+    GetLeaguesForProposals(ctx context.Context, proposalIDs []string) ([]catalog.League, error)
+}
+
+type Contest interface {
+    ValidContestForPicks(ctx context.Context, proposalIDs []string) (string, error)
+}
+
+func (svc *Service) CreateCart(ctx context.Context, cartInput *models.CartInput) (*models.Cart, error) {
+    log := logger.Get(ctx)
+    cart, err := svc.repository.CreateCart(ctx, cartInput)
+
+    if err != nil {
+        log.Err(err).Msg("failed createCart")
+        return nil, fmt.Errorf("failed to exec: %w", err)
+    }
+
+    return cart, nil
+}
+
+func (svc *Service) GetCart(ctx context.Context, cartInput *models.CartInput) (*models.Cart, error) {
+    log := logger.Get(ctx)
+    currentCart, err := svc.repository.GetCart(ctx, cartInput)
+
+    if err != nil {
+        log.Err(err).Msg("failed getCart")
+        return nil, err
+    }
+
+    return currentCart, nil
+}
+func (svc *Service) CartProposals(ctx context.Context, cartID string) ([]catalog.Proposal, error) {
+    cartProposals, err := svc.repository.CartProposals(ctx, cartID)
+    if err != nil {
+        return nil, fmt.Errorf("failed to get cart content: %w", err)
+    }
+
+    proposalIDs := make([]string, len(cartProposals))
+    for i, proposal := range cartProposals {
+        proposalIDs[i] = proposal.ProposalID
+    }
+
+    proposals, err := svc.catalog.GetProposals(ctx, proposalIDs)
+    if err != nil {
+        return nil, fmt.Errorf("failed to get proposals: %w", err)
+    }
+
+    return proposals, nil
+}
+
+func (svc *Service) IsValidCart(ctx context.Context, cart *models.Cart) (bool, error) {
+    validatedCart, err := svc.ValidateCart(ctx, cart)
+    if err != nil {
+        return false, err
+    }
+    return validatedCart.IsValid, err
+}
+
+func (svc *Service) GetValidationErrorForCart(ctx context.Context, cart *models.Cart) (*string, error) {
+    validatedCart, err := svc.ValidateCart(ctx, cart)
+    if err != nil {
+        return nil, err
+    }
+    return validatedCart.ValidationError, err
+}
+func (svc *Service) AddProposalsToCart(ctx context.Context, cartInput *models.CartInput, proposalIDs []string) (*models.Cart, error) {
+    log := logger.Get(ctx)
+
+    tx, err := svc.repository.BeginTx(ctx)
+    defer func() {
+        if tx != nil {
+            _ = tx.Rollback(ctx)
+        }
+    }()
+    if err != nil {
+        log.Err(err).Msg("failed addProposalsToUsersCart: begin transaction failed")
+        return nil, fmt.Errorf("failed to start tx: %w", err)
+    }
+
+    cart, err := svc.repository.GetCartTx(ctx, tx, cartInput)
+    if err != nil {
+        log.Err(err).Msg("failed addProposalsToUsersCart: get cart failed")
+        return nil, fmt.Errorf("failed to get cart: %w", err)
+    }
+
+    if cart == nil {
+        cart, err = svc.repository.CreateCartTx(ctx, tx, cartInput)
+        if err != nil {
+            log.Err(err).Msg("failed addProposalsToUsersCart: create cart failed")
+            return nil, fmt.Errorf("failed to create cart: %w", err)
+        }
+    }
+
+    err = svc.repository.AddProposalsToCartTx(ctx, tx, cart.ID, proposalIDs)
+    if err != nil {
+        log.Err(err).Msg("failed addProposalsToUsersCart: add proposals failed")
+        return nil, fmt.Errorf("failed to add proposals: %w", err)
+    }
+
+    err = tx.Commit(ctx)
+    if err != nil {
+        log.Err(err).Msg("failed addProposalsToUsersCart: commit failed")
+        return nil, fmt.Errorf("failed to commit: %w", err)
+    }
+
+    return cart, nil
+}
+
+func (svc *Service) RemoveProposalsFromCart(ctx context.Context, cartInput *models.CartInput, proposalIDs []string) (*models.Cart, error) {
+    log := logger.Get(ctx)
+
+    tx, err := svc.repository.BeginTx(ctx)
+    defer func() {
+        if tx != nil {
+            _ = tx.Rollback(ctx)
+        }
+    }()
+    if err != nil {
+        log.Err(err).Msg("failed RemoveProposalsFromUserCart: begin transaction failed")
+        return nil, fmt.Errorf("failed to exec: %w", err)
+    }
+
+    cart, err := svc.repository.GetCartTx(ctx, tx, cartInput)
+    if err != nil {
+        log.Err(err).Msg("failed RemoveProposalsFromUserCart: get cart failed")
+        return nil, fmt.Errorf("failed to exec: %w", err)
+    }
+
+    if cart == nil {
+        return nil, fmt.Errorf("no cart found for user")
+    }
+
+    err = svc.repository.RemoveProposalsFromCartTx(ctx, tx, cart.ID, proposalIDs)
+    if err != nil {
+        log.Err(err).Msg("failed RemoveProposalsFromUserCart: remove proposals failed")
+        return nil, fmt.Errorf("failed to exec: %w", err)
+    }
+
+    err = tx.Commit(ctx)
+    if err != nil {
+        log.Err(err).Msg("failed RemoveProposalsFromUserCart: commit failed")
+        return nil, fmt.Errorf("failed to exec: %w", err)
+    }
+
+    return cart, nil
+}
+
+func (svc *Service) CreateOrder(ctx context.Context, purchaseAmount float64, cartInput *models.CartInput) (*models.Order, error) {
+    log := logger.Get(ctx)
+
+    if purchaseAmount <= 0 {
+        return nil, fmt.Errorf("invalid purchase amount: %f", purchaseAmount)
+    }
+
+    cart, err := svc.repository.GetCart(ctx, cartInput)
+    if err != nil {
+        log.Err(err).Msg("failed createOrder: get cart failed")
+        return nil, fmt.Errorf("failed to get cart: %w", err)
+    }
+
+    cartProposals, err := svc.repository.CartProposals(ctx, cart.ID)
+    if err != nil {
+        log.Err(err).Msg("failed createOrder: get proposals failed")
+        return nil, fmt.Errorf("failed to get proposals: %w", err)
+    }
+
+    // TODO: Validate the cart before creating the orders
+    // validation, err := svc.validateCartPicks(ctx, proposals)
+    // if err != nil {
+    //     log.Err(err).Msg("failed createOrder: validate cart failed")
+    //     return nil, fmt.Errorf("failed to validate cart: %w", err)
+    // }
+    // if validation.Error != nil {
+    //     return nil, validation.Error
+    // }
+
+    // Now we validate that there is a contest that all proposals can enter into
+    proposalIDs := make([]string, len(cartProposals))
+    for i, proposal := range cartProposals {
+        proposalIDs[i] = proposal.ProposalID
+    }
+    contestID, err := svc.contest.ValidContestForPicks(ctx, proposalIDs)
+    if err != nil {
+        log.Err(err).Msg("failed createOrder: get contest id failed")
+        return nil, fmt.Errorf("failed to get contest id: %w", err)
+    }
+
+    // We call catalog to get the prices of the proposals.
+    proposals, err := svc.catalog.GetProposals(ctx, proposalIDs)
+    if err != nil {
+        log.Err(err).Msg("failed createOrder: get proposlas failed")
+        return nil, fmt.Errorf("failed to get proposals: %w", err)
+    }
+
+    // We can now create a validated order
+    tx, err := svc.repository.BeginTx(ctx)
+    if err != nil {
+        log.Err(err).Msg("failed createOrder: begin transaction failed")
+        return nil, fmt.Errorf("failed to start tx: %w", err)
+    }
+    defer func() {
+        if err != nil {
+            _ = tx.Rollback(ctx)
+        }
+    }()
+
+    order, err := svc.repository.CreateOrderTx(ctx, tx, &CreateOrderInput{
+        CartID:         cart.ID,
+        PurchaseAmount: purchaseAmount,
+        ContestID:      contestID,
+    })
+    if err != nil {
+        log.Err(err).Msg("failed createOrder: create order failed")
+        return nil, fmt.Errorf("failed to create order: %w", err)
+    }
+
+    // We copy the proposals from the cart to the order
+    err = svc.repository.InsertProposalsIntoOrderTx(ctx, tx, order.ID, proposals)
+    if err != nil {
+        log.Err(err).Msg("failed createOrder: copy proposals failed")
+        return nil, fmt.Errorf("failed to copy proposals: %w", err)
+    }
+
+    err = tx.Commit(ctx)
+    if err != nil {
+        log.Err(err).Msg("failed createOrder: commit failed")
+        return nil, fmt.Errorf("failed to commit: %w", err)
+    }
+
+    return order, nil
+}
+
+"""

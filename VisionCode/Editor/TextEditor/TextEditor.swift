@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIKit
+import CodeEditLanguages
 
 typealias TextAttributes = [NSAttributedString.Key: Any]
 
@@ -65,6 +66,7 @@ class VCTextEditorViewController: UIViewController,
         textView.alwaysBounceVertical = true
         textView.attributes = self.attributes
         textView.insets = UIEdgeInsets(top: 0, left: gutterWidth, bottom: 0, right: 10)
+        textView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 64, right: 0)
         
         textView.delegate = self
         
@@ -114,9 +116,6 @@ class VCTextEditorViewController: UIViewController,
         self.textView.onDidDeslectText = {
             self.editMenu.isHidden = true
         }
-        
-        self.highlighter = try! Highlighter(layoutManager: layoutManager, provider: contentStorage, language: .swift)
-        self.textView.add(observer: highlighter!)
     }
     
     deinit {
@@ -141,8 +140,8 @@ class VCTextEditorViewController: UIViewController,
         self.editMenu.frame = CGRect(x: x, y: y, width: editMenuSize.width, height: editMenuSize.height)
     }
     
-    func update(_ text: String) {
-        guard text != contentStorage.textStorage?.string else {
+    func update(_ text: String, language: CodeLanguage) {
+        guard (text != contentStorage.textStorage?.string || language != self.highlighter?.language) else {
             return
         }
         
@@ -160,7 +159,20 @@ class VCTextEditorViewController: UIViewController,
         gutterView.lineHeight = textView.lineHeight
         gutterView.setNeedsDisplay()
         
-        self.highlighter?.set(text: text)
+        if language != .default && language != self.highlighter?.language {
+            do {
+                let highlighter = try Highlighter(layoutManager: self.layoutManager, provider: self.contentStorage, language: language)
+                highlighter.set(text: text)
+                
+                if let h = self.highlighter {
+                    textView.remove(observer: h)
+                }
+                textView.add(observer: highlighter)
+                self.highlighter = highlighter
+            } catch {
+                print("Failed to initalize highlighter \(error)")
+            }
+        }
     }
     
     func textStorage(_ textStorage: NSTextStorage, didProcessEditing editedMask: NSTextStorage.EditActions, range editedRange: NSRange, changeInLength delta: Int) {
@@ -173,6 +185,7 @@ struct VCTextEditor: UIViewControllerRepresentable {
     typealias UIViewControllerType = VCTextEditorViewController
     
     @Binding var text: String
+    @Binding  var language: CodeLanguage
     
     func makeUIViewController(context: Context) -> VCTextEditorViewController {
         let controller = VCTextEditorViewController()
@@ -185,7 +198,7 @@ struct VCTextEditor: UIViewControllerRepresentable {
         uiViewController.onTextChanges = { text in
             self.text = text
         }
-        uiViewController.update(text)
+        uiViewController.update(text, language: language)
     }
 }
 

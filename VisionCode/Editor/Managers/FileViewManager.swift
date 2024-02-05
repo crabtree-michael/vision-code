@@ -7,6 +7,7 @@
 
 import Foundation
 import VCRemoteCommandCore
+import CodeEditLanguages
 
 class FileViewManager {
     let path: String
@@ -14,13 +15,21 @@ class FileViewManager {
     let file: File
     var client: RCSFTPClient?
     var hasAttemptedLoad: Bool = false
+    let estimatedLanguage: CodeLanguage
     
     init(path: String, client: RCSFTPClient?) {
         self.path = path
         self.state = FileViewState()
         self.file = File(path: path)
         self.client = client
+        if let url = URL(string: self.path) {
+            self.estimatedLanguage = CodeLanguage.detectLanguageFrom(url: url)
+        } else {
+            self.estimatedLanguage = .default
+        }
+        
         self.state.onSave = self.save
+        self.state.language = self.estimatedLanguage
     }
     
     func load() {

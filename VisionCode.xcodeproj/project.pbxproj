@@ -59,6 +59,7 @@
 		D8874E6C2B6D279D0062A920 /* SwiftTreeSitterLayer in Frameworks */ = {isa = PBXBuildFile; productRef = D8874E6B2B6D279D0062A920 /* SwiftTreeSitterLayer */; };
 		D8874E722B6D2D6F0062A920 /* TreeSitterGo in Frameworks */ = {isa = PBXBuildFile; productRef = D8874E712B6D2D6F0062A920 /* TreeSitterGo */; };
 		D8874E752B6D2F500062A920 /* TreeSitterDockerfile in Frameworks */ = {isa = PBXBuildFile; productRef = D8874E742B6D2F500062A920 /* TreeSitterDockerfile */; };
+		D89C87DD2B6FCA170031A87E /* CodeEditLanguages in Frameworks */ = {isa = PBXBuildFile; productRef = D89C87DC2B6FCA170031A87E /* CodeEditLanguages */; };
 		D8A9BF012B63E33500115D77 /* FinderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF002B63E33500115D77 /* FinderView.swift */; };
 		D8A9BF042B63E4C900115D77 /* FinderViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF032B63E4C900115D77 /* FinderViewState.swift */; };
 		D8A9BF062B63E4F400115D77 /* FolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF052B63E4F400115D77 /* FolderView.swift */; };
@@ -155,6 +156,7 @@
 			files = (
 				D87BB59E2B6C1C41004222F8 /* RealmSwift in Frameworks */,
 				D87BB59C2B6C1C41004222F8 /* Realm in Frameworks */,
+				D89C87DD2B6FCA170031A87E /* CodeEditLanguages in Frameworks */,
 				D8874E752B6D2F500062A920 /* TreeSitterDockerfile in Frameworks */,
 				D8874E6C2B6D279D0062A920 /* SwiftTreeSitterLayer in Frameworks */,
 				D8874E722B6D2D6F0062A920 /* TreeSitterGo in Frameworks */,
@@ -448,6 +450,7 @@
 				D8874E712B6D2D6F0062A920 /* TreeSitterGo */,
 				D8874E742B6D2F500062A920 /* TreeSitterDockerfile */,
 				D81BAC622B6E5D0500A080DF /* TreeSitterSwift */,
+				D89C87DC2B6FCA170031A87E /* CodeEditLanguages */,
 			);
 			productName = VisionCode;
 			productReference = D840A68A2B5A0A31002F3303 /* VisionCode.app */;
@@ -486,6 +489,7 @@
 				D8874E702B6D2D6F0062A920 /* XCRemoteSwiftPackageReference "tree-sitter-go" */,
 				D8874E732B6D2F500062A920 /* XCRemoteSwiftPackageReference "tree-sitter-dockerfile" */,
 				D81BAC612B6E5D0500A080DF /* XCRemoteSwiftPackageReference "tree-sitter-swift" */,
+				D89C87DB2B6FCA170031A87E /* XCLocalSwiftPackageReference "../CodeEditLanguages" */,
 			);
 			productRefGroup = D840A68B2B5A0A31002F3303 /* Products */;
 			projectDirPath = "";
@@ -801,6 +805,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = VCRemoteCommand;
 		};
+		D89C87DB2B6FCA170031A87E /* XCLocalSwiftPackageReference "../CodeEditLanguages" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../CodeEditLanguages;
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -897,6 +905,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D8874E732B6D2F500062A920 /* XCRemoteSwiftPackageReference "tree-sitter-dockerfile" */;
 			productName = TreeSitterDockerfile;
+		};
+		D89C87DC2B6FCA170031A87E /* CodeEditLanguages */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CodeEditLanguages;
 		};
 		D8FC3F1B2B5DD39E00C6E099 /* VCRemoteCommand */ = {
 			isa = XCSwiftPackageProductDependency;

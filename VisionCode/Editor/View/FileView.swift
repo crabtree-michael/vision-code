@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CodeEditLanguages
 
 struct FileView: View {
     @ObservedObject var state: FileViewState
@@ -25,8 +26,16 @@ struct FileView: View {
                 ProgressView()
                 Spacer()
             } else {
-                VCTextEditor(text: $state.content)
-                FileViewToolBar(state: state)
+                ZStack{
+                    VCTextEditor(text: $state.content,
+                                 language: $state.language)
+                    VStack {
+                        Spacer()
+                        FileViewToolBar(onSave: state.onSave, isWriting: state.isWriting, language: $state.language)
+                            .background(.clear)
+                    }
+
+                }
             }
         }
         .alert(isPresented: isShowingError, error: state.error) { _ in
@@ -36,6 +45,7 @@ struct FileView: View {
                 Text(description)
             }
         }
+        .background(Color(.darkGray))
     }
 }
 
