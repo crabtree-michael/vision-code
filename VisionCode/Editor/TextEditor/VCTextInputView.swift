@@ -157,12 +157,16 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         }
         
         view.frame = textLayoutFragment.layoutFragmentFrame
+        view.isHidden = false
     }
     
     func textViewportLayoutControllerDidLayout(_ textViewportLayoutController: NSTextViewportLayoutController) {
         self.updateContentSizeIfNeeded()
         if self.updateCursorLocationOnNextLayout {
             self.updateCarrotLocation(scrollToCarrot: false)
+        }
+        for view in self.recycler.unusedViews() {
+            view.isHidden = true
         }
     }
     

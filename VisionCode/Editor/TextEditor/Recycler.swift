@@ -26,6 +26,7 @@ class TextLayoutFragmentViewRecycler {
         if let availableView = fragmentReuseMap[fragment] {
             hits += 1
             availableView.change(to: fragment)
+            fragmentReuseMap.removeValue(forKey: fragment)
             return (availableView, false)
         }
         
@@ -73,14 +74,17 @@ class TextLayoutFragmentViewRecycler {
         }
     }
     
-    func markAsUnavailable(_ fragment: NSTextLayoutFragment) -> Bool {
-        guard let index = fragmentAvailableIndexMap[fragment],
-              let view = availableViews[index] else {
-            return false
+    func unusedViews() -> [UIView] {
+        var results = [UIView]()
+        for value in self.fragmentReuseMap.values {
+            results.append(value)
         }
         
-        availableViews[index] = nil
-        fragmentReuseMap[fragment] = view
-        return true
+        for view in self.availableViews {
+            if let view = view {
+                results.append(view)
+            }
+        }
+        return results
     }
 }
