@@ -19,7 +19,9 @@ struct RepositoryFilesView: View {
                 ScrollView {
                     FileCellView(state: state.root, indentationLevel: 0, collapsed: false, onOpen: state.onOpenFile)
                 }
+                Spacer(minLength: 46)
             }
+            .padding(.bottom)
             switch(state.connectionState.status) {
             case .connected:
                 VStack{
@@ -32,8 +34,9 @@ struct RepositoryFilesView: View {
                             icon: { Image(systemName: "icloud") }
                         )
                     }
-                    .padding()
+                    
                 }
+                .padding()
             default:
                 VStack {
                     Spacer()

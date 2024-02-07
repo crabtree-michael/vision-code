@@ -20,7 +20,7 @@ struct FileCellView: View {
     var onOpen: FileLambda?  = nil
     
     var body: some View {
-        LazyVStack(spacing: 4) {
+        LazyVStack(spacing: 16) {
             HStack {
                 Spacer(minLength: 12 * CGFloat(indentationLevel))
                 HStack(alignment: .center) {
@@ -43,18 +43,6 @@ struct FileCellView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Spacer()
             }
-            .hoverEffect()
-            .onTapGesture {
-                guard state.loaded else {
-                    return
-                }
-                guard !empty else {
-                    self.onOpen?(state.file)
-                    return
-                }
-                
-                self.collapsed = !self.collapsed
-            }
             if (!empty && !collapsed && state.loaded) {
                 ForEach(state.subnodes, id: \.file.path) { state in
                     FileCellView(state: state,
@@ -63,6 +51,18 @@ struct FileCellView: View {
                                  onOpen: self.onOpen)
                 }
             }
+        }
+        .hoverEffect()
+        .onTapGesture {
+            guard state.loaded else {
+                return
+            }
+            guard !empty else {
+                self.onOpen?(state.file)
+                return
+            }
+            
+            self.collapsed = !self.collapsed
         }
     }
 }

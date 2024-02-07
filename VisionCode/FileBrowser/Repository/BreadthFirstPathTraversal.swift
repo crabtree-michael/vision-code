@@ -109,6 +109,15 @@ class BreadthFirstPathTraversal {
         parent.node.subnodes.append(node)
         if parent.node.subnodes.count == parent.childCount {
             parent.node.loaded = true
+            parent.node.subnodes = parent.node.subnodes.sorted(by: { a, b in
+                if a.file.isFolder && !b.file.isFolder {
+                    return true
+                }
+                if !a.file.isFolder && b.file.isFolder {
+                    return false
+                }
+                return a.file.name < b.file.name
+            })
             self.onNodeLoaded?(self)
             currentParentIndex += 1
         }
