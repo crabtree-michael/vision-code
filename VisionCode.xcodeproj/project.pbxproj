@@ -74,6 +74,8 @@
 		D8A9BF1D2B63E74700115D77 /* RepositoryFilesViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF1C2B63E74700115D77 /* RepositoryFilesViewState.swift */; };
 		D8CCC7092B66E21000730B45 /* TextLayoutFragmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CCC7082B66E21000730B45 /* TextLayoutFragmentView.swift */; };
 		D8CCC70B2B66EE8100730B45 /* VCTextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CCC70A2B66EE8100730B45 /* VCTextInputView.swift */; };
+		D8F23A532B725A2600A47A13 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F23A522B725A2600A47A13 /* ConnectionState.swift */; };
+		D8F23A552B725E7900A47A13 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F23A542B725E7900A47A13 /* Connection.swift */; };
 		D8FC3F192B5DA5CD00C6E099 /* Terminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FC3F182B5DA5CD00C6E099 /* Terminal.swift */; };
 		D8FC3F1C2B5DD39E00C6E099 /* VCRemoteCommand in Frameworks */ = {isa = PBXBuildFile; productRef = D8FC3F1B2B5DD39E00C6E099 /* VCRemoteCommand */; };
 		D8FC3F1F2B5DF7CA00C6E099 /* TerminalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FC3F1E2B5DF7CA00C6E099 /* TerminalManager.swift */; };
@@ -144,6 +146,8 @@
 		D8A9BF1C2B63E74700115D77 /* RepositoryFilesViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryFilesViewState.swift; sourceTree = "<group>"; };
 		D8CCC7082B66E21000730B45 /* TextLayoutFragmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLayoutFragmentView.swift; sourceTree = "<group>"; };
 		D8CCC70A2B66EE8100730B45 /* VCTextInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTextInputView.swift; sourceTree = "<group>"; };
+		D8F23A522B725A2600A47A13 /* ConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
+		D8F23A542B725E7900A47A13 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		D8FC3F182B5DA5CD00C6E099 /* Terminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terminal.swift; sourceTree = "<group>"; };
 		D8FC3F1E2B5DF7CA00C6E099 /* TerminalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalManager.swift; sourceTree = "<group>"; };
 		D8FC3F202B5DF83300C6E099 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -199,6 +203,7 @@
 				D80881F12B63E0B300582C41 /* Host.swift */,
 				D80881FC2B63E27200582C41 /* Lambdas.swift */,
 				D81BAC682B6EB80200A080DF /* Content.swift */,
+				D8F23A542B725E7900A47A13 /* Connection.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -404,6 +409,7 @@
 			children = (
 				D8A9BF1A2B63E6FF00115D77 /* FileCellViewState.swift */,
 				D8A9BF1C2B63E74700115D77 /* RepositoryFilesViewState.swift */,
+				D8F23A522B725A2600A47A13 /* ConnectionState.swift */,
 			);
 			path = State;
 			sourceTree = "<group>";
@@ -559,6 +565,7 @@
 				D8393BB42B6872C6004018DC /* VCTextInputView+UITextInput.swift in Sources */,
 				D8393BB02B687113004018DC /* GutterView.swift in Sources */,
 				D80881FB2B63E25E00582C41 /* EditorErrors.swift in Sources */,
+				D8F23A532B725A2600A47A13 /* ConnectionState.swift in Sources */,
 				D81BAC6D2B6F29E100A080DF /* Theme.swift in Sources */,
 				D8CCC7092B66E21000730B45 /* TextLayoutFragmentView.swift in Sources */,
 				D8A9BF182B63E6D000115D77 /* FileCellView.swift in Sources */,
@@ -571,6 +578,7 @@
 				D8A9BF0C2B63E55100115D77 /* FileThumbnailView.swift in Sources */,
 				D80881F92B63E23100582C41 /* EditorNavBarView.swift in Sources */,
 				D87BB5992B6C1BB7004222F8 /* HostManager.swift in Sources */,
+				D8F23A552B725E7900A47A13 /* Connection.swift in Sources */,
 				D8A9BF1B2B63E6FF00115D77 /* FileCellViewState.swift in Sources */,
 				D840A68E2B5A0A31002F3303 /* VisionCodeApp.swift in Sources */,
 				D80881DF2B63DD3A00582C41 /* File.swift in Sources */,

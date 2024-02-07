@@ -9,7 +9,7 @@ import Foundation
 import VCRemoteCommandCore
 
 class RepositoryEditorViewManager {
-    let connection: RCConnection
+    let remote: Connection
     let path: String
     let editor: EditorViewManager
     let browser: RepositoryFileBrowserManager
@@ -18,12 +18,12 @@ class RepositoryEditorViewManager {
     
     var didClose: ((RepositoryEditorViewManager) -> ())? = nil
     
-    init(path: String, connection: RCConnection) {
-        self.connection = connection
-        self.editor = EditorViewManager(path: path)
-        self.browser = RepositoryFileBrowserManager(path: path)
+    init(path: String, connection: Connection) {
+        self.remote = connection
+        self.editor = EditorViewManager(path: path, remote: connection)
+        self.browser = RepositoryFileBrowserManager(path: path, remote: connection)
 
-        self.terminal = TerminalManager(title: (path as NSString).lastPathComponent, connection: connection)
+        self.terminal = TerminalManager(title: (path as NSString).lastPathComponent, connection: connection.connection)
         self.terminal.state.showTitle = false
         
         self.state = RepositoryEditorViewState(editorState: editor.state, browserState: browser.state, terminalState: self.terminal.state)
@@ -36,20 +36,14 @@ class RepositoryEditorViewManager {
     
     func load() {
         Task {
-            do {
-                let editorClient = try await self.connection.createSFTPClient()
-                self.editor.client = editorClient
-                self.editor.loadIfNeeded()
-                
-                let browserClient = try await self.connection.createSFTPClient()
-                self.browser.client = browserClient
-                self.browser.load()
-                
-                await self.terminal.connect()
-            } catch {
-                print("Failed to load \(error)")
-            }
-
+            await self.editor.load()
+        }
+        Task {
+            await self.browser.load()
+        }
+        
+        Task {
+            await self.terminal.connect()
         }
     }
     

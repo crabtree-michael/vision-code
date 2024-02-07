@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 struct RepositoryEditorView: View {
     let cornerRadius: CGFloat = 6
     let minTerminalHeight: CGFloat = 150
@@ -29,9 +27,7 @@ struct RepositoryEditorView: View {
         HStack(alignment: .top, spacing: 0) {
             RepositoryFilesView(state: self.state.browserState)
                 .frame(width: 200)
-                .padding(.leading)
                 .padding(.top)
-                .padding(.bottom)
 
             
             GeometryReader { geometry in
@@ -58,7 +54,6 @@ struct RepositoryEditorView: View {
                 
                     TerminalView(state: state.terminalState)
                         .frame(maxWidth: .infinity, minHeight: min(terminalHeight, geometry.size.height - minEditorHeight - verticalControlSize))
-                        .cornerRadius(cornerRadius)
                         
                 }
                 
@@ -72,8 +67,9 @@ struct RepositoryEditorView: View {
 }
 
 
-#Preview {
-    var root: PathNode {
+@MainActor
+struct ContentView_Previews: PreviewProvider {
+    static var root: PathNode {
         let file1 = File(path: "/michael/george/test.txt", isFolder: false)
         let file2 = File(path: "/michael/george/long.txt", isFolder: false)
         let file3 = File(path: "/michael/smith/john/text.txt", isFolder: false)
@@ -90,9 +86,14 @@ struct RepositoryEditorView: View {
             PathNode(file: file5, subnodes: [])], loaded: true)
         
     }
-    var state: RepositoryEditorViewState {
+    static var connectionState: ConnectionViewState {
+        let state = ConnectionViewState()
+        state.status = .notStarted
+        return state
+    }
+    static var state: RepositoryEditorViewState {
         get {
-            let browserState = RepositoryFilesViewState(root: root)
+            let browserState = RepositoryFilesViewState(root: root, connectionState: connectionState)
             browserState.isLoading = false
             
             let editorState = EditorViewState(title: "fantasy-backend")
@@ -122,6 +123,10 @@ struct RepositoryEditorView: View {
         }
     }
     
-    return RepositoryEditorView(state: state)
+    static var previews: some View {
+        Group {
+            RepositoryEditorView(state: state)
+        }
+    }
 }
 

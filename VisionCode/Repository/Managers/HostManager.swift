@@ -95,6 +95,7 @@ class HostManager {
             var success = true
             do {
                 try await connection.connect()
+                connection.close()
             } catch {
                 success = false
                 err = error

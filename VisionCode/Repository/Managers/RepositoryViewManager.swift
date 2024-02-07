@@ -11,6 +11,7 @@ import VCRemoteCommandCore
 import SwiftUI
 import Combine
 
+@MainActor
 class RepositoryViewManager {
     let realm: Realm
     
@@ -77,7 +78,7 @@ class RepositoryViewManager {
         })
     }
     
-    private func open(project: Project, connection: RCConnection) {
+    private func open(project: Project, connection: Connection) {
         let manager = RepositoryEditorViewManager(path: project.root, connection: connection)
         if editorManager == nil {
             self.editorManager = manager

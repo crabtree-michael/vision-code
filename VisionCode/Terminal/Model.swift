@@ -12,6 +12,19 @@ enum ConnectionState {
     case notStarted
     case connecting
     case failed(Error)
+    
+    func display() -> String {
+        switch(self) {
+        case .connected:
+            return "Connected"
+        case .notStarted:
+            return "Not Started"
+        case .connecting:
+            return "Connecting"
+        case .failed(_):
+            return "Failure"
+        }
+    }
 }
 
 enum CommandState {

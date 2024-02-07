@@ -359,6 +359,14 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             return
         }
         
+        var text = text
+        if text == "“" || text == "”"{
+            text = "\""
+        }
+        if text == "‘" || text == "’" {
+            text = "'"
+        }
+        
         self.inputDelegate?.textWillChange(self)
         
         for observer in textObservers {

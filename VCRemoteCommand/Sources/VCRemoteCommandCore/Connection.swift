@@ -26,7 +26,7 @@ public class RCConnection: NIOSSHClientUserAuthenticationDelegate, NIOSSHClientS
         self.password = password
     }
     
-    public func connect() async throws {
+    public func connect(onDisconnect: ((Result<Void, Error>) -> ())? = nil) async throws {
         let bootstrap = ClientBootstrap(group: self.group)
             .channelInitializer { channel in
                 channel.pipeline.addHandlers([NIOSSHHandler(
@@ -43,11 +43,14 @@ public class RCConnection: NIOSSHClientUserAuthenticationDelegate, NIOSSHClientS
                     continuation.resume(returning: channel)
                 case .failure(let err):
                     continuation.resume(throwing: err)
-                    
                 }
             }
         }
+        
         self.channel = channel
+        self.channel?.closeFuture.whenComplete({ result in
+            onDisconnect?(result)
+        })
     }
     
     public func createShell() async throws -> RCShell {
@@ -83,6 +86,9 @@ public class RCConnection: NIOSSHClientUserAuthenticationDelegate, NIOSSHClientS
                 guard channelType == .session else {
                     return channel.eventLoop.makeFailedFuture(ConnectionError.incorrectChannelType)
                 }
+                childChannel.closeFuture.whenComplete { result in
+                    print("Child closed")
+                }
                 return childChannel.pipeline.addHandlers(handlers)
             }
             return p.futureResult
@@ -97,11 +103,15 @@ public class RCConnection: NIOSSHClientUserAuthenticationDelegate, NIOSSHClientS
         
         nextChallengePromise.succeed(
             NIOSSHUserAuthenticationOffer(username: self.username,
-                                          serviceName: "test",
+                                          serviceName: "VisionCode",
                                           offer: .password(.init(password: self.password))))
     }
     
     public func validateHostKey(hostKey: NIOSSH.NIOSSHPublicKey, validationCompletePromise: NIOCore.EventLoopPromise<Void>) {
         validationCompletePromise.succeed()
+    }
+    
+    public func close() {
+        _ = self.channel?.close()
     }
 }

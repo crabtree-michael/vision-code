@@ -12,9 +12,11 @@ import Combine
 
 
 class ConnectionManager {
-    private var connectionMap = [ObjectId: RCConnection]()
+    private var connectionMap = [ObjectId: Connection]()
     private var queue = DispatchQueue(label: "connection-queue")
     private var realm: Realm?
+    
+    var cancellableSet = Set<AnyCancellable>()
     
     init() {
         self.realm = nil
@@ -24,7 +26,62 @@ class ConnectionManager {
         
     }
     
-    func connection(for id: ObjectId) -> Future<RCConnection, Error> {
+    @MainActor func didDisconnect(for id: ObjectId, withResult result: Result<Void, Error>)  {
+        guard let connection = connectionMap[id] else {
+            return
+        }
+        
+        switch (result) {
+        case .success:
+            connection.state.status = .notStarted
+        case .failure(let error):
+            connection.state.status = .failed(error)
+        }
+    }
+    
+    @MainActor func reload(id: ObjectId) {
+        guard let connection = self.connectionMap[id] else {
+            return
+        }
+        
+        connection.state.status = .connecting
+        self.cancellableSet.insert(
+            self.connection(for: id, reuse: false).sink { completion in
+                switch (completion) {
+                case .failure(let error):
+                    Task {
+                        await MainActor.run {
+                            connection.state.status = .failed(CommonError.genericError(error))
+                        }
+                    }
+                default: break
+                }
+            } receiveValue: { newConnection in
+                newConnection.users = connection.users
+                for user in connection.users {
+                    user.connectionDidReload(newConnection)
+                }
+            }
+        )
+    }
+    
+    @MainActor func disconnect(id: ObjectId) {
+        guard let connection = self.connectionMap[id] else {
+            return
+        }
+        
+        connection.connection.close()
+    }
+    
+    @MainActor func connection(for id: ObjectId, reuse: Bool = true) -> Future<Connection, Error> {
+        let state = ConnectionViewState()
+        state.onReload = { [weak self] in
+            self?.reload(id: id)
+        }
+        state.disconnect = { [weak self] in
+            self?.disconnect(id: id)
+        }
+        state.status = .connecting
         return Future { [self] promise in
             queue.async { [self] in
                 guard let host = self.realm?.object(ofType: Host.self, forPrimaryKey: id) else {
@@ -32,7 +89,7 @@ class ConnectionManager {
                     return
                 }
                 
-                if let existingConnection = connectionMap[host.id] {
+                if let existingConnection = connectionMap[host.id], reuse {
                     promise(.success(existingConnection))
                 }
                 
@@ -44,9 +101,16 @@ class ConnectionManager {
                 Task { [self] in
                     do {
                         let connection = RCConnection(host: ip, port: port, username: username, password: password)
-                        try await connection.connect()
-                        self.connectionMap[id] = connection
-                        promise(.success(connection))
+                        try await connection.connect { result in
+                            Task {
+                                await self.didDisconnect(for: id, withResult: result)
+                            }
+                        }
+                        
+                        state.status = .connected
+                        let finalConnection = Connection(connection: connection, state: state)
+                        self.connectionMap[id] = finalConnection
+                        promise(.success(finalConnection))
                     }
                     catch {
                         promise(.failure(error))
