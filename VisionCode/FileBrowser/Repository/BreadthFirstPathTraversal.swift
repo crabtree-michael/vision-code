@@ -23,7 +23,7 @@ class BreadthFirstPathTraversal {
     var maxChildCount = 100
     var maxFileSize = 80000
     
-    var onNodeLoaded: ((BreadthFirstPathTraversal) -> Void)? = nil
+    var onNodeLoaded: ((BreadthFirstPathTraversal, PathNode) -> Void)? = nil
     
     let root: PathNode
     private let load: AsyncLoadDirLambda
@@ -118,7 +118,7 @@ class BreadthFirstPathTraversal {
                 }
                 return a.file.name < b.file.name
             })
-            self.onNodeLoaded?(self)
+            self.onNodeLoaded?(self, parent.node)
             currentParentIndex += 1
         }
     }

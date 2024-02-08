@@ -97,7 +97,7 @@ struct QuickOpenView: View {
             
             
             ScrollView {
-                VStack {
+                LazyVStack {
                     ForEach(state.files, id: \.path) { file in
                         VStack(alignment: .leading) {
                             HStack {

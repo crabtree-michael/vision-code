@@ -25,6 +25,8 @@ class RepositoryFileBrowserManager: ConnectionUser {
     
     var remote: Connection
     
+    let trieRoot = TrieNode<String, PathNode>()
+    
     init(path: String, remote: Connection) {
         self.path = path
         
@@ -64,10 +66,14 @@ class RepositoryFileBrowserManager: ConnectionUser {
 
     }
     
-    func onTraversalLoadedNode(_ traverser: BreadthFirstPathTraversal) {
+    func onTraversalLoadedNode(_ traverser: BreadthFirstPathTraversal, node: PathNode) {
         self.root = traverser.root.copy()
         DispatchQueue.main.async {
             self.state.root = FileCellViewState(node: self.root)
+        }
+        
+        for n in node.subnodes {
+            self.trieRoot.insert(value: n, for: n.file.name)
         }
     }
     
@@ -104,8 +110,9 @@ class RepositoryFileBrowserManager: ConnectionUser {
     }
     
     func files(withPrefix prefix: String) -> [File] {
-        let root = self.root.copy()
-        return files(withPrefix: prefix, in: root).reversed()
+        return trieRoot.retrieve(key: prefix)
+            .filter { !$0.file.isFolder }
+            .map { $0.file }
     }
     
     private func files(withPrefix prefix: String, in node: PathNode) -> [File] {

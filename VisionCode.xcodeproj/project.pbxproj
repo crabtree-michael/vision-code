@@ -81,11 +81,25 @@
 		D8F23A532B725A2600A47A13 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F23A522B725A2600A47A13 /* ConnectionState.swift */; };
 		D8F23A552B725E7900A47A13 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F23A542B725E7900A47A13 /* Connection.swift */; };
 		D8F89CD02B753BF800444923 /* QuickOpenViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F89CCF2B753BF800444923 /* QuickOpenViewState.swift */; };
+		D8F89CD32B7543FF00444923 /* TrieNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F89CD22B7543FF00444923 /* TrieNode.swift */; };
+		D8F89CDD2B75449900444923 /* VisionCodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F89CDC2B75449900444923 /* VisionCodeTests.swift */; };
+		D8F89CE32B7544CA00444923 /* TrieNodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F89CD42B75443100444923 /* TrieNodeTests.swift */; };
+		D8F89CE42B75451900444923 /* TrieNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F89CD22B7543FF00444923 /* TrieNode.swift */; };
 		D8FC3F192B5DA5CD00C6E099 /* Terminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FC3F182B5DA5CD00C6E099 /* Terminal.swift */; };
 		D8FC3F1C2B5DD39E00C6E099 /* VCRemoteCommand in Frameworks */ = {isa = PBXBuildFile; productRef = D8FC3F1B2B5DD39E00C6E099 /* VCRemoteCommand */; };
 		D8FC3F1F2B5DF7CA00C6E099 /* TerminalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FC3F1E2B5DF7CA00C6E099 /* TerminalManager.swift */; };
 		D8FC3F212B5DF83300C6E099 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FC3F202B5DF83300C6E099 /* Model.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D8F89CDE2B75449900444923 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D840A6822B5A0A31002F3303 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D840A6892B5A0A31002F3303;
+			remoteInfo = VisionCode;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		D80881D72B63DBB500582C41 /* FinderFolderViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderFolderViewManager.swift; sourceTree = "<group>"; };
@@ -156,6 +170,10 @@
 		D8F23A522B725A2600A47A13 /* ConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
 		D8F23A542B725E7900A47A13 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		D8F89CCF2B753BF800444923 /* QuickOpenViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickOpenViewState.swift; sourceTree = "<group>"; };
+		D8F89CD22B7543FF00444923 /* TrieNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrieNode.swift; sourceTree = "<group>"; };
+		D8F89CD42B75443100444923 /* TrieNodeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrieNodeTests.swift; sourceTree = "<group>"; };
+		D8F89CDA2B75449900444923 /* VisionCodeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VisionCodeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D8F89CDC2B75449900444923 /* VisionCodeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionCodeTests.swift; sourceTree = "<group>"; };
 		D8FC3F182B5DA5CD00C6E099 /* Terminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terminal.swift; sourceTree = "<group>"; };
 		D8FC3F1E2B5DF7CA00C6E099 /* TerminalManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalManager.swift; sourceTree = "<group>"; };
 		D8FC3F202B5DF83300C6E099 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -180,6 +198,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D8F89CD72B75449900444923 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -197,6 +222,7 @@
 		D80881D62B63DB6900582C41 /* Repository */ = {
 			isa = PBXGroup;
 			children = (
+				D8F89CD12B7543F600444923 /* Models */,
 				D8A9BF192B63E6E400115D77 /* State */,
 				D8A9BF142B63E62A00115D77 /* Views */,
 				D870C6D22B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift */,
@@ -269,6 +295,7 @@
 			children = (
 				D840A6AC2B5C4890002F3303 /* VCRemoteCommand */,
 				D840A68C2B5A0A31002F3303 /* VisionCode */,
+				D8F89CDB2B75449900444923 /* VisionCodeTests */,
 				D840A68B2B5A0A31002F3303 /* Products */,
 				D8FC3F1A2B5DD39E00C6E099 /* Frameworks */,
 			);
@@ -278,6 +305,7 @@
 			isa = PBXGroup;
 			children = (
 				D840A68A2B5A0A31002F3303 /* VisionCode.app */,
+				D8F89CDA2B75449900444923 /* VisionCodeTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -426,6 +454,23 @@
 			path = State;
 			sourceTree = "<group>";
 		};
+		D8F89CD12B7543F600444923 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				D8F89CD22B7543FF00444923 /* TrieNode.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		D8F89CDB2B75449900444923 /* VisionCodeTests */ = {
+			isa = PBXGroup;
+			children = (
+				D8F89CD42B75443100444923 /* TrieNodeTests.swift */,
+				D8F89CDC2B75449900444923 /* VisionCodeTests.swift */,
+			);
+			path = VisionCodeTests;
+			sourceTree = "<group>";
+		};
 		D8FC3F1A2B5DD39E00C6E099 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -477,6 +522,24 @@
 			productReference = D840A68A2B5A0A31002F3303 /* VisionCode.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D8F89CD92B75449900444923 /* VisionCodeTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8F89CE02B75449900444923 /* Build configuration list for PBXNativeTarget "VisionCodeTests" */;
+			buildPhases = (
+				D8F89CD62B75449900444923 /* Sources */,
+				D8F89CD72B75449900444923 /* Frameworks */,
+				D8F89CD82B75449900444923 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D8F89CDF2B75449900444923 /* PBXTargetDependency */,
+			);
+			name = VisionCodeTests;
+			productName = VisionCodeTests;
+			productReference = D8F89CDA2B75449900444923 /* VisionCodeTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -489,6 +552,10 @@
 				TargetAttributes = {
 					D840A6892B5A0A31002F3303 = {
 						CreatedOnToolsVersion = 15.2;
+					};
+					D8F89CD92B75449900444923 = {
+						CreatedOnToolsVersion = 15.2;
+						TestTargetID = D840A6892B5A0A31002F3303;
 					};
 				};
 			};
@@ -518,6 +585,7 @@
 			projectRoot = "";
 			targets = (
 				D840A6892B5A0A31002F3303 /* VisionCode */,
+				D8F89CD92B75449900444923 /* VisionCodeTests */,
 			);
 		};
 /* End PBXProject section */
@@ -530,6 +598,13 @@
 				D81BAC6B2B6F281F00A080DF /* theme.json in Resources */,
 				D840A6962B5A0A32002F3303 /* Preview Assets.xcassets in Resources */,
 				D840A6922B5A0A32002F3303 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8F89CD82B75449900444923 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -577,6 +652,7 @@
 				D8A9BF082B63E51800115D77 /* FolderViewState.swift in Sources */,
 				D8874E632B6C6C6C0062A920 /* ProjectManagmentView.swift in Sources */,
 				D84AAABE2B6510AF002B8E1E /* TextEditor.swift in Sources */,
+				D8F89CD32B7543FF00444923 /* TrieNode.swift in Sources */,
 				D87BB58A2B6ABBEB004222F8 /* EditMenu.swift in Sources */,
 				D8874E612B6C6A4E0062A920 /* ProjectManagementViewState.swift in Sources */,
 				D8A9BF062B63E4F400115D77 /* FolderView.swift in Sources */,
@@ -607,7 +683,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D8F89CD62B75449900444923 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F89CE42B75451900444923 /* TrieNode.swift in Sources */,
+				D8F89CDD2B75449900444923 /* VisionCodeTests.swift in Sources */,
+				D8F89CE32B7544CA00444923 /* TrieNodeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D8F89CDF2B75449900444923 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D840A6892B5A0A31002F3303 /* VisionCode */;
+			targetProxy = D8F89CDE2B75449900444923 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		D840A6972B5A0A32002F3303 /* Debug */ = {
@@ -804,6 +898,47 @@
 			};
 			name = Release;
 		};
+		D8F89CE12B75449900444923 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = michaelcrabtree.VisionCodeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VisionCode.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VisionCode";
+				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Debug;
+		};
+		D8F89CE22B75449900444923 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = michaelcrabtree.VisionCodeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VisionCode.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VisionCode";
+				VALIDATE_PRODUCT = YES;
+				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -821,6 +956,15 @@
 			buildConfigurations = (
 				D840A69A2B5A0A32002F3303 /* Debug */,
 				D840A69B2B5A0A32002F3303 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D8F89CE02B75449900444923 /* Build configuration list for PBXNativeTarget "VisionCodeTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8F89CE12B75449900444923 /* Debug */,
+				D8F89CE22B75449900444923 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
