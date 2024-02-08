@@ -115,11 +115,11 @@ struct ContentView_Previews: PreviewProvider {
             
 
             
-            state.editorState.activeIndex = 2
             let fileEditorState = FileViewState()
             fileEditorState.isLoading = false
             fileEditorState.content = "This is a paragraph"
-            state.editorState.activeFileState = fileEditorState
+            state.editorState.openFileStates = [fileEditorState]
+            state.editorState.activeIndex = 0
             return state
         }
     }

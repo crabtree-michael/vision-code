@@ -21,8 +21,15 @@ struct Editor: View {
                          title: self.state.title,
                          onSelected: self.state.onFileSelected,
                          onClose: self.state.onFileClose)
-            if let activeState = state.activeFileState {
-                FileView(state: activeState)
+            
+            if let activeIndex = state.activeIndex {
+                ZStack {
+                    ForEach(Array(zip(state.openFileStates.indices, state.openFileStates)),
+                            id: \.0) { (index, fileState) in
+                        FileView(state: fileState)
+                            .opacity(activeIndex == index ? 1 : 0)
+                    }
+                }
             } else {
                 Spacer()
                 Text("Open a file")

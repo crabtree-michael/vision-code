@@ -11,7 +11,7 @@ class EditorViewState: ObservableObject {
     var title: String
     @Published var activeIndex: Int? = nil
     @Published var openFiles: [File] = []
-    @Published var activeFileState: FileViewState?
+    @Published var openFileStates: [FileViewState] = []
     var onFileSelected: FileLambda? = nil
     var onFileClose: FileLambda? = nil
     var onClose: VoidLambda? = nil

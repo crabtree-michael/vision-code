@@ -26,13 +26,13 @@ class EditorViewManager: ConnectionUser {
     var openFileManagers: [FileViewManager] = [] {
         didSet {
             self.state.openFiles  = openFileManagers.map({ $0.file })
+            self.state.openFileStates = openFileManagers.map({ $0.state })
         }
     }
     
     var activeManagerIndex: Int? {
         didSet {
             state.activeIndex = self.activeManagerIndex
-            state.activeFileState = self.activeManager?.state
         }
     }
     
