@@ -141,7 +141,7 @@ class VCTextEditorViewController: UIViewController,
     }
     
     func update(_ text: String, language: CodeLanguage) {
-        guard (text != contentStorage.textStorage?.string || language.id != self.highlighter?.language.id) else {
+        guard (text != contentStorage.textStorage?.string || language.id != (self.highlighter?.language.id ?? .plainText)) else {
             return
         }
         
