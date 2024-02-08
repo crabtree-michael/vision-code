@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import VCRemoteCommandCore
 
 struct RepositoryEditorView: View {
     let cornerRadius: CGFloat = 6
@@ -14,7 +15,7 @@ struct RepositoryEditorView: View {
     let verticalControlSize: CGFloat = 15
     
     @ObservedObject var state: RepositoryEditorViewState
-    @State var terminalHeight:CGFloat = 150
+    @State var terminalHeight:CGFloat = 300
     
     var verticalResizeDrag: some Gesture {
         DragGesture().onChanged { value in
@@ -97,9 +98,9 @@ struct ContentView_Previews: PreviewProvider {
             browserState.isLoading = false
             
             let editorState = EditorViewState(title: "fantasy-backend")
-            let terminalState = TerminalViewState(title: "Hello")
-            terminalState.connectionState = .connected
-            terminalState.showTitle = false
+            let terminalState = TerminalViewState(connection:
+                                                    Connection(connection: RCConnection(host: "", port: 0, username: "", password: ""),
+                                                               state: ConnectionViewState()))
             let state = RepositoryEditorViewState(
                 editorState: editorState,
                 browserState: browserState,

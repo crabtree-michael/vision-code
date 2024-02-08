@@ -23,6 +23,9 @@
 		D80881F92B63E23100582C41 /* EditorNavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881F82B63E23100582C41 /* EditorNavBarView.swift */; };
 		D80881FB2B63E25E00582C41 /* EditorErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881FA2B63E25E00582C41 /* EditorErrors.swift */; };
 		D80881FD2B63E27200582C41 /* Lambdas.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881FC2B63E27200582C41 /* Lambdas.swift */; };
+		D80E37AD2B744A9B008D0FFA /* XTerm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80E37AC2B744A9B008D0FFA /* XTerm.swift */; };
+		D80E37B02B744BC3008D0FFA /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = D80E37AF2B744BC3008D0FFA /* SwiftTerm */; };
+		D80E37B22B744BC3008D0FFA /* SwiftTermFuzz in Frameworks */ = {isa = PBXBuildFile; productRef = D80E37B12B744BC3008D0FFA /* SwiftTermFuzz */; };
 		D81BAC632B6E5D0500A080DF /* TreeSitterSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D81BAC622B6E5D0500A080DF /* TreeSitterSwift */; };
 		D81BAC672B6EB74200A080DF /* Highlighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81BAC662B6EB74200A080DF /* Highlighter.swift */; };
 		D81BAC692B6EB80200A080DF /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81BAC682B6EB80200A080DF /* Content.swift */; };
@@ -99,6 +102,7 @@
 		D80881F82B63E23100582C41 /* EditorNavBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorNavBarView.swift; sourceTree = "<group>"; };
 		D80881FA2B63E25E00582C41 /* EditorErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorErrors.swift; sourceTree = "<group>"; };
 		D80881FC2B63E27200582C41 /* Lambdas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lambdas.swift; sourceTree = "<group>"; };
+		D80E37AC2B744A9B008D0FFA /* XTerm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XTerm.swift; sourceTree = "<group>"; };
 		D81BAC662B6EB74200A080DF /* Highlighter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Highlighter.swift; sourceTree = "<group>"; };
 		D81BAC682B6EB80200A080DF /* Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Content.swift; sourceTree = "<group>"; };
 		D81BAC6A2B6F281F00A080DF /* theme.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = theme.json; sourceTree = "<group>"; };
@@ -164,7 +168,9 @@
 				D8874E752B6D2F500062A920 /* TreeSitterDockerfile in Frameworks */,
 				D8874E6C2B6D279D0062A920 /* SwiftTreeSitterLayer in Frameworks */,
 				D8874E722B6D2D6F0062A920 /* TreeSitterGo in Frameworks */,
+				D80E37B02B744BC3008D0FFA /* SwiftTerm in Frameworks */,
 				D8FC3F1C2B5DD39E00C6E099 /* VCRemoteCommand in Frameworks */,
+				D80E37B22B744BC3008D0FFA /* SwiftTermFuzz in Frameworks */,
 				D8874E6A2B6D279D0062A920 /* SwiftTreeSitter in Frameworks */,
 				D81BAC632B6E5D0500A080DF /* TreeSitterSwift in Frameworks */,
 			);
@@ -427,6 +433,7 @@
 				D8FC3F182B5DA5CD00C6E099 /* Terminal.swift */,
 				D8FC3F1E2B5DF7CA00C6E099 /* TerminalManager.swift */,
 				D8FC3F202B5DF83300C6E099 /* Model.swift */,
+				D80E37AC2B744A9B008D0FFA /* XTerm.swift */,
 			);
 			path = Terminal;
 			sourceTree = "<group>";
@@ -457,6 +464,8 @@
 				D8874E742B6D2F500062A920 /* TreeSitterDockerfile */,
 				D81BAC622B6E5D0500A080DF /* TreeSitterSwift */,
 				D89C87DC2B6FCA170031A87E /* CodeEditLanguages */,
+				D80E37AF2B744BC3008D0FFA /* SwiftTerm */,
+				D80E37B12B744BC3008D0FFA /* SwiftTermFuzz */,
 			);
 			productName = VisionCode;
 			productReference = D840A68A2B5A0A31002F3303 /* VisionCode.app */;
@@ -496,6 +505,7 @@
 				D8874E732B6D2F500062A920 /* XCRemoteSwiftPackageReference "tree-sitter-dockerfile" */,
 				D81BAC612B6E5D0500A080DF /* XCRemoteSwiftPackageReference "tree-sitter-swift" */,
 				D89C87DB2B6FCA170031A87E /* XCLocalSwiftPackageReference "../CodeEditLanguages" */,
+				D80E37AE2B744BC3008D0FFA /* XCLocalSwiftPackageReference "SwiftTerm" */,
 			);
 			productRefGroup = D840A68B2B5A0A31002F3303 /* Products */;
 			projectDirPath = "";
@@ -544,6 +554,7 @@
 				D80881E62B63DEE900582C41 /* RepositoryEditorViewManager.swift in Sources */,
 				D8A9BF1D2B63E74700115D77 /* RepositoryFilesViewState.swift in Sources */,
 				D80881D82B63DBB500582C41 /* FinderFolderViewManager.swift in Sources */,
+				D80E37AD2B744A9B008D0FFA /* XTerm.swift in Sources */,
 				D8874E5F2B6C6A350062A920 /* ProjectsManager.swift in Sources */,
 				D8393BAE2B6870E9004018DC /* Models.swift in Sources */,
 				D8FC3F1F2B5DF7CA00C6E099 /* TerminalManager.swift in Sources */,
@@ -809,6 +820,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		D80E37AE2B744BC3008D0FFA /* XCLocalSwiftPackageReference "SwiftTerm" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = SwiftTerm;
+		};
 		D840A6AD2B5C48AB002F3303 /* XCLocalSwiftPackageReference "VCRemoteCommand" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = VCRemoteCommand;
@@ -879,6 +894,14 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D80E37AF2B744BC3008D0FFA /* SwiftTerm */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftTerm;
+		};
+		D80E37B12B744BC3008D0FFA /* SwiftTermFuzz */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SwiftTermFuzz;
+		};
 		D81BAC622B6E5D0500A080DF /* TreeSitterSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D81BAC612B6E5D0500A080DF /* XCRemoteSwiftPackageReference "tree-sitter-swift" */;

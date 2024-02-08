@@ -34,27 +34,9 @@ enum CommandState {
 }
 
 class TerminalViewState: ObservableObject {
-    @Published var connectionState: ConnectionState
-    @Published var commandState: CommandState
-    var title: String
-    @Published var historyText: String
-    var commandInputText: String
-    var showTitle: Bool = true
+    @Published var connection: Connection
     
-    var onExecute: (() -> ())? = nil
-    
-    init(title: String = "", historyText: String = "",  commandInputText: String = "", connectionState: ConnectionState = .notStarted,
-         commandState: CommandState = .available) {
-        self.title = title
-        self.historyText = historyText
-        self.commandInputText = commandInputText
-        self.connectionState = connectionState
-        self.commandState = commandState
-    }
-    
-    func enterCommandExecutingState() {
-        self.commandInputText = ""
-        self.commandState = .executing
-        
+    init(connection: Connection) {
+        self.connection = connection
     }
 }

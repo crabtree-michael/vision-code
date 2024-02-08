@@ -30,4 +30,12 @@ class Connection {
         }
         return try await connection.createSFTPClient()
     }
+    
+    func createPTY(user: ConnectionUser, settings: RCPseudoTerminalSettings) async throws -> RCPseudoTerminal {
+        if !self.users.contains(where: { $0.id() == user.id() }) {
+            self.users.append(user)
+        }
+        
+        return try await connection.createTerminal(settings: settings)
+    }
 }

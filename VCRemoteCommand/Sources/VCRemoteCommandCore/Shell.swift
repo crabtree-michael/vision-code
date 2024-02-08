@@ -61,6 +61,10 @@ class SSHChildChannelHandler: ChannelDuplexHandler {
         print("Connection closed")
         self.onClose?()
     }
+    
+    func channelRead(context: ChannelHandlerContext, data: NIOAny) {
+        context.fireChannelRead(data)
+    }
 }
 
 class ShellChannelHandler: SSHChildChannelHandler {
@@ -114,5 +118,4 @@ public class RCShell {
     public func execute(_ cmd: String) async throws -> RCCommandResult   {
         return try await self.handler.execute(cmd: cmd).futureResult.get()
     }
-    
 }

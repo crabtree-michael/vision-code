@@ -53,6 +53,17 @@ public class RCConnection: NIOSSHClientUserAuthenticationDelegate, NIOSSHClientS
         })
     }
     
+    public func createTerminal(settings: RCPseudoTerminalSettings) async throws -> RCPseudoTerminal {
+        guard let channel = self.channel else {
+            throw ConnectionError.noActiveChannel
+        }
+        
+        let terminal = RCPseudoTerminal(settings: settings, eventLoop: channel.eventLoop)
+        let _ = try self.createChildChannel(withHandlers: [terminal.handler])
+        let _ = try await terminal.creationPromise.futureResult.get()
+        return terminal
+    }
+    
     public func createShell() async throws -> RCShell {
         guard let channel = self.channel else {
             throw ConnectionError.noActiveChannel

@@ -23,8 +23,7 @@ class RepositoryEditorViewManager {
         self.editor = EditorViewManager(path: path, remote: connection)
         self.browser = RepositoryFileBrowserManager(path: path, remote: connection)
 
-        self.terminal = TerminalManager(title: (path as NSString).lastPathComponent, connection: connection.connection)
-        self.terminal.state.showTitle = false
+        self.terminal = TerminalManager(connection: connection)
         
         self.state = RepositoryEditorViewState(editorState: editor.state, browserState: browser.state, terminalState: self.terminal.state)
         self.path = path
@@ -40,10 +39,6 @@ class RepositoryEditorViewManager {
         }
         Task {
             await self.browser.load()
-        }
-        
-        Task {
-            await self.terminal.connect()
         }
     }
     
