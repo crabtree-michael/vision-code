@@ -26,7 +26,6 @@ public class TrieNode<Key, Element> where Key: StringProtocol {
         let substring = key.dropFirst()
         var branch = branches[c]
         if branch == nil {
-            print("Creating a new branch at \(c)")
             branch = TrieNode()
             branches[c] = branch
         }

@@ -20,9 +20,10 @@ struct FileCellView: View {
     var onOpen: FileLambda?  = nil
     
     var body: some View {
-        LazyVStack(spacing: 16) {
+        LazyVStack(spacing: 0) {
             ZStack {
-                Color.black.opacity(0.001)
+                Color.black.opacity(0.0001)
+                    .frame(minHeight: 48)
                 HStack {
                     Spacer(minLength: 12 * CGFloat(indentationLevel))
                     HStack(alignment: .center) {
@@ -42,11 +43,11 @@ struct FileCellView: View {
                     }
                     .frame(maxWidth: 12)
                     Text(state.file.name)
+                        .padding(.vertical, 6)
                         .font(indentationLevel == 0 ? .title2 : .subheadline)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     Spacer()
                 }
-                
             }
             if (!empty && !collapsed && state.loaded) {
                 ForEach(state.subnodes, id: \.file.path) { state in
