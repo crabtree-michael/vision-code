@@ -25,45 +25,65 @@ struct RepositoryEditorView: View {
     }
     
     var body: some View {
-        HStack(alignment: .top, spacing: 0) {
-            RepositoryFilesView(state: self.state.browserState)
-                .frame(width: 300)
-                .padding(.top)
-
-            
-            GeometryReader { geometry in
-                VStack(spacing: 0) {
-                    Editor(state: state.editorState)
-                        .background(.ultraThickMaterial)
-                        .frame(height: max(geometry.size.height - terminalHeight - verticalControlSize, minEditorHeight))
-                        .cornerRadius(cornerRadius)
+        ZStack {
+            HStack(alignment: .top, spacing: 0) {
+                RepositoryFilesView(state: self.state.browserState)
+                    .frame(width: 300)
+                    .padding(.top)
+                
+                
+                GeometryReader { geometry in
+                    VStack(spacing: 0) {
+                        Editor(state: state.editorState)
+                            .background(.ultraThickMaterial)
+                            .frame(height: max(geometry.size.height - terminalHeight - verticalControlSize, minEditorHeight))
+                            .cornerRadius(cornerRadius)
                         
-                    ZStack {
-                        Color(.systemBackground)
-                        HStack {
-                            Spacer()
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(.background)
-                                .frame(maxWidth: 100, maxHeight: 9)
-                                .gesture(verticalResizeDrag)
-                                .hoverEffect()
-                            Spacer()
+                        ZStack {
+                            Color(.systemBackground)
+                            HStack {
+                                Spacer()
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(.background)
+                                    .frame(maxWidth: 100, maxHeight: 9)
+                                    .gesture(verticalResizeDrag)
+                                    .hoverEffect()
+                                Spacer()
+                            }
+                            
                         }
+                        .frame(maxHeight: verticalControlSize)
+                        
+                        TerminalView(state: state.terminalState)
+                            .frame(maxWidth: .infinity, minHeight: min(terminalHeight, geometry.size.height - minEditorHeight - verticalControlSize))
                         
                     }
-                    .frame(maxHeight: verticalControlSize)
-                
-                    TerminalView(state: state.terminalState)
-                        .frame(maxWidth: .infinity, minHeight: min(terminalHeight, geometry.size.height - minEditorHeight - verticalControlSize))
-                        
+                    
                 }
                 
             }
-            
+            .onDisappear {
+                self.state.onClose?()
+            }
+            if let qs = state.quickOpenSate {
+                Rectangle()
+                    .opacity(0.001)
+                    .onTapGesture {
+                        state.closeQuickOpen?()
+                    }
+                Spacer()
+                QuickOpenView(state: qs)
+                    .frame(maxHeight: 500)
+                    .background(.ultraThinMaterial)
+                    .background(.white.opacity(0.9))
+                    .clipShape(.rect(cornerSize: CGSize(width: 30, height: 30)))
+                    .frame(depth: 60)
+                    .padding(.horizontal, 100)
+                    .padding(.bottom, 25)
+                    .shadow(color: .black, radius: 25)
+            }
         }
-        .onDisappear {
-            self.state.onClose?()
-        }
+        .frame(depth: 100, alignment: .back)
     }
 }
 

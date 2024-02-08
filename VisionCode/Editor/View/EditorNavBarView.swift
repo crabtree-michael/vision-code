@@ -13,11 +13,29 @@ struct EditorNavBar: View {
     var title: String
     var onSelected: FileLambda? = nil
     var onClose: FileLambda? = nil
+    var onQuickOpen: VoidLambda? = nil
     
     var body: some View {
         VStack(spacing: 2) {
+            HStack {
+                Image(systemName: "sparkle.magnifyingglass")
+                Text("Quick Open")
+                    .foregroundStyle(.primary)
+                    .font(.headline)
+            }
+            .frame(maxWidth: .infinity, minHeight: 35)
+            .background(Color.gray.opacity(0.25))
+            .clipShape(.rect(cornerSize: CGSize(width: 10, height: 10)))
+            .padding(.top)
+            .padding(.horizontal)
+            .hoverEffect(.lift)
+            .onTapGesture {
+                self.onQuickOpen?()
+            }
+            
             Text(title)
-                .font(.title)
+                .font(.largeTitle)
+                .padding(.vertical, 4)
                 .frame(maxWidth: .infinity)
                 
             ScrollView(.horizontal) {
@@ -59,13 +77,22 @@ struct EditorNavBarButton: View {
             Spacer(minLength: 25)
             Image(systemName: "xmark")
                 .hoverEffect(.highlight)
-                .clipShape(Circle())
                 .onTapGesture {
                     closeAction?()
                 }
         }
-        .padding()
+        .padding(.top)
+        .padding(.horizontal)
+        .padding(.bottom, 4)
         .border(.background)
         .frame(maxWidth: 450)
     }
+}
+
+#Preview {
+    EditorNavBar(activeIndex: .constant(0), openFiles: [
+        File(path: "test.txt"),
+        File(path: "go.txt"),
+        File(path: "john.txt")
+    ], title: "test")
 }

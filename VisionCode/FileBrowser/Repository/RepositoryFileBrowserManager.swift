@@ -102,6 +102,25 @@ class RepositoryFileBrowserManager: ConnectionUser {
             await self.load(traverse: false)
         }
     }
+    
+    func files(withPrefix prefix: String) -> [File] {
+        let root = self.root.copy()
+        return files(withPrefix: prefix, in: root).reversed()
+    }
+    
+    private func files(withPrefix prefix: String, in node: PathNode) -> [File] {
+        var result: [File] = []
+        
+        if node.file.name.lowercased().hasPrefix(prefix.lowercased()) {
+            result.append(node.file)
+        }
+        
+        for subnode in node.subnodes {
+            result.append(contentsOf: files(withPrefix: prefix, in: subnode))
+        }
+        
+        return result
+    }
 }
 
 extension ListResponse {

@@ -20,7 +20,8 @@ struct Editor: View {
                          openFiles: self.state.openFiles,
                          title: self.state.title,
                          onSelected: self.state.onFileSelected,
-                         onClose: self.state.onFileClose)
+                         onClose: self.state.onFileClose,
+                         onQuickOpen: self.state.onQuickOpen)
             
             if let activeIndex = state.activeIndex {
                 ZStack {
@@ -40,5 +41,6 @@ struct Editor: View {
         .onDisappear() {
             self.state.onClose?()
         }
+        
     }
 }

@@ -12,6 +12,9 @@ class RepositoryEditorViewState: ObservableObject {
     let browserState: RepositoryFilesViewState
     let terminalState: TerminalViewState
     
+    @Published var quickOpenSate: QuickOpenViewState? = nil
+    
+    var closeQuickOpen: VoidLambda? = nil
     var onClose: VoidLambda? = nil
     
     init(editorState: EditorViewState, browserState: RepositoryFilesViewState, terminalState: TerminalViewState) {

@@ -15,6 +15,7 @@ class EditorViewState: ObservableObject {
     var onFileSelected: FileLambda? = nil
     var onFileClose: FileLambda? = nil
     var onClose: VoidLambda? = nil
+    var onQuickOpen: VoidLambda? = nil
     
     init(title: String) {
         self.title = title
