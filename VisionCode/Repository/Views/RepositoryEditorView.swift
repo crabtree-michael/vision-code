@@ -27,7 +27,7 @@ struct RepositoryEditorView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             RepositoryFilesView(state: self.state.browserState)
-                .frame(width: 200)
+                .frame(width: 300)
                 .padding(.top)
 
             

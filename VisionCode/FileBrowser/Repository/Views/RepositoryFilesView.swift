@@ -22,6 +22,7 @@ struct RepositoryFilesView: View {
                 Spacer(minLength: 46)
             }
             .padding(.bottom)
+            .padding(.leading)
             switch(state.connectionState.status) {
             case .connected:
                 VStack{
@@ -62,7 +63,6 @@ struct RepositoryFilesView: View {
                 }
             }
         }
-        .frame(maxWidth: 200)
     }
 }
 
