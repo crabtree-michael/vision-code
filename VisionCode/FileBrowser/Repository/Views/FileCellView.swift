@@ -21,28 +21,32 @@ struct FileCellView: View {
     
     var body: some View {
         LazyVStack(spacing: 16) {
-            HStack {
-                Spacer(minLength: 12 * CGFloat(indentationLevel))
-                HStack(alignment: .center) {
-                    Spacer()
-                    if (!state.loaded) {
-                        ProgressView()
-                            .frame(maxHeight: 0)
-                            .scaleEffect(CGSize(width: 0.4, height: 0.4))
+            ZStack {
+                Color.black.opacity(0.001)
+                HStack {
+                    Spacer(minLength: 12 * CGFloat(indentationLevel))
+                    HStack(alignment: .center) {
+                        Spacer()
+                        if (!state.loaded) {
+                            ProgressView()
+                                .frame(maxHeight: 0)
+                                .scaleEffect(CGSize(width: 0.4, height: 0.4))
+                            
+                        } else if (!empty) {
+                            Image(systemName: !collapsed ? "chevron.down" : "chevron.right")
+                        } else {
+                            Image(systemName: state.file.icon.rawValue)
+                        }
                         
-                    } else if (!empty) {
-                        Image(systemName: !collapsed ? "chevron.down" : "chevron.right")
-                    } else {
-                        Image(systemName: state.file.icon.rawValue)
+                        Spacer()
                     }
-                    
+                    .frame(maxWidth: 12)
+                    Text(state.file.name)
+                        .font(indentationLevel == 0 ? .title2 : .subheadline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     Spacer()
                 }
-                .frame(maxWidth: 12)
-                Text(state.file.name)
-                    .font(indentationLevel == 0 ? .title2 : .subheadline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                Spacer()
+                
             }
             if (!empty && !collapsed && state.loaded) {
                 ForEach(state.subnodes, id: \.file.path) { state in

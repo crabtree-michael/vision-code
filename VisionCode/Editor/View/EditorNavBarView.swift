@@ -80,9 +80,8 @@ struct EditorNavBarButton: View {
                     closeAction?()
                 }
         }
-        .padding(.top)
+        .padding(.vertical, 4)
         .padding(.horizontal)
-        .padding(.bottom, 4)
         .border(.background)
         .frame(maxWidth: 450)
     }

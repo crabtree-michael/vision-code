@@ -13,9 +13,6 @@ struct RepositoryFilesView: View {
     var body: some View {
         ZStack {
             VStack {
-                Text("Explore")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .font(.title2)
                 ScrollView {
                     FileCellView(state: state.root, indentationLevel: 0, collapsed: false, onOpen: state.onOpenFile)
                 }
