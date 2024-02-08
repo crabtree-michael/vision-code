@@ -65,8 +65,7 @@ class RepositoryFileBrowserManager: ConnectionUser {
     }
     
     func onTraversalLoadedNode(_ traverser: BreadthFirstPathTraversal) {
-        self.root = traverser.root
-//        let r = self.root.copy() as! PathNode
+        self.root = traverser.root.copy()
         DispatchQueue.main.async {
             self.state.root = FileCellViewState(node: self.root)
         }

@@ -63,4 +63,17 @@ class PathNode {
         self.subnodes = subnodes
         self.loaded = loaded
     }
+    
+    func copy() -> PathNode {
+        var subnodes: [PathNode] = []
+        for s in self.subnodes {
+            subnodes.append(s.copy())
+        }
+        
+        let c = PathNode(file: self.file, subnodes: subnodes, loaded: self.loaded)
+        c.visited = self.visited
+        c.loaded = self.loaded
+        c.skipped = self.skipped
+        return c
+    }
 }
