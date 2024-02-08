@@ -7,6 +7,16 @@
 
 import SwiftUI
 
+struct QuickOpenButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .frame(maxWidth: .infinity, minHeight: 35)
+            .background(Color.gray.opacity(0.25))
+            .hoverEffect()
+            .clipShape(.rect(cornerSize: CGSize(width: 10, height: 10)))
+    }
+}
+
 struct EditorNavBar: View {
     @Binding var activeIndex: Int?
     var openFiles: [File]
@@ -17,27 +27,16 @@ struct EditorNavBar: View {
     
     var body: some View {
         VStack(spacing: 2) {
-            HStack {
-                Image(systemName: "sparkle.magnifyingglass")
-                Text("Quick Open")
-                    .foregroundStyle(.primary)
-                    .font(.headline)
-            }
-            .frame(maxWidth: .infinity, minHeight: 35)
-            .background(Color.gray.opacity(0.25))
-            .clipShape(.rect(cornerSize: CGSize(width: 10, height: 10)))
-            .padding(.top)
-            .padding(.horizontal)
-            .hoverEffect(.lift)
-            .onTapGesture {
+            Button(action: {
                 self.onQuickOpen?()
-            }
+            }, label: {
+                Label("Quick Open", systemImage: "sparkle.magnifyingglass")
+            })
+            .keyboardShortcut("p", modifiers: .command)
+            .buttonStyle(QuickOpenButtonStyle())
+            .padding()
             
-            Text(title)
-                .font(.largeTitle)
-                .padding(.vertical, 4)
-                .frame(maxWidth: .infinity)
-                
+            
             ScrollView(.horizontal) {
                 HStack(spacing: 4) {
                     ForEach(Array(openFiles.enumerated()), id: \.offset) { index, file in

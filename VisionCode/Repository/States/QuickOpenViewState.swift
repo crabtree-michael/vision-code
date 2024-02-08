@@ -12,6 +12,7 @@ class QuickOpenViewState: ObservableObject {
     @Published var files: [File]
     
     var onFileSelected: FileLambda? = nil
+    var close: VoidLambda? = nil
     
     init(query: String, files: [File]) {
         self.query = query

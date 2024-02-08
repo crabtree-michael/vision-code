@@ -40,6 +40,7 @@ struct FileCellView: View {
                 }
                 .frame(maxWidth: 12)
                 Text(state.file.name)
+                    .font(indentationLevel == 0 ? .title2 : .subheadline)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Spacer()
             }
@@ -81,7 +82,7 @@ struct FileCellView: View {
     }
     
     return FileCellView(state: state,
-                 indentationLevel: 1,
+                 indentationLevel: 0,
                  collapsed: false,
                  onOpen: nil)
 }

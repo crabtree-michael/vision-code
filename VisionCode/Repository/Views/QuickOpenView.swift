@@ -72,13 +72,12 @@ struct QuickOpenView: View {
     
     var body: some View {
         VStack {
-            HStack {
+            HStack(alignment: .center) {
                 Image(systemName: "sparkle.magnifyingglass")
                     .font(.title)
                     .padding(.leading)
                 FirstResponderTextField(text: $state.query,
                                         becomeFirstResponder: $becomeFirstResponder) {
-                    
                     if let file = self.state.files.first {
                         state.onFileSelected?(file)
                         return true
@@ -88,7 +87,6 @@ struct QuickOpenView: View {
                 }
                 .frame(maxHeight: 65)
             }
-            
             .background(.white.opacity(0.25))
             .clipShape(.rect(cornerSize: CGSize(width: 25, height: 25)))
             .padding(.horizontal)

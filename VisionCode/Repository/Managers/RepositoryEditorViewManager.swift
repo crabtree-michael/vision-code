@@ -73,6 +73,7 @@ class RepositoryEditorViewManager {
             self.openFile(file)
             self.closeQuickOpen()
         }
+        self.state.quickOpenSate?.close = self.closeQuickOpen
         self.state.quickOpenSate?.$query.sink(receiveValue: { query in
             if query != "" {
                 self.quickOpenSearch(query: query)
