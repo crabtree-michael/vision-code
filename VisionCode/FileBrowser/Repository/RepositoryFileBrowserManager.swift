@@ -111,7 +111,7 @@ class RepositoryFileBrowserManager: ConnectionUser {
     private func files(withPrefix prefix: String, in node: PathNode) -> [File] {
         var result: [File] = []
         
-        if node.file.name.lowercased().hasPrefix(prefix.lowercased()) {
+        if node.file.name.lowercased().hasPrefix(prefix.lowercased()) && !node.file.isFolder {
             result.append(node.file)
         }
         

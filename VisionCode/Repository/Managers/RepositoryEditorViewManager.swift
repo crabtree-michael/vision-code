@@ -34,9 +34,9 @@ class RepositoryEditorViewManager {
         self.state.onClose = self.onClose
         
         self.browser.state.onOpenFile = self.openFile
+        
         self.editor.state.onQuickOpen = self.openQuickOpen
         self.state.closeQuickOpen = self.closeQuickOpen
-        
     }
     
     func load() {
@@ -69,6 +69,10 @@ class RepositoryEditorViewManager {
     
     func openQuickOpen() {
         self.state.quickOpenSate = QuickOpenViewState(query: "", files: [])
+        self.state.quickOpenSate?.onFileSelected = { file in
+            self.openFile(file)
+            self.closeQuickOpen()
+        }
         self.state.quickOpenSate?.$query.sink(receiveValue: { query in
             if query != "" {
                 self.quickOpenSearch(query: query)

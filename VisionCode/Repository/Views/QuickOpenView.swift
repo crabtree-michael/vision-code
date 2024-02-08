@@ -7,22 +7,13 @@
 
 import SwiftUI
 
-class QuickOpenViewState: ObservableObject {
-    @Published var query: String
-    @Published var files: [File]
-    
-    init(query: String, files: [File]) {
-        self.query = query
-        self.files = files
-    }
-}
-
 struct FirstResponderTextField: UIViewRepresentable {
     typealias UIViewType = UITextField
 
     @Binding var text: String
     @Binding var becomeFirstResponder: Bool
-   
+    
+    var shouldReturn: () -> Bool
 
     func makeUIView(context: Context) -> UITextField {
         let textField = UITextField()
@@ -35,10 +26,13 @@ struct FirstResponderTextField: UIViewRepresentable {
     }
     
     func makeCoordinator() -> Coordinator {
-        return Coordinator(text: $text)
+        return Coordinator(text: $text) {
+            self.shouldReturn()
+        }
     }
     
     func updateUIView(_ textField: UITextField, context: Context) {
+        context.coordinator.shouldReturn = self.shouldReturn
         textField.font = UIFont.systemFont(ofSize: 36, weight: .bold)
         if text != textField.text {
             textField.text = text
@@ -54,12 +48,19 @@ struct FirstResponderTextField: UIViewRepresentable {
     class Coordinator: NSObject, UITextFieldDelegate {
         @Binding var text: String
         
-        init(text: Binding<String>) {
+        var shouldReturn: () -> Bool
+        
+        init(text: Binding<String>, shouldReturn: @escaping () -> Bool) {
             self._text = text
+            self.shouldReturn = shouldReturn
         }
         
         @objc func textFieldDidChange(_ textField: UITextField) {
             self.text = textField.text ?? ""
+        }
+        
+        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+            self.shouldReturn()
         }
     }
 }
@@ -76,7 +77,15 @@ struct QuickOpenView: View {
                     .font(.title)
                     .padding(.leading)
                 FirstResponderTextField(text: $state.query,
-                                        becomeFirstResponder: $becomeFirstResponder)
+                                        becomeFirstResponder: $becomeFirstResponder) {
+                    
+                    if let file = self.state.files.first {
+                        state.onFileSelected?(file)
+                        return true
+                    }
+                    
+                    return false
+                }
                 .frame(maxHeight: 65)
             }
             
@@ -101,13 +110,14 @@ struct QuickOpenView: View {
                             }
                             Text(file.path)
                         }
-                        
                         .padding()
                         .background(.gray.opacity(0.4))
                         .hoverEffect(.lift)
                         .clipShape(.rect(cornerSize: CGSize(width: 35, height: 35)))
                         .padding(.horizontal)
-                        
+                        .onTapGesture {
+                            state.onFileSelected?(file)
+                        }
                     }
                 }
             }
@@ -115,7 +125,6 @@ struct QuickOpenView: View {
         .onAppear() {
             self.becomeFirstResponder = true
         }
-//        .background(.white)
     }
 }
 
