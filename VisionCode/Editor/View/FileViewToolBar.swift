@@ -28,6 +28,7 @@ struct FileViewToolBar: View {
                             Image(systemName: "network.badge.shield.half.filled")
                         }
                     }
+                    .keyboardShortcut("s", modifiers: .command)
                     .controlSize(.regular)
                     Picker("Language", selection: $language) {
                         ForEach(CodeLanguage.allLanguages, id: \.id) { language in
