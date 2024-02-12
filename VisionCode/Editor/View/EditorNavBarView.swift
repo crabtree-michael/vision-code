@@ -19,7 +19,7 @@ struct QuickOpenButtonStyle: ButtonStyle {
 
 struct EditorNavBar: View {
     @Binding var activeIndex: Int?
-    var openFiles: [File]
+    var openFiles: [FileViewState]
     var title: String
     var onSelected: FileLambda? = nil
     var onClose: FileLambda? = nil
@@ -39,21 +39,21 @@ struct EditorNavBar: View {
             
             ScrollView(.horizontal) {
                 HStack(spacing: 4) {
-                    ForEach(Array(openFiles.enumerated()), id: \.offset) { index, file in
+                    ForEach(Array(zip(openFiles.indices, openFiles)), id: \.0) { index, fvState in
                         if (index != self.activeIndex) {
-                            EditorNavBarButton(name: file.name) {
-                                self.onClose?(file)
+                            EditorNavBarButton(state: fvState) {
+                                self.onClose?(fvState.file)
                             }
-                                .background(.ultraThinMaterial)
-                                .hoverEffect()
-                                .onTapGesture {
-                                    self.onSelected?(file)
-                                }
+                            .background(.ultraThinMaterial)
+                            .hoverEffect()
+                            .onTapGesture {
+                                self.onSelected?(fvState.file)
+                            }
                         } else {
-                            EditorNavBarButton(name: file.name) {
-                                self.onClose?(file)
+                            EditorNavBarButton(state: fvState) {
+                                self.onClose?(fvState.file)
                             }
-                                .background(.black.opacity(0.46))
+                            .background(.black.opacity(0.46))
                         }
                     }
                     Spacer()
@@ -64,33 +64,58 @@ struct EditorNavBar: View {
     }
 }
 
+struct EditorNavBarCloseButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        ZStack {
+            Color.gray
+                .opacity(0.0001)
+                .frame(width: 30, height: 30)
+            Image(systemName: (configuration.role == .none && !configuration.isPressed) ? "circle.inset.filled" : "xmark")
+                .background(Color.clear)
+        }
+        .hoverEffect()
+    }
+}
+
 struct EditorNavBarButton: View {
-    let name: String
+    @ObservedObject var state: FileViewState
     var closeAction: VoidLambda?
+    
+    @State private var isHoveringOnCancel: Bool = false
     
     var body: some View {
         HStack {
-            Text(name)
+            Text(state.name)
                 .lineLimit(1)
                 .frame(alignment: .leading)
             Spacer(minLength: 25)
-            Image(systemName: "xmark")
-                .hoverEffect(.highlight)
-                .onTapGesture {
-                    closeAction?()
-                }
+            Button(role: state.hasChanges ? .none : .destructive) {
+                closeAction?()
+            } label: {
+                Text("ignored")
+            }
+            .buttonStyle(EditorNavBarCloseButtonStyle())
         }
         .padding(.vertical, 4)
-        .padding(.horizontal)
+        .padding(.leading)
+        .padding(.trailing, 6)
         .border(.background)
         .frame(maxWidth: 450)
     }
 }
 
 #Preview {
-    EditorNavBar(activeIndex: .constant(0), openFiles: [
-        File(path: "test.txt"),
-        File(path: "go.txt"),
-        File(path: "john.txt")
-    ], title: "test")
+    var openFiles: [FileViewState] {
+        get {
+            let changed = FileViewState(file: File(path: "test.txt"))
+            changed.hasChanges = true
+            return [
+                changed,
+                FileViewState(file: File(path: "go.txt")),
+                FileViewState(file: File(path: "john.txt"))
+            ]
+        }
+    }
+    
+    return EditorNavBar(activeIndex: .constant(0), openFiles: openFiles, title: "test")
 }

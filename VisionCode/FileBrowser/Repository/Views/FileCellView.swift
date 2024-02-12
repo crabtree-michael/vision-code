@@ -20,7 +20,7 @@ struct FileCellView: View {
     var onOpen: FileLambda?  = nil
     
     var body: some View {
-        LazyVStack(spacing: 0) {
+        LazyVStack(spacing: 4) {
             ZStack {
                 Color.black.opacity(0.0001)
                     .frame(minHeight: 48)

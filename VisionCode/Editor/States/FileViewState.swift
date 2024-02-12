@@ -14,6 +14,18 @@ class FileViewState: ObservableObject {
     @Published var error: EditorError? = nil
     @Published var isWriting: Bool = false
     @Published var language: CodeLanguage = .default
+    @Published var name: String
+    @Published var hasChanges: Bool = false
+    @Published var presentUnsavedChangesAlert: Bool = false
+    let file: File
+    
+    init(file: File) {
+        self.file = file
+        self.name = file.name
+    }
     
     var onSave: (() -> ())? = nil
+    
+    var onSaveAndClose: VoidLambda? = nil
+    var onForceClose: VoidLambda? = nil
 }

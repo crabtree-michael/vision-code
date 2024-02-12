@@ -45,6 +45,19 @@ struct FileView: View {
                 Text(description)
             }
         }
+        .alert(.init("Unsaved Changes"), isPresented: $state.presentUnsavedChangesAlert, actions: {
+            Button {
+                state.onSaveAndClose?()
+            } label: {
+                Text("Save & Close")
+            }
+            Button(role: .destructive) {
+                state.onForceClose?()
+            } label: {
+                Text("Discard Changes")
+            }
+
+        })
         .frame(maxWidth: .infinity)
         .background(Color(.darkGray))
     }
@@ -53,9 +66,10 @@ struct FileView: View {
 #Preview {
     
     var state: FileViewState {
-        let state = FileViewState()
+        let state = FileViewState(file: .init(path: "test"))
         state.isLoading = false
         state.content = longFile
+        state.presentUnsavedChangesAlert = true
         return state
     }
     

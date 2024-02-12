@@ -17,7 +17,7 @@ struct Editor: View {
     var body: some View {
         VStack(spacing: 0) {
             EditorNavBar(activeIndex: self.$state.activeIndex,
-                         openFiles: self.state.openFiles,
+                         openFiles: self.state.openFileStates,
                          title: self.state.title,
                          onSelected: self.state.onFileSelected,
                          onClose: self.state.onFileClose,

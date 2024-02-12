@@ -55,7 +55,7 @@ struct FileViewToolBar: View {
 
 #Preview {
     var state: FileViewState {
-        let state = FileViewState()
+        let state = FileViewState(file: .init(path: "test"))
         state.isWriting = true
         state.language = .c
         return state

@@ -185,7 +185,7 @@ struct VCTextEditor: UIViewControllerRepresentable {
     typealias UIViewControllerType = VCTextEditorViewController
     
     @Binding var text: String
-    @Binding  var language: CodeLanguage
+    @Binding var language: CodeLanguage
     
     func makeUIViewController(context: Context) -> VCTextEditorViewController {
         let controller = VCTextEditorViewController()
@@ -196,7 +196,9 @@ struct VCTextEditor: UIViewControllerRepresentable {
 
     func updateUIViewController(_ uiViewController: VCTextEditorViewController, context: Context) {
         uiViewController.onTextChanges = { text in
-            self.text = text
+            DispatchQueue.main.async {
+                self.text = text
+            }
         }
         uiViewController.update(text, language: language)
     }

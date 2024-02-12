@@ -135,7 +135,7 @@ struct ContentView_Previews: PreviewProvider {
             
 
             
-            let fileEditorState = FileViewState()
+            let fileEditorState = FileViewState(file: File(path: "test"))
             fileEditorState.isLoading = false
             fileEditorState.content = "This is a paragraph"
             state.editorState.openFileStates = [fileEditorState]

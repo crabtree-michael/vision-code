@@ -75,6 +75,7 @@ class EditorViewManager: ConnectionUser {
             self.activeManagerIndex = index
         } else {
             let manager = FileViewManager(path: path, client: client)
+            manager.onClose = self.close
             manager.load()
             openFileManagers.append(manager)
             self.activeManagerIndex = openFileManagers.count - 1
@@ -94,6 +95,10 @@ class EditorViewManager: ConnectionUser {
         guard let index = openFileManagers.firstIndex(where: {$0.path == file.path}) else {
             print("Attempt to close unopened file")
             return
+        }
+        
+        guard self.openFileManagers[index].allowClosing() else {
+            return 
         }
     
         self.openFileManagers.remove(at: index)
