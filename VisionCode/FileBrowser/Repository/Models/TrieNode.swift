@@ -42,8 +42,6 @@ public class TrieNode<Key, Element> where Key: StringProtocol {
             return self.contents
         }
         
-        print(branches)
-        
         guard let branch = branches[c] else {
             print("no branch for \(c)")
             return []
