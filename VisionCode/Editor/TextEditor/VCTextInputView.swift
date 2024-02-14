@@ -52,6 +52,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     
     var onDidSelectText: VoidLambda? = nil
     var onDidDeslectText: VoidLambda? = nil
+    var onOpenFindInFile: VoidLambda? = nil
     
     private var textObservers: [TextInputObserver] = []
     
@@ -594,6 +595,10 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             if press.key?.modifierFlags == .command {
                 self.cutSelection()
                 return
+            }
+        case .keyboardF:
+            if press.key?.modifierFlags == .command {
+                self.onOpenFindInFile?()
             }
         default: break
         }

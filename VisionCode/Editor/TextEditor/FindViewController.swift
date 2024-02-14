@@ -123,12 +123,21 @@ class UpDownControlSegment: UIView {
 }
 
 class FindViewController: UIViewController, UITextFieldDelegate {
-    var width: CGFloat = 325
+    var width: CGFloat = 335
     var height: CGFloat = 50
     
+    var didSetIsActive: ((Bool) -> ())? = nil
     var isActive: Bool {
         didSet {
             self.view.isHidden = !isActive
+            if isActive && oldValue != isActive {
+                self.textField.becomeFirstResponder()
+            }
+            if isActive != oldValue && !isActive {
+                self.removeAllAttributes()
+                self.layoutManager.textViewportLayoutController.layoutViewport()
+            }
+            self.didSetIsActive?(isActive)
         }
     }
     
@@ -138,7 +147,14 @@ class FindViewController: UIViewController, UITextFieldDelegate {
     var layoutManager: NSTextLayoutManager
     var storage: NSTextContentStorage
     
-    var currentSearch: Search?
+    var currentSearch: Search? {
+        didSet {
+            if currentSearch == nil {
+                self.controls.isEnabled = false
+                self.resultCountLabel.text = ""
+            }
+        }
+    }
     
     var viewportController: FindViewportController? = nil
     
@@ -148,6 +164,7 @@ class FindViewController: UIViewController, UITextFieldDelegate {
     let highlightedResultBackgroundColor = UIColor.red
     
     let controls: UpDownControlSegment
+    let close: UIButton
     
     let resultCountLabel: UILabel
     
@@ -158,6 +175,7 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         self.controls = UpDownControlSegment(frame: CGRect(x: 0, y: 0, width: 55, height: 50))
         self.resultCountLabel = UILabel()
         self.resultCountLabel.text = ""
+        self.close = UIButton(type: .close)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -176,6 +194,28 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         containerView.addSubview(textField)
         containerView.layer.cornerRadius = 10
         
+        self.containerView.addSubview(close)
+        close.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            close.leftAnchor.constraint(equalTo: containerView.leftAnchor),
+            close.widthAnchor.constraint(equalToConstant: 25),
+            close.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            close.heightAnchor.constraint(equalTo: containerView.heightAnchor)
+        ])
+        close.addTarget(self, action: #selector(self.closeWindow), for: .touchUpInside)
+        
+        self.containerView.addSubview(controls)
+        controls.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            controls.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -5),
+            controls.widthAnchor.constraint(equalToConstant: 50),
+            controls.heightAnchor.constraint(equalTo: containerView.heightAnchor),
+            controls.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
+        ])
+        controls.isEnabled = false
+        controls.up.addTarget(self, action: #selector(self.moveResultBackward), for: .touchUpInside)
+        controls.down.addTarget(self, action: #selector(self.moveResultForward), for: .touchUpInside)
+        
         let iconView = UIImageView(image: UIImage(systemName: "magnifyingglass"))
         iconView.tintColor = .white
         
@@ -186,8 +226,8 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         textField.leftViewMode = .always
         
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 5).isActive = true
-        textField.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -50).isActive = true
+        textField.leftAnchor.constraint(equalTo: close.rightAnchor, constant: 5).isActive = true
+        textField.rightAnchor.constraint(equalTo: controls.leftAnchor).isActive = true
         textField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
         textField.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
         
@@ -198,18 +238,6 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         textField.addSubview(resultCountLabel)
         textField.rightView = resultCountLabel
         textField.rightViewMode = .always
-        
-        self.containerView.addSubview(controls)
-        controls.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            controls.leftAnchor.constraint(equalTo: textField.rightAnchor),
-            controls.widthAnchor.constraint(equalToConstant: 55),
-            controls.heightAnchor.constraint(equalTo: containerView.heightAnchor),
-            controls.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
-        ])
-        controls.isEnabled = false
-        controls.up.addTarget(self, action: #selector(self.moveResultBackward), for: .touchUpInside)
-        controls.down.addTarget(self, action: #selector(self.moveResultForward), for: .touchUpInside)
     }
     
     @objc func textFieldDidChange(_ textField: UITextField) {
@@ -224,6 +252,10 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         _ = self.advanceSearhIndex(forward: false)
     }
     
+    @objc func closeWindow() {
+        self.isActive = false
+    }
+    
     func performSearch() {
         guard let query = textField.text else {
             return
@@ -232,6 +264,8 @@ class FindViewController: UIViewController, UITextFieldDelegate {
             self.currentSearch = nil
             self.resultCountLabel.text = ""
             self.controls.isEnabled = false
+            self.removeAllAttributes()
+            self.layoutManager.textViewportLayoutController.layoutViewport()
             return
         }
         
@@ -251,6 +285,9 @@ class FindViewController: UIViewController, UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if self.currentSearch == nil {
+            self.performSearch()
+        }
         return !advanceSearhIndex(forward: true)
     }
     
@@ -324,6 +361,14 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         return rect
     }
     
+    func textDidChange() {
+        if self.allActiveAttributes.count > 0 {
+            self.removeAllAttributes()
+            layoutManager.textViewportLayoutController.layoutViewport()
+            self.currentSearch = nil
+        }
+    }
+    
     private func addAttribute(_ attribute: NSAttributedString.Key, value: Any, for range: NSTextRange)
     {
         self.allActiveAttributes.append(RangedAttribute(attribute: attribute, range: range))
@@ -349,6 +394,6 @@ class FindViewController: UIViewController, UITextFieldDelegate {
     }
     
     override func viewDidLayoutSubviews() {
-        containerView.frame = CGRect(x: self.view.frame.width - width, y: 0, width: width, height: height)
+        containerView.frame = CGRect(x: self.view.frame.width - width - 2, y: 0, width: width - 2, height: height)
     }
 }

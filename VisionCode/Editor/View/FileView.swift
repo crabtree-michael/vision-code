@@ -64,7 +64,8 @@ struct FileView: View {
         let state = FileViewState(file: .init(path: "test"))
         state.isLoading = false
         state.content = longFile
-        state.presentUnsavedChangesAlert = true
+        state.presentUnsavedChangesAlert = false
+        state.showFindInFile = true
         return state
     }
     

@@ -33,7 +33,7 @@ class VCTextEditorViewController: UIViewController,
     
     var onTextChanges: ((String) -> ())?
     
-    var onFindInFileDismissed: (() -> ())?
+    var onFindInFileSet: ((Bool) -> ())?
     
     let editMenu = EditMenu()
     
@@ -132,10 +132,17 @@ class VCTextEditorViewController: UIViewController,
         
         self.textView.onDidSelectText = {
             self.editMenu.isHidden = false
+            self.findController.isActive = false
+            self.onFindInFileSet?(self.findController.isActive)
         }
         
         self.textView.onDidDeslectText = {
             self.editMenu.isHidden = true
+        }
+        
+        self.textView.onOpenFindInFile = {
+            self.findController.isActive = true
+            self.onFindInFileSet?(self.findController.isActive)
         }
         
         findController = FindViewController(layoutManager: layoutManager, storage: contentStorage)
@@ -153,6 +160,9 @@ class VCTextEditorViewController: UIViewController,
         ])
         
         findController.isActive = false
+        findController.didSetIsActive = { value in
+            self.onFindInFileSet?(value)
+        }
     }
     
     deinit {
@@ -210,10 +220,8 @@ class VCTextEditorViewController: UIViewController,
     }
     
     func textStorage(_ textStorage: NSTextStorage, didProcessEditing editedMask: NSTextStorage.EditActions, range editedRange: NSRange, changeInLength delta: Int) {
-        
-        if self.findController.isActive {
-            self.findController.isActive = false
-            self.onFindInFileDismissed?()
+        if findController.isActive {
+            findController.textDidChange()
         }
         
         self.onTextChanges?(textStorage.string)
@@ -249,8 +257,8 @@ struct VCTextEditor: UIViewControllerRepresentable {
                 self.text = text
             }
         }
-        uiViewController.onFindInFileDismissed = {
-            self.showFindInFile = false
+        uiViewController.onFindInFileSet = { value in
+            self.showFindInFile = value
         }
         uiViewController.update(text, language: language, showFindInFile: showFindInFile)
     }
