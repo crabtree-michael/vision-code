@@ -238,6 +238,7 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         textField.addSubview(resultCountLabel)
         textField.rightView = resultCountLabel
         textField.rightViewMode = .always
+        textField.autocorrectionType = .no
     }
     
     @objc func textFieldDidChange(_ textField: UITextField) {

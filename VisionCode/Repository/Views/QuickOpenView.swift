@@ -22,6 +22,7 @@ struct FirstResponderTextField: UIViewRepresentable {
                             action: #selector(context.coordinator.textFieldDidChange),
                             for: .editingChanged)
         textField.autocapitalizationType = .none
+        textField.autocorrectionType = .no
         return textField
     }
     
