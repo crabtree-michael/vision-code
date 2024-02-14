@@ -14,7 +14,7 @@ typealias TextAttributes = [NSAttributedString.Key: Any]
 class VCTextEditorViewController: UIViewController, 
                                     UITextViewDelegate,
                                     UIScrollViewDelegate,
-                                    NSTextLayoutManagerDelegate, NSTextStorageDelegate {
+                                    NSTextLayoutManagerDelegate, NSTextStorageDelegate, FindViewportController {
     var textView: VCTextInputView!
     let layoutManager = NSTextLayoutManager()
     var gutterView: GutterView = GutterView()
@@ -33,11 +33,17 @@ class VCTextEditorViewController: UIViewController,
     
     var onTextChanges: ((String) -> ())?
     
+    var onFindInFileDismissed: (() -> ())?
+    
     let editMenu = EditMenu()
     
     let editMenuSize = CGSize(width: 93, height: 25)
     
     var highlighter: Highlighter?
+    
+    var findController: FindViewController!
+    
+    var overlayView = UIView()
 
     override func viewDidLoad() {
         let container = NSTextContainer(size: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
@@ -91,10 +97,25 @@ class VCTextEditorViewController: UIViewController,
         self.gutterView.backgroundColor = .darkGray.withAlphaComponent(0.95)
         self.textView.addSubview(gutterView)
         
-        self.textView.addSubview(editMenu)
-        self.editMenu.frame = CGRect(x: 100, y: 100, width: editMenuSize.width, height: editMenuSize.height)
-        self.textView.bringSubviewToFront(self.editMenu)
+        self.textView.addSubview(overlayView)
+        self.overlayView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.overlayView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
+            self.overlayView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
+            self.overlayView.topAnchor.constraint(equalTo: self.view.topAnchor),
+            self.overlayView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+        ])
+        
+        self.overlayView.addSubview(editMenu)
         self.editMenu.isHidden = true
+        self.editMenu.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.editMenu.bottomAnchor.constraint(equalTo: overlayView.bottomAnchor, constant: -25),
+            self.editMenu.centerXAnchor.constraint(equalTo: overlayView.centerXAnchor),
+            self.editMenu.widthAnchor.constraint(equalToConstant: editMenuSize.width),
+            self.editMenu.heightAnchor.constraint(equalToConstant: editMenuSize.height)
+        
+        ])
         
         self.editMenu.copyButton.addAction(UIAction(title: "Copy") { _ in
             self.textView.copySelection()
@@ -116,6 +137,22 @@ class VCTextEditorViewController: UIViewController,
         self.textView.onDidDeslectText = {
             self.editMenu.isHidden = true
         }
+        
+        findController = FindViewController(layoutManager: layoutManager, storage: contentStorage)
+        self.overlayView.addSubview(findController.view)
+        self.addChild(findController)
+        findController.didMove(toParent: self)
+        findController.viewportController = self
+        
+        findController.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.findController.view.leadingAnchor.constraint(equalTo: self.overlayView.leadingAnchor),
+            self.findController.view.trailingAnchor.constraint(equalTo: self.overlayView.trailingAnchor),
+            self.findController.view.topAnchor.constraint(equalTo: self.overlayView.topAnchor),
+            self.findController.view.bottomAnchor.constraint(equalTo: self.overlayView.bottomAnchor)
+        ])
+        
+        findController.isActive = false
     }
     
     deinit {
@@ -125,22 +162,19 @@ class VCTextEditorViewController: UIViewController,
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         layoutManager.textViewportLayoutController.layoutViewport()
         
-        gutterView.frame = CGRect(x: textView.contentOffset.x, y: gutterView.bounds.minY, width: gutterView.frame.width, height: gutterView.frame.height)
-        forceEditMenuToBottom()
+        gutterView.frame = CGRect(x: textView.contentOffset.x, 
+                                  y: gutterView.bounds.minY,
+                                  width: gutterView.frame.width,
+                                  height: gutterView.frame.height)
     }
     
     override func viewDidLayoutSubviews() {
         layoutManager.textViewportLayoutController.layoutViewport()
-        forceEditMenuToBottom()
     }
     
-    func forceEditMenuToBottom() {
-        let y = textView.contentOffset.y + textView.frame.height - 50
-        let x = textView.contentOffset.x + textView.frame.width/2 - 50
-        self.editMenu.frame = CGRect(x: x, y: y, width: editMenuSize.width, height: editMenuSize.height)
-    }
-    
-    func update(_ text: String, language: CodeLanguage) {
+    func update(_ text: String, language: CodeLanguage, showFindInFile: Bool) {
+        self.findController.isActive = showFindInFile
+        
         guard (text != contentStorage.textStorage?.string || language.id != (self.highlighter?.language.id ?? .plainText)) else {
             return
         }
@@ -176,7 +210,21 @@ class VCTextEditorViewController: UIViewController,
     }
     
     func textStorage(_ textStorage: NSTextStorage, didProcessEditing editedMask: NSTextStorage.EditActions, range editedRange: NSRange, changeInLength delta: Int) {
+        
+        if self.findController.isActive {
+            self.findController.isActive = false
+            self.onFindInFileDismissed?()
+        }
+        
         self.onTextChanges?(textStorage.string)
+    }
+    
+    func searchContent() -> String {
+        return self.contentStorage.textStorage?.string ?? ""
+    }
+    
+    func scroll(to point: CGPoint) {
+        self.textView.scrollRectToVisible(CGRect(x: point.x, y: point.y, width: 100, height: 100), animated: true)
     }
     
 }
@@ -186,6 +234,7 @@ struct VCTextEditor: UIViewControllerRepresentable {
     
     @Binding var text: String
     @Binding var language: CodeLanguage
+    @Binding var showFindInFile: Bool
     
     func makeUIViewController(context: Context) -> VCTextEditorViewController {
         let controller = VCTextEditorViewController()
@@ -200,7 +249,10 @@ struct VCTextEditor: UIViewControllerRepresentable {
                 self.text = text
             }
         }
-        uiViewController.update(text, language: language)
+        uiViewController.onFindInFileDismissed = {
+            self.showFindInFile = false
+        }
+        uiViewController.update(text, language: language, showFindInFile: showFindInFile)
     }
 }
 

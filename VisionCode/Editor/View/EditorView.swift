@@ -34,6 +34,11 @@ struct Editor: View {
                                         state.openFileStates[index].onSave?()
                                     }
                                 },
+                                onOpenFinder: {
+                                    if let index = state.activeIndex {
+                                        state.openFileStates[index].showFindInFile = true
+                                    }
+                                },
                                 isWriting: state.openFileStates[activeIndex].isWriting,
                                 language: $state.openFileStates[activeIndex].language)
                             .background(.clear)

@@ -11,6 +11,7 @@ import CodeEditLanguages
 
 struct FileViewToolBar: View {
     var onSave: VoidLambda? = nil
+    var onOpenFinder: VoidLambda? = nil
     var isWriting: Bool = false
     @Binding var language: CodeLanguage
     
@@ -30,13 +31,23 @@ struct FileViewToolBar: View {
                     }
                     .keyboardShortcut("s", modifiers: .command)
                     .controlSize(.regular)
+                    Button {
+                        onOpenFinder?()
+                    } label: {
+                        Label(title: {
+                            Text("Find")
+                        }) {
+                            Image(systemName: "magnifyingglass")
+                        }
+                    }
+                    .keyboardShortcut("f", modifiers: .command)
+                    .controlSize(.regular)
                     Picker("Language", selection: $language) {
                         ForEach(CodeLanguage.allLanguages, id: \.id) { language in
                             Text(language.tsName)
                                 .tag(language)
                         }
                     }
-                    
                 } else {
                     ProgressView()
                         .scaleEffect(CGSize(width: 0.7,

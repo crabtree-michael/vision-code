@@ -28,7 +28,8 @@ struct FileView: View {
             } else {
                 ZStack{
                     VCTextEditor(text: $state.content,
-                                 language: $state.language)
+                                 language: $state.language,
+                                 showFindInFile: $state.showFindInFile)
                 }
             }
         }

@@ -97,8 +97,6 @@ class Highlighter: TextInputObserver {
                     self.addAttribute(.foregroundColor, value: color, for: range)
                 }
             }
-            
-            
         }
     }
     

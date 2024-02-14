@@ -17,6 +17,7 @@ class FileViewState: ObservableObject {
     @Published var name: String
     @Published var hasChanges: Bool = false
     @Published var presentUnsavedChangesAlert: Bool = false
+    @Published var showFindInFile: Bool = false
     let file: File
     
     init(file: File) {
