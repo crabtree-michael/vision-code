@@ -149,11 +149,15 @@ class FindViewController: UIViewController, UITextFieldDelegate {
     
     let controls: UpDownControlSegment
     
+    let resultCountLabel: UILabel
+    
     init(layoutManager: NSTextLayoutManager, storage: NSTextContentStorage) {
         self.layoutManager = layoutManager
         self.storage = storage
         isActive = true
         self.controls = UpDownControlSegment(frame: CGRect(x: 0, y: 0, width: 55, height: 50))
+        self.resultCountLabel = UILabel()
+        self.resultCountLabel.text = ""
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -191,6 +195,10 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         textField.autocapitalizationType = .none
         textField.delegate = self
         
+        textField.addSubview(resultCountLabel)
+        textField.rightView = resultCountLabel
+        textField.rightViewMode = .always
+        
         self.containerView.addSubview(controls)
         controls.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -220,12 +228,19 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         guard let query = textField.text else {
             return
         }
+        guard query.count > 0 else {
+            self.currentSearch = nil
+            self.resultCountLabel.text = ""
+            self.controls.isEnabled = false
+            return
+        }
         
         let search = Search(with: query, storage: storage)
         search.perform()
         currentSearch = search
         
         self.controls.isEnabled = !search.results.isEmpty
+        self.resultCountLabel.text = "\(search.results.count) results"
         
         self.removeAllAttributes()
         for range in search.results {
@@ -253,6 +268,8 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         } else {
             didAdvance = search.moveBackIfPossible()
         }
+        
+        self.resultCountLabel.text = "\((search.selectedIndex ?? 0) + 1) of \(search.results.count)"
        
         self.addHighlightAttributeForCurrentSelection()
         
