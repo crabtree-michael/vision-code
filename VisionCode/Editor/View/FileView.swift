@@ -29,12 +29,6 @@ struct FileView: View {
                 ZStack{
                     VCTextEditor(text: $state.content,
                                  language: $state.language)
-                    VStack {
-                        Spacer()
-                        FileViewToolBar(onSave: state.onSave, isWriting: state.isWriting, language: $state.language)
-                            .background(.clear)
-                    }
-
                 }
             }
         }

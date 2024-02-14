@@ -64,6 +64,6 @@ struct FileViewToolBar: View {
     @ObservedObject var s = state
 
     
-    return FileViewToolBar(onSave: state.onSave, 
+    return FileViewToolBar(onSave: state.onSave,
                            language: $s.language)
 }

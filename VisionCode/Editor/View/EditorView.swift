@@ -16,12 +16,7 @@ struct Editor: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            EditorNavBar(activeIndex: self.$state.activeIndex,
-                         openFiles: self.state.openFileStates,
-                         title: self.state.title,
-                         onSelected: self.state.onFileSelected,
-                         onClose: self.state.onFileClose,
-                         onQuickOpen: self.state.onQuickOpen)
+            EditorNavBar(state: self.state)
             
             if let activeIndex = state.activeIndex {
                 ZStack {
@@ -29,6 +24,20 @@ struct Editor: View {
                             id: \.0) { (index, fileState) in
                         FileView(state: fileState)
                             .opacity(activeIndex == index ? 1 : 0)
+                    }
+                    if let activeIndex = state.activeIndex {
+                        VStack {
+                            Spacer()
+                            FileViewToolBar(
+                                onSave: {
+                                    if let index = state.activeIndex {
+                                        state.openFileStates[index].onSave?()
+                                    }
+                                },
+                                isWriting: state.openFileStates[activeIndex].isWriting,
+                                language: $state.openFileStates[activeIndex].language)
+                            .background(.clear)
+                        }
                     }
                 }
             } else {

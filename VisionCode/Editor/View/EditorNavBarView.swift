@@ -18,48 +18,79 @@ struct QuickOpenButtonStyle: ButtonStyle {
 }
 
 struct EditorNavBar: View {
-    @Binding var activeIndex: Int?
-    var openFiles: [FileViewState]
-    var title: String
-    var onSelected: FileLambda? = nil
-    var onClose: FileLambda? = nil
-    var onQuickOpen: VoidLambda? = nil
+    @ObservedObject var state: EditorViewState
     
     var body: some View {
-        VStack(spacing: 2) {
-            Button(action: {
-                self.onQuickOpen?()
-            }, label: {
-                Label("Quick Open", systemImage: "sparkle.magnifyingglass")
-            })
-            .keyboardShortcut("p", modifiers: .command)
-            .buttonStyle(QuickOpenButtonStyle())
-            .padding()
-            
-            
-            ScrollView(.horizontal) {
-                HStack(spacing: 4) {
-                    ForEach(Array(zip(openFiles.indices, openFiles)), id: \.0) { index, fvState in
-                        if (index != self.activeIndex) {
-                            EditorNavBarButton(state: fvState) {
-                                self.onClose?(fvState.file)
-                            }
-                            .background(.ultraThinMaterial)
-                            .hoverEffect()
-                            .onTapGesture {
-                                self.onSelected?(fvState.file)
-                            }
-                        } else {
-                            EditorNavBarButton(state: fvState) {
-                                self.onClose?(fvState.file)
-                            }
-                            .background(.black.opacity(0.46))
-                        }
-                    }
-                    Spacer()
+        ZStack {
+            Button {
+                if let index = state.activeIndex,
+                   index >= 1 {
+                    state.onFileSelected?(state.openFiles[index - 1])
                 }
+            } label: {
+                Label("Move tab left", systemImage: "test")
             }
-            .scrollPosition(id: $activeIndex)
+            .opacity(0.0001)
+            .keyboardShortcut("{", modifiers: [.command, .shift])
+            
+            Button {
+                if let index = state.activeIndex,
+                   index < self.state.openFiles.count - 1 {
+                    state.onFileSelected?(state.openFiles[index + 1])
+                }
+            } label: {
+                Label("Move tab right", systemImage: "test")
+            }
+            .opacity(0.0001)
+            .keyboardShortcut("}", modifiers: [.command, .shift])
+            
+            Button {
+                if let index = state.activeIndex {
+                    self.state.onFileClose?(self.state.openFiles[index])
+                }
+            } label: {
+                Label("Close tab", systemImage: "test")
+            }
+            .opacity(0.0001)
+            .keyboardShortcut("w", modifiers: .command)
+            
+            VStack(spacing: 2) {
+                Button(action: {
+                    self.state.onQuickOpen?()
+                }, label: {
+                    Label("Quick Open", systemImage: "sparkle.magnifyingglass")
+                })
+                .keyboardShortcut("p", modifiers: .command)
+                .buttonStyle(QuickOpenButtonStyle())
+                .padding()
+                
+                ScrollView(.horizontal) {
+                    HStack(spacing: 4) {
+                        ForEach(Array(zip(state.openFileStates.indices, state.openFileStates)),
+                                id: \.0) { arrayIndex, fileState in
+  
+                            if (arrayIndex != state.activeIndex) {
+                                EditorNavBarButton(state: fileState) {
+                                    self.state.onFileClose?(fileState.file)
+                                }
+                                .background(.ultraThinMaterial)
+                                .hoverEffect()
+                                .onTapGesture {
+                                    self.state.onFileSelected?(fileState.file)
+                                }
+                            } else {
+                                EditorNavBarButton(state: fileState) {
+                                    self.state.onFileClose?(fileState.file)
+                                }
+                                .background(.black.opacity(0.46))
+                            }
+                            
+                        }
+                        Spacer()
+                    }
+                }
+                .scrollPosition(id: $state.activeIndex)
+            }
         }
     }
 }
@@ -117,5 +148,11 @@ struct EditorNavBarButton: View {
         }
     }
     
-    return EditorNavBar(activeIndex: .constant(0), openFiles: openFiles, title: "test")
+    var state: EditorViewState {
+        let state = EditorViewState(title: "test")
+        state.openFileStates = openFiles
+        return state
+    }
+    
+    return EditorNavBar(state: state)
 }
