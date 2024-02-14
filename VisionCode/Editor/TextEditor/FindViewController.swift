@@ -59,6 +59,24 @@ class Search {
         return true
     }
     
+    func moveBackIfPossible() -> Bool {
+        guard self.results.count > 0 else {
+            return false
+        }
+        
+        guard let currentIndex = selectedIndex else {
+            selectedIndex = self.results.count - 1
+            return true
+        }
+        
+        guard currentIndex > 0 else {
+            return false
+        }
+        
+        selectedIndex = currentIndex - 1
+        return true
+    }
+    
     func currentSelection() -> NSTextRange? {
         guard let selectedIndex = selectedIndex else {
             return nil
@@ -72,8 +90,40 @@ protocol FindViewportController {
     func scroll(to point: CGPoint)
 }
 
+class UpDownControlSegment: UIView {
+    var isEnabled: Bool = true {
+        didSet {
+            self.down.isEnabled = isEnabled
+            self.up.isEnabled = isEnabled
+        }
+    }
+    let down: UIButton
+    let up: UIButton
+    
+    override init(frame: CGRect) {
+        down = UIButton(type: .custom)
+        down.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        down.frame = CGRect(x: 0, y: 0, width: 25, height: frame.height)
+        down.tintColor = .white
+        
+        up = UIButton(type: .custom)
+        up.setImage(UIImage(systemName: "chevron.up"), for: .normal)
+        up.frame = CGRect(x: frame.width - 25, y: 0, width: 25, height: frame.height)
+        up.tintColor = .white
+        
+        super.init(frame: frame)
+        
+        self.addSubview(up)
+        self.addSubview(down)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 class FindViewController: UIViewController, UITextFieldDelegate {
-    var width: CGFloat = 250
+    var width: CGFloat = 325
     var height: CGFloat = 50
     
     var isActive: Bool {
@@ -97,10 +147,13 @@ class FindViewController: UIViewController, UITextFieldDelegate {
     let resultBackgroundColor = UIColor.red.withAlphaComponent(0.4)
     let highlightedResultBackgroundColor = UIColor.red
     
+    let controls: UpDownControlSegment
+    
     init(layoutManager: NSTextLayoutManager, storage: NSTextContentStorage) {
         self.layoutManager = layoutManager
         self.storage = storage
         isActive = true
+        self.controls = UpDownControlSegment(frame: CGRect(x: 0, y: 0, width: 55, height: 50))
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -130,16 +183,40 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 5).isActive = true
-        textField.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 5).isActive = true
+        textField.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: -50).isActive = true
         textField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
         textField.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
         
         textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         textField.autocapitalizationType = .none
         textField.delegate = self
+        
+        self.containerView.addSubview(controls)
+        controls.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            controls.leftAnchor.constraint(equalTo: textField.rightAnchor),
+            controls.widthAnchor.constraint(equalToConstant: 55),
+            controls.heightAnchor.constraint(equalTo: containerView.heightAnchor),
+            controls.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
+        ])
+        controls.isEnabled = false
+        controls.up.addTarget(self, action: #selector(self.moveResultBackward), for: .touchUpInside)
+        controls.down.addTarget(self, action: #selector(self.moveResultForward), for: .touchUpInside)
     }
     
     @objc func textFieldDidChange(_ textField: UITextField) {
+        performSearch()
+    }
+    
+    @objc func moveResultForward() {
+        _ = self.advanceSearhIndex(forward: true)
+    }
+    
+    @objc func moveResultBackward() {
+        _ = self.advanceSearhIndex(forward: false)
+    }
+    
+    func performSearch() {
         guard let query = textField.text else {
             return
         }
@@ -147,6 +224,8 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         let search = Search(with: query, storage: storage)
         search.perform()
         currentSearch = search
+        
+        self.controls.isEnabled = !search.results.isEmpty
         
         self.removeAllAttributes()
         for range in search.results {
@@ -157,6 +236,10 @@ class FindViewController: UIViewController, UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        return !advanceSearhIndex(forward: true)
+    }
+    
+    func advanceSearhIndex(forward: Bool) -> Bool {
         guard let search = self.currentSearch else {
             return true
         }
@@ -164,10 +247,15 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         self.removeAttributeForCurrentSelection()
         self.addNormalAttributeForCurrentSelection()
         
-        let didAdvance = search.moveToNextIndexIfPossible()
-        if didAdvance {
-            self.addHighlightAttributeForCurrentSelection()
+        let didAdvance: Bool
+        if forward {
+            didAdvance = search.moveToNextIndexIfPossible()
+        } else {
+            didAdvance = search.moveBackIfPossible()
         }
+       
+        self.addHighlightAttributeForCurrentSelection()
+        
         if let rect = rectForCurrentSelection() {
             self.viewportController?.scroll(to: rect.origin)
         }
