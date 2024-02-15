@@ -71,6 +71,7 @@ class ConnectionManager {
         }
         
         connection.connection.close()
+        connection.state.status = .notStarted
     }
     
     @MainActor func connection(for id: ObjectId, reuse: Bool = true) -> Future<Connection, Error> {

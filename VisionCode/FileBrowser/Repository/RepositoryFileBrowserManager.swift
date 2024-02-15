@@ -9,7 +9,7 @@ import Foundation
 import VCRemoteCommandCore
 
 class RepositoryFileBrowserManager: ConnectionUser {
-    private let identifier = UUID()
+    private let identifier: UUID
     var client: RCSFTPClient?
     let state: RepositoryFilesViewState
     let path: String
@@ -34,10 +34,11 @@ class RepositoryFileBrowserManager: ConnectionUser {
         self.state = RepositoryFilesViewState(root: self.root, connectionState: remote.state)
         self.loading = false
         self.remote = remote
+        self.identifier = UUID()
     }
     
     func id() -> String {
-        return identifier.uuidString
+        return identifier.uuidString + "-repository-manager"
     }
     
     func load(traverse: Bool = true) async {

@@ -8,7 +8,8 @@
 import Foundation
 import VCRemoteCommandCore
 import CodeEditLanguages
-import Combine 
+import Combine
+import NIOCore
 
 class FileViewManager {
     let path: String
@@ -19,6 +20,8 @@ class FileViewManager {
     let estimatedLanguage: CodeLanguage
     
     var onClose: FileLambda? = nil
+    
+    var onChannelClosed: VoidLambda? = nil
     
     private var originalContent: String? = nil
     private var tasks = [AnyCancellable]()
@@ -66,9 +69,7 @@ class FileViewManager {
                     self.state.isLoading = false
                 }
             } catch(let error) {
-                DispatchQueue.main.async {
-                    self.state.error = .serverError(error)
-                }
+                handle(error: error)
             }
         }
     }
@@ -92,16 +93,28 @@ class FileViewManager {
                     onCompletion?()
                 }
             } catch(let error) {
-                if let error = error as? EditorError {
-                    self.state.error = error
-                } else {
-                    self.state.error = .serverError(error)
-                }
+                handle(error: error)
             }
             
             DispatchQueue.main.async {
                 self.state.isWriting = false
             }
+        }
+    }
+    
+    private func handle(error: Error) {
+        if let error = error as? EditorError {
+            self.state.error = error
+        } else {
+            if let error = error as? ChannelError {
+                switch(error) {
+                case .ioOnClosedChannel, .alreadyClosed:
+                    self.onChannelClosed?()
+                default:
+                    break
+                }
+            }
+            self.state.error = .serverError(error)
         }
     }
     

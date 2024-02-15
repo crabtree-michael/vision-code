@@ -9,7 +9,7 @@ import Foundation
 import VCRemoteCommandCore
 
 class EditorViewManager: ConnectionUser {
-    private let identifier = UUID()
+    private let identifier: UUID
     
     var client: RCSFTPClient? {
         didSet {
@@ -52,6 +52,7 @@ class EditorViewManager: ConnectionUser {
         self.path = path
         self.state = EditorViewState(title: (path as NSString).lastPathComponent)
         self.remote = remote
+        self.identifier = UUID()
         self.state.onFileSelected = self.changeActiveFile
         self.state.onFileClose = self.close
     }
@@ -62,9 +63,10 @@ class EditorViewManager: ConnectionUser {
     
     func load() async  {
         do {
-            print("Trying to load client")
             self.client = try await self.remote.createSFTPClient(user: self)
-            print("Client loaded successfully")
+            for manager in openFileManagers {
+                manager.client = self.client
+            }
         } catch {
             print("Failed to load client")
         }
@@ -76,6 +78,10 @@ class EditorViewManager: ConnectionUser {
         } else {
             let manager = FileViewManager(path: path, client: client)
             manager.onClose = self.close
+            manager.onChannelClosed = { [weak self, weak manager] in
+                guard let m = manager else { return }
+                self?.managerReceivedClosedChannel(m)
+            }
             manager.load()
             openFileManagers.append(manager)
             self.activeManagerIndex = openFileManagers.count - 1
@@ -126,6 +132,12 @@ class EditorViewManager: ConnectionUser {
     
     func connectionDidReload(_ connection: Connection) {
         self.remote = connection
+        Task {
+            await self.load()
+        }
+    }
+    
+    func managerReceivedClosedChannel(_ manager: FileViewManager) {
         Task {
             await self.load()
         }
