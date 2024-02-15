@@ -17,6 +17,7 @@ class FileViewState: ObservableObject {
     @Published var name: String
     @Published var hasChanges: Bool = false
     @Published var presentUnsavedChangesAlert: Bool = false
+    @Published var presentRemoteModifiedAlert: Bool = false
     @Published var showFindInFile: Bool = false
     let file: File
     
@@ -29,4 +30,6 @@ class FileViewState: ObservableObject {
     
     var onSaveAndClose: VoidLambda? = nil
     var onForceClose: VoidLambda? = nil
+    var onOverwriteRemote: VoidLambda? = nil
+    var onReloadRemote: VoidLambda? = nil
 }

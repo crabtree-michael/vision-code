@@ -17,12 +17,14 @@ struct SFTPMessageType: OptionSet {
     static let CLOSE = SFTPMessageType(rawValue: 4)
     static let READ = SFTPMessageType(rawValue: 5)
     static let WRITE = SFTPMessageType(rawValue: 6)
+    static let FSTAT = SFTPMessageType(rawValue: 8)
     static let OPENDIR = SFTPMessageType(rawValue: 11)
     static let READDIR = SFTPMessageType(rawValue: 12)
     static let STATUS = SFTPMessageType(rawValue: 101)
     static let HANDLE = SFTPMessageType(rawValue: 102)
     static let DATA = SFTPMessageType(rawValue: 103)
     static let NAME = SFTPMessageType(rawValue: 104)
+    static let ATTRS = SFTPMessageType(rawValue: 105)
 }
 
 struct SFTPStatusCode: OptionSet {
@@ -149,6 +151,15 @@ class SFTPNameMessage: SFTPFullMessage {
         }
         self.files = files
         super.init(length: length, type: type, body: body)
+    }
+}
+
+class SFTPAttrMessage: SFTPFullMessage {
+    var attr: FileAttributes! = nil
+    
+    init(buffer: inout ByteBuffer, length: UInt32) throws {
+        try super.init(buffer: &buffer, length: length, type: .ATTRS)
+        self.attr = try FileAttributes(buffer: &buffer)
     }
 }
 

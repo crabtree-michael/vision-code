@@ -43,6 +43,9 @@ class SFTPMessageInboundTransformer: ChannelInboundHandler {
                 return nil
             }
             return message
+        case .ATTRS:
+            let message = try SFTPAttrMessage(buffer: &bytes, length: length)
+            return message
         case .VERSION:
             let body = bytes.readData(length: bytes.readableBytes) ?? Data()
             return SFTPVersionMessage(length: length, type: type, body: body)

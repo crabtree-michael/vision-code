@@ -53,6 +53,18 @@ struct FileView: View {
             }
 
         })
+        .alert(.init("Remote Modified"), isPresented: $state.presentRemoteModifiedAlert, actions: {
+            Button {
+                state.onOverwriteRemote?()
+            } label: {
+                Text("Overwrite")
+            }
+            Button(role: .destructive) {
+                state.onReloadRemote?()
+            } label: {
+                Text("Discard Changes")
+            }
+        })
         .frame(maxWidth: .infinity)
         .background(Color(.darkGray))
     }

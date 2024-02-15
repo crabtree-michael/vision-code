@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NIOCore
 
 extension UInt32 {
     var bigEdianBytes: [UInt8] {
@@ -53,6 +54,18 @@ extension Int {
 }
 
 extension String {
+    public static func from(buffer: inout ByteBuffer) throws -> String {
+        var bytes = try buffer.readOrThrow(length: 4)
+        let length = UInt32.from(bytes: bytes.reversed())
+        if length == 0 {
+            return ""
+        }
+        
+        bytes = try buffer.readOrThrow(length: Int(length))
+        let result = String(decoding: bytes, as: UTF8.self)
+        return result
+    }
+    
     public static func from<Encoding>(paddedData data: [UInt8], encoding: Encoding.Type) -> (UInt32, String) where Encoding : _UnicodeEncoding, Encoding.CodeUnit == UInt8  {
         guard data.count >= 4 else {
             preconditionFailure("padded data does not begin with string length")

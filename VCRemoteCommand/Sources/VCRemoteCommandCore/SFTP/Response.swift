@@ -102,6 +102,22 @@ class SFTPCloseResponse: SFTPResponse {
     }
 }
 
+class SFTPStatResponse: SFTPResponse {
+    var attributes: FileAttributes? = nil
+    
+    override func complete(with message: SFTPFullMessage) throws {
+        switch(message) {
+        case let message as SFTPStatusMessage:
+            self.promise.fail(SFTPError.serverSuppliedError(message: message.message))
+        case let message as SFTPAttrMessage:
+            self.attributes = message.attr
+            self.promise.succeed()
+        default:
+            throw SFTPError.unsupportedMessage
+        }
+    }
+}
+
 class SFTPReadResponse: SFTPResponse {
     var data: Data {
         get {

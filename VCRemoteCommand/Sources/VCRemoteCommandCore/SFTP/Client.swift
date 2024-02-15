@@ -145,6 +145,12 @@ class SFTPHandler: ChannelDuplexHandler {
         }
     }
     
+    func fstat(handle: String) async throws -> SFTPStatResponse {
+        return try await self.executeRequest { id in
+            SFTPFStatRequest(requestId: id, handle: handle)
+        }
+    }
+    
     private func executeRequest<T>(_ request: @escaping (_ id: UInt32) -> SFTPMessage) async throws -> T where T:SFTPResponse {
         guard let context = self.context, self.wroteInit else {
             throw SFTPError.notPrepared
@@ -242,6 +248,18 @@ public class ListResponse: HandleResponse {
     }
 }
 
+public class Handle: HandleResponse {
+    internal let handle: String?
+    
+    internal init(handle: String?) {
+        self.handle = handle
+    }
+    
+    public func getHandle() -> String? {
+        return self.handle
+    }
+}
+
 public class RCSFTPClient {
     internal var handlers: [ChannelHandler] {
         get {
@@ -277,31 +295,65 @@ public class RCSFTPClient {
     }
     
     public func get(file: String) async throws -> Data {
-        var result = Data()
-        let handle = try await self.handler.open(path: file, permissions: .READ)
-        var response = try await self.handler.read(handle: handle.handle, offset: 0)
-        result.append(response.data)
-        while !response.reachedEOF {
-            response = try await self.handler.read(handle: handle.handle, offset: UInt64(result.count))
-            result.append(response.data)
-        }
+        let h = try await self.handler.open(path: file, permissions: .READ)
+        let handle = Handle(handle: h.handle)
+        let data = try await self.get(handle: handle)
         
         do {
-            _ = try await self.handler.close(handle: handle.handle)
+            _ = try await self.handler.close(handle: h.handle)
         } catch {
             print("Failed to close handle for \(file)")
         }
 
         
+        return data
+    }
+    
+    public func get(handle: HandleResponse) async throws -> Data {
+        guard let handle = handle.getHandle() else {
+            throw SFTPError.notPrepared
+        }
+        
+        var result = Data()
+        var response = try await self.handler.read(handle: handle, offset: 0)
+        result.append(response.data)
+        while !response.reachedEOF {
+            response = try await self.handler.read(handle: handle, offset: UInt64(result.count))
+            result.append(response.data)
+        }
+        
         return result
     }
     
+    public func open(file: String, permissions: SFTPPermission = [.TRUNC, .CREAT, .WRITE]) async throws -> Handle {
+        let sftpHandle = try await self.handler.open(path: file, permissions: permissions)
+        return Handle(handle: sftpHandle.handle)
+    }
+    
+    public func stat(handle: HandleResponse) async throws -> FileAttributes {
+        guard let handle = handle.getHandle() else {
+            throw SFTPError.notPrepared
+        }
+        
+        let response = try await self.handler.fstat(handle: handle)
+        return response.attributes!
+    }
+    
+    public func write(_ data: Data, handle: HandleResponse) async throws {
+        guard let handle = handle.getHandle() else {
+            throw SFTPError.notPrepared
+        }
+        
+        _ = try await self.handler.write(to: handle, data: data, offset: 0)
+    }
+    
     public func write(_ data: Data, file: String, permissions: SFTPPermission = [.TRUNC, .CREAT, .WRITE]) async throws {
-        let handle = try await self.handler.open(path: file, permissions: permissions)
-        _ = try await self.handler.write(to: handle.handle, data: data, offset: 0)
+        let h = try await self.handler.open(path: file, permissions: permissions)
+        let handle = Handle(handle: h.handle)
+        try await self.write(data, handle: handle)
         
         do {
-            _ = try await self.handler.close(handle: handle.handle)
+            _ = try await self.handler.close(handle: h.handle)
         } catch {
             print("Failed to close handle for file \(file)")
         }

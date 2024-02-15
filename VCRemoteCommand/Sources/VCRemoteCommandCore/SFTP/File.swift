@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NIOCore
 
 struct FileAttrFlag: OptionSet {
     let rawValue: UInt32
@@ -15,6 +16,16 @@ struct FileAttrFlag: OptionSet {
     static let PERMISSIONS =  FileAttrFlag(rawValue: 0x00000004)
     static let ACMODTIME   =  FileAttrFlag(rawValue: 0x00000008)
     static let EXTENDED    =  FileAttrFlag(rawValue: 0x80000000)
+}
+
+extension ByteBuffer {
+    mutating func readOrThrow(length: Int) throws -> [UInt8] {
+        guard let byte = self.readBytes(length: length) else {
+            throw SFTPError.malformedMessage
+        }
+        
+        return byte
+    }
 }
 
 
@@ -28,6 +39,62 @@ public struct FileAttributes {
     public let atime: UInt32?
     public let mtime: UInt32?
     let extended_count: UInt32?
+    
+    init(buffer: inout ByteBuffer) throws {
+        let ByteLength = 4
+        
+        let startIndex = buffer.readerIndex
+        
+        var bytes = try buffer.readOrThrow(length: ByteLength)
+        self.flag = FileAttrFlag(rawValue: .from(bytes: bytes.reversed()))
+        if self.flag.contains(.SIZE) {
+            bytes = try buffer.readOrThrow(length: ByteLength * 2)
+            self.size = UInt64.from(bytes: bytes.reversed())
+        } else {
+            self.size = nil
+        }
+        
+        if self.flag.contains(.UIDGID) {
+            bytes = try buffer.readOrThrow(length: ByteLength)
+            self.uid = .from(bytes: bytes.reversed())
+            
+            bytes = try buffer.readOrThrow(length: ByteLength)
+            self.gid = .from(bytes: bytes.reversed())
+        } else {
+            self.uid = nil
+            self.gid = nil
+        }
+        
+        if self.flag.contains(.PERMISSIONS) {
+            bytes = try buffer.readOrThrow(length: ByteLength)
+            self.permissions = .from(bytes: bytes.reversed())
+        } else {
+            self.permissions = nil
+        }
+        
+        if self.flag.contains(.ACMODTIME) {
+            bytes = try buffer.readOrThrow(length: ByteLength)
+            self.atime = .from(bytes: bytes.reversed())
+            
+            bytes = try buffer.readOrThrow(length: ByteLength)
+            self.mtime = .from(bytes: bytes.reversed())
+        } else {
+            self.atime = nil
+            self.mtime = nil
+        }
+        
+        if self.flag.contains(.EXTENDED) {
+            bytes = try buffer.readOrThrow(length: ByteLength)
+            self.extended_count = .from(bytes: bytes.reversed())
+            for _ in 0..<Int(self.extended_count ?? 0) {
+                _ = try String.from(buffer: &buffer)
+            }
+        } else {
+            self.extended_count = nil
+        }
+        
+        self.byteSize = buffer.readerIndex - startIndex
+    }
 
     init(bytes: [UInt8]) {
         self.flag = FileAttrFlag(rawValue: .from(bytes: bytes[0..<4].reversed()))
@@ -64,9 +131,9 @@ public struct FileAttributes {
             self.extended_count = .from(bytes: bytes[x..<x+4].reversed())
             x += 4
             for _ in 0..<Int(self.extended_count ?? 0) {
-                let (read, first) = String.from(paddedData: Array(bytes[x...]), encoding: UTF8.self)
+                let (read, _) = String.from(paddedData: Array(bytes[x...]), encoding: UTF8.self)
                 x += Int(read)
-                let (read2, second) = String.from(paddedData: Array(bytes[x...]), encoding: UTF8.self)
+                let (read2, _) = String.from(paddedData: Array(bytes[x...]), encoding: UTF8.self)
                 x += Int(read2)
             }
         } else {
@@ -74,6 +141,14 @@ public struct FileAttributes {
         }
 
         self.byteSize = x
+    }
+    
+    public func modifiedDate() -> Date? {
+        guard let mtime = self.mtime else {
+            return nil
+        }
+        
+        return Date(timeIntervalSince1970: Double(mtime))
     }
 }
 

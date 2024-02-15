@@ -27,6 +27,9 @@ class FileViewManager {
     private var tasks = [AnyCancellable]()
     private var didForceClose: Bool = false
     
+    private var openHandle: Handle? = nil
+    private var lastLoadedDate: Date? = nil
+    
     init(path: String, client: RCSFTPClient?) {
         self.path = path
         self.file = File(path: path)
@@ -43,13 +46,16 @@ class FileViewManager {
         }
         self.state.onSaveAndClose = self.saveAndClose
         self.state.onForceClose = self.forceClose
+        self.state.onReloadRemote = self.load
+        self.state.onOverwriteRemote = { [weak self] in
+            self?.save(overrideModification: true)
+        }
         self.state.language = self.estimatedLanguage
         
         self.state.$content.sink { _ in
         } receiveValue: { [weak self] content in
             self?.state.hasChanges = content != self?.originalContent
         }.store(in: &self.tasks)
-
     }
     
     func load() {
@@ -61,7 +67,12 @@ class FileViewManager {
         self.hasAttemptedLoad = true
         Task {
             do {
-                let data = try await client.get(file: self.file.path)
+                let handle = try await client.open(file: self.file.path, permissions: .READ)
+                self.openHandle = handle
+                
+                let data = try await client.get(handle: handle)
+                self.lastLoadedDate = Date()
+                
                 let content = String(decoding: data, as: UTF8.self)
                 originalContent = content
                 DispatchQueue.main.async {
@@ -74,7 +85,7 @@ class FileViewManager {
         }
     }
     
-    func save(onCompletion: VoidLambda? = nil) {
+    func save(overrideModification: Bool = false, onCompletion: VoidLambda? = nil) {
         self.state.isWriting = true
         Task {
             guard let client = self.client else {
@@ -85,8 +96,18 @@ class FileViewManager {
                     throw EditorError.encodingFailed
                 }
                 
+                if let handler = self.openHandle,
+                   let attr = try? await client.stat(handle: handler),
+                   let mdate = attr.modifiedDate(),
+                   let loadDate = self.lastLoadedDate,
+                   mdate > loadDate && !overrideModification {
+                    state.presentRemoteModifiedAlert = true
+                    return
+                }
+                
                 let writtenContent = self.state.content
                 try await client.write(data, file: self.file.path)
+                self.lastLoadedDate = Date()
                 DispatchQueue.main.async {
                     self.originalContent = writtenContent
                     self.state.hasChanges = false

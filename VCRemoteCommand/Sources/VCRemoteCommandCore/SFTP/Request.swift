@@ -96,6 +96,14 @@ class SFTPCloseRequest: SFTPHandleRequest {
     }
 }
 
+class SFTPFStatRequest: SFTPHandleRequest {
+    init(requestId: UInt32, handle: String) {
+        super.init(requestId: requestId,
+                   type: .FSTAT,
+                   handle: handle)
+    }
+}
+
 class SFTPReadRequest: SFTPFullRequest {
     init(requestId: UInt32, handle: String, offset: UInt64, length: UInt32) {
         var buffer = ByteBuffer()
