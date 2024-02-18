@@ -232,7 +232,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     
     func closestLocation(to location: CGPoint) -> NSTextLocation? {
         guard let lineFragement = self.layoutManager.textLayoutFragment(for: location) else {
-            return nil
+            return contentStore.documentRange.endLocation
         }
         
         var closestX = lineFragement.layoutFragmentFrame.minX
@@ -249,7 +249,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
                 }
             }
         }
-        if closestXDelta > 10 && contentStore.offset(from: lineFragement.rangeInElement.location, to: lineFragement.rangeInElement.endLocation) > 1 {
+        if closestXDelta > 3 && contentStore.offset(from: lineFragement.rangeInElement.location, to: lineFragement.rangeInElement.endLocation) > 1 {
             closestTextLocation = contentStore.location(closestTextLocation, offsetBy: 1)!
         }
         
@@ -426,19 +426,22 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         }
         
         var range: NSTextRange? = nil
+        var nsRange: NSRange? = nil
         if let selectionRange = self.selectionRange {
             range = selectionRange
             self.selectionRange = nil
+            nsRange = NSRange(range!, provider: contentStore, inclusive: false)
         } else if let start = contentStore.location(carrotLocation, offsetBy: -1) {
-            range = NSTextRange(location: start, end: carrotLocation)
+            range = NSTextRange(location: start, end: start)
+            nsRange = NSRange(range!, provider: contentStore, inclusive: true)
         }
         
-        guard let range = range else {
+        guard let range = range, let r = nsRange else {
             return
         }
         
         textStore.beginEditing()
-        textStore.deleteCharacters(in: NSRange(range, provider: contentStore))
+        textStore.deleteCharacters(in: r)
         textStore.endEditing()
         
         for observer in textObservers {
@@ -453,9 +456,38 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         self.inputDelegate?.textDidChange(self)
     }
     
+    func setCarrotToEndOfDocument() {
+        let endLocation = contentStore.documentRange.endLocation
+        var fragment: NSTextLayoutFragment?
+        self.layoutManager.enumerateTextLayoutFragments(from: endLocation, options: [.reverse]) { f in
+            fragment = f
+            return false
+        }
+        
+        guard let fragment = fragment else {
+            return
+        }
+        
+        let isDoubleFragment = abs(fragment.layoutFragmentFrame.height - lineHeight * 2) < 2
+        
+        self.carrot.frame = CGRect(
+            x: isDoubleFragment ? fragment.layoutFragmentFrame.minX : fragment.layoutFragmentFrame.maxX,
+            y: fragment.layoutFragmentFrame.maxY - self.lineHeight,
+            width: self.carrot.frame.width,
+            height: self.lineHeight)
+    }
+    
     func updateCarrotLocation(scrollToCarrot: Bool = true) {
-        guard let carrotLocation = self.carrotLocation,
-              let lineFragment = self.layoutManager.textLayoutFragment(for: carrotLocation) else {
+        guard let carrotLocation = self.carrotLocation else {
+            return
+        }
+        
+        guard carrotLocation.compare(contentStore.documentRange.endLocation) != .orderedSame else {
+            self.setCarrotToEndOfDocument()
+            return
+        }
+        
+        guard let lineFragment = self.layoutManager.textLayoutFragment(for: carrotLocation) else {
             return
         }
     
@@ -504,7 +536,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     @objc func upPressed() {
         self.clearSelectionRange()
         if self.verticalKeyPressStartX == nil {
-            self.verticalKeyPressStartX = self.carrot.frame.minX
+            self.verticalKeyPressStartX = self.carrot.frame.maxX
         }
         self.moveCursorVertically(lines: 1)
     }
@@ -512,7 +544,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     @objc func downPressed() {
         self.clearSelectionRange()
         if self.verticalKeyPressStartX == nil {
-            self.verticalKeyPressStartX = self.carrot.frame.minX
+            self.verticalKeyPressStartX = self.carrot.frame.maxX
         }
         self.moveCursorVertically(lines: -1)
     }
@@ -529,10 +561,21 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     }
     
     func moveCursorHorizontially(offset: Int) {
-        if let location = self.carrotLocation {
-            self.carrotLocation = contentStore.location(location, offsetBy: offset)
-            self.updateCarrotLocation()
+        guard let location = self.carrotLocation else {
+            return
         }
+        
+        if let newLocation =  contentStore.location(location, offsetBy: offset) {
+            self.carrotLocation = newLocation
+        } else {
+            if offset > 0 {
+                self.carrotLocation = contentStore.documentRange.endLocation
+            } else {
+                self.carrotLocation = contentStore.documentRange.location
+            }
+        }
+        
+        self.updateCarrotLocation()
     }
     
     func moveCursorVertically(lines: Int) {
@@ -540,8 +583,12 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             return
         }
         
-        self.carrotLocation = closestLocation(to: 
-                                                CGPoint(x: self.verticalKeyPressStartX!,
+        guard let keyPress = self.verticalKeyPressStartX else {
+            return
+        }
+        
+        self.carrotLocation = closestLocation(to:
+                                                CGPoint(x: keyPress,
                                                         y: carrot.frame.minY - CGFloat(lines) * carrot.frame.height))
         self.updateCarrotLocation()
     }
@@ -607,7 +654,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
 }
 
 public extension NSRange {
-    init(_ textRange: NSTextRange, provider: NSTextElementProvider) {
+    init(_ textRange: NSTextRange, provider: NSTextElementProvider, inclusive: Bool = false) {
         let docLocation = provider.documentRange.location
 
         let start = provider.offset?(from: docLocation, to: textRange.location) ?? NSNotFound
@@ -621,8 +668,12 @@ public extension NSRange {
             self.init(location: NSNotFound, length: 0)
             return
         }
-
-        self.init(start..<end)
+        
+        if !inclusive {
+            self.init(start..<end)
+        } else {
+            self.init(start...end)
+        }
     }
 }
 
