@@ -163,6 +163,8 @@ class VCTextEditorViewController: UIViewController,
         findController.didSetIsActive = { value in
             self.onFindInFileSet?(value)
         }
+        
+        gutterView.lineHeight = textView.lineHeight
     }
     
     deinit {
@@ -199,9 +201,6 @@ class VCTextEditorViewController: UIViewController,
 
         textView.findWidestTextFragement()
         layoutManager.textViewportLayoutController.layoutViewport()
-        
-        gutterView.lineHeight = textView.lineHeight
-        gutterView.setNeedsDisplay()
         
         if language != .default && language != self.highlighter?.language {
             do {

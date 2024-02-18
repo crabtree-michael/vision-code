@@ -45,7 +45,14 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     let tapGesture = UITapGestureRecognizer()
     let holdGesture = UILongPressGestureRecognizer()
     
-    var attributes: TextAttributes = [:]
+    var attributes: TextAttributes = [:] {
+        didSet {
+            let oneLineStr = NSAttributedString(string: "One linj", attributes: attributes)
+            let size = oneLineStr.size()
+            
+            self.lineHeight = size.height
+        }
+    }
     var highlightColor: UIColor = .blue
     
     var recycler = TextLayoutFragmentViewRecycler()
@@ -100,16 +107,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         }
     }
     
-    var lineHeight: CGFloat {
-        var height: CGFloat = 0
-        self.layoutManager.enumerateTextLayoutFragments(from: layoutManager.documentRange.location,
-                                                        options: [.ensuresLayout]) { fragment in
-            height = fragment.layoutFragmentFrame.height
-            return false
-        }
-        
-        return height
-    }
+    var lineHeight: CGFloat
     
     override var keyCommands: [UIKeyCommand]? {
         return [
@@ -210,6 +208,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         self.layoutManager = manager
         self.contentStore = content
         self.fragmentLayerMap = .weakToWeakObjects()
+        self.lineHeight = 12
         super.init(frame: .zero)
         
         self.addSubview(contentView)
@@ -465,13 +464,13 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             if location.compare(carrotLocation) == .orderedSame {
                 if le {
                     found = true
-                    self.carrot.frame = CGRect(x: x, y: lineFragment.layoutFragmentFrame.minY, width: self.carrot.frame.width, height: lineFragment.layoutFragmentFrame.height)
+                    self.carrot.frame = CGRect(x: x, y: lineFragment.layoutFragmentFrame.minY, width: self.carrot.frame.width, height: self.lineHeight)
                 }
             }
         })
         
         if !found {
-            self.carrot.frame = CGRect(x: lineFragment.layoutFragmentFrame.maxX, y: lineFragment.layoutFragmentFrame.minY, width: self.carrot.frame.width, height: lineFragment.layoutFragmentFrame.height)
+            self.carrot.frame = CGRect(x: lineFragment.layoutFragmentFrame.maxX, y: lineFragment.layoutFragmentFrame.minY, width: self.carrot.frame.width, height: self.lineHeight)
         }
         
         if (self.carrot.frame.origin.y < self.contentOffset.y ||  self.carrot.frame.origin.y > self.contentOffset.y + self.frame.height) && scrollToCarrot {
