@@ -39,6 +39,7 @@ class VCTextEditorViewController: UIViewController,
     
     let editMenuSize = CGSize(width: 93, height: 25)
     
+    var treeSitterManager: TreeSitterManager?
     var highlighter: Highlighter?
     
     var findController: FindViewController!
@@ -165,6 +166,8 @@ class VCTextEditorViewController: UIViewController,
         }
         
         gutterView.lineHeight = textView.lineHeight
+        
+        textView.languageTokenizer = Tokenizer(provider: self.contentStorage)
     }
     
     deinit {
@@ -187,7 +190,7 @@ class VCTextEditorViewController: UIViewController,
     func update(_ text: String, language: CodeLanguage, showFindInFile: Bool) {
         self.findController.isActive = showFindInFile
         
-        guard (text != contentStorage.textStorage?.string || language.id != (self.highlighter?.language.id ?? .plainText)) else {
+        guard (text != contentStorage.textStorage?.string || language.id != (self.treeSitterManager?.language.id ?? .plainText)) else {
             return
         }
         
@@ -202,16 +205,21 @@ class VCTextEditorViewController: UIViewController,
         textView.findWidestTextFragement()
         layoutManager.textViewportLayoutController.layoutViewport()
         
-        if language != .default && language != self.highlighter?.language {
+        if language != .default && language != self.treeSitterManager?.language {
             do {
-                let highlighter = try Highlighter(layoutManager: self.layoutManager, provider: self.contentStorage, language: language)
-                highlighter.set(text: text)
+                let treeSitter = try TreeSitterManager(language: language)
+                let highlighter = try Highlighter(treeSitterManager: treeSitter,
+                                                  layoutManager: self.layoutManager,
+                                                  provider: self.contentStorage)
                 
-                if let h = self.highlighter {
-                    textView.remove(observer: h)
+                
+                treeSitter.set(text: text)
+                if let m = self.treeSitterManager {
+                    textView.remove(observer: m)
                 }
-                textView.add(observer: highlighter)
+                textView.add(observer: treeSitter)
                 self.highlighter = highlighter
+                self.treeSitterManager = treeSitter
             } catch {
                 print("Failed to initalize highlighter \(error)")
             }

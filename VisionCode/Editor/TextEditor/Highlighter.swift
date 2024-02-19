@@ -22,14 +22,9 @@ class RangedAttribute {
     }
 }
 
-class Highlighter: TextInputObserver {
+class Highlighter: TreeSitterManagerObserver {
     let layoutManager: NSTextLayoutManager
-    let language: CodeLanguage
-    let observerId = UUID().uuidString
     
-    private let tsLanguage: Language
-    private let parser: Parser
-    private var tree: MutableTree?
     private var highlightQuery: Query
     private var provider: NSTextElementProvider
     
@@ -37,54 +32,21 @@ class Highlighter: TextInputObserver {
     
     private var allActiveAttributes = [RangedAttribute]()
     
-    init(layoutManager: NSTextLayoutManager, provider: NSTextElementProvider, language: CodeLanguage) throws {
+    init(treeSitterManager: TreeSitterManager, layoutManager: NSTextLayoutManager, provider: NSTextElementProvider) throws {
         self.layoutManager = layoutManager
-        self.language = language
         self.provider = provider
-        
-        self.tsLanguage = language.language!
-        let config = try LanguageConfiguration(language)
-        self.parser = Parser()
-        try self.parser.setLanguage(config.language)
-        self.highlightQuery = config.queries[.highlights]!
-        
         self.theme = try? Theme(name: "theme")
+        self.highlightQuery = treeSitterManager.config.queries[.highlights]!
+        
+        treeSitterManager.add(observer: self)
     }
     
-    func set(text: String) {
-        self.tree = parser.parse(text)
-        self.setHighlightsFromTree(text)
-    }
-    
-    @objc func id() -> String {
-        return self.observerId
-    }
-    
-    @objc func textWillChange(in textView: VCTextInputView) {
+   func treeWillChange() {
         self.removeAllAttributes()
     }
     
-    @objc func textDidChange(in textView: VCTextInputView, oldRange: NSTextRange, newRange: NSTextRange, newValue: String) {
-//        if let oldStartOffset = oldRange.offset(provider: self.provider),
-//           let oldEndOffset = oldRange.endOffset(provider: self.provider),
-//           let newEndOffset = newRange.endOffset(provider: self.provider) {
-//            let edit = InputEdit(startByte: oldStartOffset,
-//                                 oldEndByte: oldEndOffset,
-//                                 newEndByte: newEndOffset,
-//                                 startPoint: .zero,
-//                                 oldEndPoint:.zero,
-//                                 newEndPoint: .zero)
-//            tree?.edit(edit)
-//            
-//            
-//            self.tree = parser.parse(tree: self.tree, string: newValue)
-//            self.setHighlightsFromTree(newValue)
-//        }
-        self.set(text: newValue)
-    }
-    
-    func setHighlightsFromTree(_ text: String) {
-        let cursor = self.highlightQuery.execute(in: self.tree!)
+    func treeDidChange(_ tree: MutableTree, with text: String) {
+        let cursor = self.highlightQuery.execute(in: tree)
         let highlights = cursor.resolve(with: .init(string: text)).highlights()
         
         for namedRange in highlights {
@@ -98,6 +60,9 @@ class Highlighter: TextInputObserver {
                 }
             }
         }
+    }
+    
+    func tokenRange(at index: NSTextLocation) {
     }
     
     private func addAttribute(_ attribute: NSAttributedString.Key, value: Any, for range: NSTextRange) 
@@ -180,5 +145,16 @@ extension LanguageConfiguration {
 extension CodeLanguage {
     func url(for query: Query.Definition) -> String {
         return Bundle.main.bundlePath.appending("/CodeEditLanguages_CodeEditLanguages.bundle/Languages/tree-sitter-\(self.tsName)/\(query.name).scm")
+    }
+}
+
+extension NSRange {
+    func textRange(from provider: NSTextElementProvider) -> NSTextRange? {
+        guard let beginning = provider.location?(provider.documentRange.location, offsetBy: self.lowerBound),
+              let ending = provider.location?(provider.documentRange.location, offsetBy: self.upperBound) else {
+            return nil
+        }
+        
+        return .init(location: beginning, end: ending)
     }
 }

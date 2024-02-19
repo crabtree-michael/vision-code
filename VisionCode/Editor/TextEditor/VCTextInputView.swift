@@ -44,6 +44,9 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     
     let tapGesture = UITapGestureRecognizer()
     let holdGesture = UILongPressGestureRecognizer()
+    let doubleTapGesture = UITapGestureRecognizer()
+    
+    var languageTokenizer: Tokenizer? = nil
     
     var attributes: TextAttributes = [:] {
         didSet {
@@ -221,6 +224,10 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         tapGesture.addTarget(self, action: #selector(onTap))
         addGestureRecognizer(tapGesture)
         
+        doubleTapGesture.addTarget(self, action: #selector(onDoubleTap))
+        doubleTapGesture.numberOfTapsRequired = 2
+        addGestureRecognizer(doubleTapGesture)
+        
         holdGesture.addTarget(self, action: #selector(onHoldGesture))
         holdGesture.minimumPressDuration = 0.25
         addGestureRecognizer(holdGesture)
@@ -274,6 +281,26 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         self.updateCarrotLocation()
         
         self.verticalKeyPressStartX = self.carrot.frame.minX
+    }
+    
+    @objc func onDoubleTap(_ gesture: UITapGestureRecognizer) {
+        guard let location = self.closestLocation(to: gesture.location(in: self.contentView)),
+              let range = self.languageTokenizer?.rangeForToken(at: location) else {
+            return
+        }
+        
+        if !self.isFirstResponder {
+            _ = self.becomeFirstResponder()
+        }
+        
+        // Tokenizer provides an inclusive range
+        let endLocation = self.contentStore.location(range.endLocation, offsetBy: 1)
+        let adjustedRange = NSTextRange(location: range.location, end: endLocation)
+        
+        self.selectionRange = adjustedRange
+        self.carrotLocation = adjustedRange?.endLocation
+        self.updateCarrotLocation()
+        layoutManager.textViewportLayoutController.layoutViewport()
     }
     
     @objc func onHoldGesture(_ gesture: UILongPressGestureRecognizer) {
