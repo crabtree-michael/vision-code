@@ -29,7 +29,8 @@ struct FileView: View {
                 ZStack{
                     VCTextEditor(text: $state.content,
                                  language: $state.language,
-                                 showFindInFile: $state.showFindInFile)
+                                 showFindInFile: $state.showFindInFile,
+                                 tabWidth: $state.tabWidth)
                 }
             }
         }

@@ -64,6 +64,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     var onDidDeslectText: VoidLambda? = nil
     var onOpenFindInFile: VoidLambda? = nil
     
+    var tabWidth: TabWidth
+    
     private var textObservers: [TextInputObserver] = []
     
     private var updateCursorLocationOnNextLayout: Bool = true
@@ -212,6 +214,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         self.contentStore = content
         self.fragmentLayerMap = .weakToWeakObjects()
         self.lineHeight = 12
+        self.tabWidth = .fourTabs
         super.init(frame: .zero)
         
         self.addSubview(contentView)
@@ -625,6 +628,10 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         self.layoutManager.textViewportLayoutController.layoutViewport()
     }
     
+    func insertTab() {
+        self.insertText(self.tabWidth.tabString)
+    }
+    
     @objc func copySelection() {
         guard let selection = selectionRange,
               let store = contentStore.textStorage else {
@@ -672,7 +679,11 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         case .keyboardF:
             if press.key?.modifierFlags == .command {
                 self.onOpenFindInFile?()
+                return
             }
+        case .keyboardTab:
+            self.insertTab()
+            return
         default: break
         }
         

@@ -10,54 +10,60 @@ import SwiftUI
 import CodeEditLanguages
 
 struct FileViewToolBar: View {
-    var onSave: VoidLambda? = nil
-    var onOpenFinder: VoidLambda? = nil
-    var isWriting: Bool = false
-    @Binding var language: CodeLanguage
+    @ObservedObject var state: FileViewState
     
     var body: some View {
         HStack {
             Spacer()
             HStack {
-                if !isWriting {
-                    Button {
-                        onSave?()
-                    } label: {
-                        Label(title: {
-                            Text("Save")
-                        }) {
-                            Image(systemName: "network.badge.shield.half.filled")
-                        }
+                if !state.isWriting {
+                Button {
+                    state.onSave?()
+                } label: {
+                    Label(title: {
+                        Text("Save")
+                    }) {
+                        Image(systemName: "network.badge.shield.half.filled")
                     }
-                    .keyboardShortcut("s", modifiers: .command)
-                    .controlSize(.regular)
-                    Button {
-                        onOpenFinder?()
-                    } label: {
-                        Label(title: {
-                            Text("Find")
-                        }) {
-                            Image(systemName: "magnifyingglass")
-                        }
-                    }
-                    .keyboardShortcut("f", modifiers: .command)
-                    .controlSize(.regular)
-                    Picker("Language", selection: $language) {
-                        ForEach(CodeLanguage.allLanguages, id: \.id) { language in
-                            Text(language.tsName)
-                                .tag(language)
-                        }
-                    }
-                } else {
-                    ProgressView()
-                        .scaleEffect(CGSize(width: 0.7,
-                                            height: 0.7))
+                }
+                .keyboardShortcut("s", modifiers: .command)
+                .controlSize(.regular)
+            } else {
+                ProgressView()
+                    .scaleEffect(CGSize(width: 0.7,
+                                        height: 0.7))
+                    .padding(EdgeInsets(top: 0,
+                                        leading: 5,
+                                        bottom: 0,
+                                        trailing: 5))
+            }
+
+            Button {
+                state.showFindInFile = true
+            } label: {
+                Label(title: {
+                    Text("Find")
+                }) {
+                    Image(systemName: "magnifyingglass")
                 }
             }
-            .padding(EdgeInsets(top: 7,
-                                leading: 10,
-                                bottom: 7,
-                                trailing: 10))
+            .keyboardShortcut("f", modifiers: .command)
+            .controlSize(.regular)
+                Picker("Language", selection: $state.language) {
+                ForEach(CodeLanguage.allLanguages, id: \.id) { language in
+                    Text(language.tsName)
+                        .tag(language)
+                }
+            }
+            }
+            Picker("Tab width", selection: $state.tabWidth) {
+                ForEach(TabWidth.primarySet) { width in
+                    Text(width.description)
+                        .tag(width)
+                    
+                }
+            }
+            .padding(.trailing)
         }
         .frame(maxHeight: 52)
         .background(Color(.clear))
@@ -69,12 +75,12 @@ struct FileViewToolBar: View {
         let state = FileViewState(file: .init(path: "test"))
         state.isWriting = true
         state.language = .c
+        state.tabWidth = TabWidth(width: 2, spacing: .space)
         return state
     }
     
     @ObservedObject var s = state
 
     
-    return FileViewToolBar(onSave: state.onSave,
-                           language: $s.language)
+    return FileViewToolBar(state: state)
 }

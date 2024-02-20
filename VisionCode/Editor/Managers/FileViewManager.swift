@@ -74,8 +74,9 @@ class FileViewManager {
                 self.lastLoadedDate = Date()
                 
                 let content = String(decoding: data, as: UTF8.self)
-                originalContent = content
                 DispatchQueue.main.async {
+                    self.originalContent = content
+                    self.state.tabWidth = .estimate(from: content)
                     self.state.content = content
                     self.state.isLoading = false
                 }

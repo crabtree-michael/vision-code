@@ -22,27 +22,13 @@ struct Editor: View {
                 ZStack {
                     ForEach(Array(zip(state.openFileStates.indices, state.openFileStates)),
                             id: \.0) { (index, fileState) in
-                        FileView(state: fileState)
-                            .opacity(activeIndex == index ? 1 : 0)
-                    }
-                    if let activeIndex = state.activeIndex {
                         VStack {
-                            Spacer()
-                            FileViewToolBar(
-                                onSave: {
-                                    if let index = state.activeIndex {
-                                        state.openFileStates[index].onSave?()
-                                    }
-                                },
-                                onOpenFinder: {
-                                    if let index = state.activeIndex {
-                                        state.openFileStates[index].showFindInFile = true
-                                    }
-                                },
-                                isWriting: state.openFileStates[activeIndex].isWriting,
-                                language: $state.openFileStates[activeIndex].language)
-                            .background(.clear)
+                            FileView(state: fileState)
+                            FileViewToolBar(state: fileState)
+                                .background(.clear)
                         }
+                        .opacity(activeIndex == index ? 1 : 0)
+                        
                     }
                 }
             } else {
@@ -57,4 +43,25 @@ struct Editor: View {
         }
         
     }
+}
+
+#Preview {
+    
+    var fileState: FileViewState {
+        let state = FileViewState(file: .init(path: "test"))
+        state.isLoading = false
+        state.content = longFile
+        state.presentUnsavedChangesAlert = false
+        state.showFindInFile = true
+        return state
+    }
+    
+    var state: EditorViewState {
+        let state = EditorViewState(title: "test")
+        state.activeIndex = 0
+        state.openFileStates = [fileState]
+        return state
+    }
+    
+    return Editor(state: state)
 }

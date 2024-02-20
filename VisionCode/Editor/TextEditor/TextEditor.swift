@@ -187,8 +187,9 @@ class VCTextEditorViewController: UIViewController,
         layoutManager.textViewportLayoutController.layoutViewport()
     }
     
-    func update(_ text: String, language: CodeLanguage, showFindInFile: Bool) {
+    func update(_ text: String, language: CodeLanguage, showFindInFile: Bool, tabWidth: TabWidth) {
         self.findController.isActive = showFindInFile
+        textView.tabWidth = tabWidth
         
         guard (text != contentStorage.textStorage?.string || language.id != (self.treeSitterManager?.language.id ?? .plainText)) else {
             return
@@ -250,6 +251,7 @@ struct VCTextEditor: UIViewControllerRepresentable {
     @Binding var text: String
     @Binding var language: CodeLanguage
     @Binding var showFindInFile: Bool
+    @Binding var tabWidth: TabWidth
     
     func makeUIViewController(context: Context) -> VCTextEditorViewController {
         let controller = VCTextEditorViewController()
@@ -265,9 +267,14 @@ struct VCTextEditor: UIViewControllerRepresentable {
             }
         }
         uiViewController.onFindInFileSet = { value in
-            self.showFindInFile = value
+            if value != self.showFindInFile {
+                self.showFindInFile = value
+            }
         }
-        uiViewController.update(text, language: language, showFindInFile: showFindInFile)
+        uiViewController.update(text, 
+                                language: language, 
+                                showFindInFile: showFindInFile,
+                                tabWidth: tabWidth)
     }
 }
 
