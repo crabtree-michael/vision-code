@@ -26,7 +26,7 @@ class RepositoryEditorViewManager {
         self.editor = EditorViewManager(path: path, remote: connection)
         self.browser = RepositoryFileBrowserManager(path: path, remote: connection)
 
-        self.terminal = TerminalManager(connection: connection)
+        self.terminal = TerminalManager(connection: connection, directory: path)
         
         self.state = RepositoryEditorViewState(editorState: editor.state, browserState: browser.state, terminalState: self.terminal.state)
         self.path = path

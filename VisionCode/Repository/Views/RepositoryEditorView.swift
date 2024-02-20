@@ -120,7 +120,8 @@ struct ContentView_Previews: PreviewProvider {
             let editorState = EditorViewState(title: "fantasy-backend")
             let terminalState = TerminalViewState(connection:
                                                     Connection(connection: RCConnection(host: "", port: 0, username: "", password: ""),
-                                                               state: ConnectionViewState()))
+                                                               state: ConnectionViewState()),
+            directory: "test/")
             let state = RepositoryEditorViewState(
                 editorState: editorState,
                 browserState: browserState,

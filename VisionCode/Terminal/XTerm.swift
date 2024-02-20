@@ -16,12 +16,17 @@ class XTermViewController: UIViewController, TerminalViewDelegate, ConnectionUse
     let terminalView = SwiftTerm.TerminalView(frame: CGRect(x: 100, y: 100, width: 800, height: 800))
     var shell: RCPseudoTerminal?
     
+    var currentDirectory: String
+    
     private let identifier: UUID
     private var tasks = [AnyCancellable]()
+    private let root: String
     
-    init(connection: Connection) {
+    init(connection: Connection, root: String) {
         self.connection = connection
         self.identifier = UUID()
+        self.root = root
+        self.currentDirectory = root
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -63,6 +68,9 @@ class XTermViewController: UIViewController, TerminalViewDelegate, ConnectionUse
     
     func hostCurrentDirectoryUpdate(source: SwiftTerm.TerminalView, directory: String?) {
         // TODO: Implement me
+        if let directory = directory {
+            self.currentDirectory = directory
+        }
     }
     
     func send(source: SwiftTerm.TerminalView, data: ArraySlice<UInt8>) {
@@ -123,6 +131,10 @@ class XTermViewController: UIViewController, TerminalViewDelegate, ConnectionUse
                     }
                 }
                 
+                if let cdCmd = "cd \(self.currentDirectory)\n".data(using: .utf8) {
+                    try await self.shell?.send(ArraySlice(cdCmd))
+                }
+                
                 
                 try await self.shell!.setSize(terminalCharacterWidth: dims.cols, terminalRowHeight: dims.rows, terminalPixelWidth: Int(terminalView.contentSize.width), terminalPixelHeight: Int(terminalView.contentSize.height))
             } catch {
@@ -151,9 +163,10 @@ struct XTerm: UIViewControllerRepresentable {
     typealias UIViewControllerType = XTermViewController
     
     @State var connection: Connection
+    let rootDirectory: String
     
     func makeUIViewController(context: Context) -> XTermViewController {
-        let controller = XTermViewController(connection: connection)
+        let controller = XTermViewController(connection: connection, root: rootDirectory)
         return controller
     }
 

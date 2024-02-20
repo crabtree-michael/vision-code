@@ -13,8 +13,8 @@ class TerminalManager {
     private let connection: Connection
     
     
-    init(connection: Connection) {
+    init(connection: Connection, directory: String) {
         self.connection = connection
-        self.state = TerminalViewState(connection: connection)
+        self.state = TerminalViewState(connection: connection, directory: directory)
     }
 }

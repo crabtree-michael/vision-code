@@ -12,7 +12,7 @@ struct TerminalView: View {
     @ObservedObject var state: TerminalViewState
     
     var body: some View {
-        XTerm(connection: state.connection)
+        XTerm(connection: state.connection, rootDirectory: state.directory)
             .padding()
             .background(.ultraThickMaterial)
             .clipShape(.rect(cornerRadius: 5))
@@ -22,5 +22,6 @@ struct TerminalView: View {
 #Preview {
     TerminalView(state: TerminalViewState(connection:
                                             Connection(connection: RCConnection(host: "", port: 0, username: "", password: ""),
-                                                       state: ConnectionViewState())))
+                                                       state: ConnectionViewState()),
+                                         directory: "test/"))
 }

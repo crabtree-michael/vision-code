@@ -34,9 +34,11 @@ enum CommandState {
 }
 
 class TerminalViewState: ObservableObject {
+    let directory: String
     @Published var connection: Connection
     
-    init(connection: Connection) {
+    init(connection: Connection, directory: String) {
         self.connection = connection
+        self.directory = directory
     }
 }
