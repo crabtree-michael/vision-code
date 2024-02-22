@@ -23,5 +23,13 @@ final class TrieNodeTests: XCTestCase {
         assert(node.branches["h"] != nil)
         assert(node.retrieve(key: "Hello") == ["Goodbye"])
     }
+    
+    func testRemove() throws {
+        let node = TrieNode<String, String>()
+        node.insert(value: "Goodbye", for: "Hello")
+        node.insert(value: "Hello", for: "Hello")
+        node.remove(value: "Goodbye", for: "Hello")
+        assert(node.retrieve(key: "Hello") == ["Hello"])
+    }
 
 }

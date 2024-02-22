@@ -18,6 +18,41 @@ struct FileCellView: View {
     @State var collapsed: Bool
     
     var onOpen: FileLambda?  = nil
+    var onReloadDirectory: FileLambda? = nil
+    
+    func onTap() {
+        guard state.loaded else {
+            return
+        }
+        guard !empty else {
+            self.onOpen?(state.file)
+            return
+        }
+        
+        self.collapsed = !self.collapsed
+    }
+    
+    var menuItems: some View {
+        Group {
+            Button {
+                self.onTap()
+            } label: {
+                if !empty && !collapsed {
+                    Label("Close", systemImage: "eye.slash")
+                } else {
+                    Label("Open", systemImage: "eye")
+                }
+                
+            }
+            if !empty {
+                Button {
+                    self.onReloadDirectory?(state.file)
+                } label: {
+                    Label("Reload", systemImage: "arrow.clockwise")
+                }
+            }
+        }
+    }
     
     var body: some View {
         LazyVStack(spacing: 4) {
@@ -25,9 +60,9 @@ struct FileCellView: View {
                 Color.black.opacity(0.0001)
                     .frame(minHeight: 48)
                 HStack {
-                    Spacer(minLength: 12 * CGFloat(indentationLevel))
+                    Color.black.opacity(0.0001)
+                        .frame(maxWidth: 12 * CGFloat(indentationLevel))
                     HStack(alignment: .center) {
-                        Spacer()
                         if (!state.loaded) {
                             ProgressView()
                                 .frame(maxHeight: 0)
@@ -39,37 +74,32 @@ struct FileCellView: View {
                             Image(systemName: state.file.icon.rawValue)
                         }
                         
-                        Spacer()
                     }
                     .frame(maxWidth: 12)
                     Text(state.file.name)
                         .padding(.vertical, 6)
-                        .font(indentationLevel == 0 ? .title2 : .subheadline)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    Spacer()
+                    Color.black.opacity(0.0001)
+                        .frame(maxWidth: .infinity)
                 }
             }
+            .onTapGesture {
+                self.onTap()
+            }
+            .contextMenu(ContextMenu(menuItems: {
+                menuItems
+            }))
             if (!empty && !collapsed && state.loaded) {
                 ForEach(state.subnodes, id: \.file.path) { state in
                     FileCellView(state: state,
                                  indentationLevel: indentationLevel + 1,
                                  collapsed: true,
-                                 onOpen: self.onOpen)
+                                 onOpen: self.onOpen,
+                                 onReloadDirectory: self.onReloadDirectory)
                 }
             }
         }
         .hoverEffect()
-        .onTapGesture {
-            guard state.loaded else {
-                return
-            }
-            guard !empty else {
-                self.onOpen?(state.file)
-                return
-            }
-            
-            self.collapsed = !self.collapsed
-        }
     }
 }
 

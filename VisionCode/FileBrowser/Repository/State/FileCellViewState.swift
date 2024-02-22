@@ -23,4 +23,28 @@ class FileCellViewState: ObservableObject, CustomStringConvertible {
             return FileCellViewState(node: node)
         })
     }
+    
+    func update(subnode path: String, loaded: Bool, subnodes: [FileCellViewState]) {
+        guard let node = self.find(path: path, currentComponentIndex: self.file.pathComponents.count) else {
+            return
+        }
+        
+        node.loaded = loaded
+        node.subnodes = subnodes
+    }
+    
+    private func find(path: String, currentComponentIndex: Int) -> FileCellViewState? {
+        if self.file.path == path {
+            return self
+        }
+        
+        let component = (path as NSString).pathComponents[currentComponentIndex]
+        
+        for node in self.subnodes {
+            if node.file.name == component {
+                return node.find(path: path, currentComponentIndex: currentComponentIndex + 1)
+            }
+        }
+        return nil
+    }
 }

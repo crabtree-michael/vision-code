@@ -35,6 +35,8 @@ class RepositoryFileBrowserManager: ConnectionUser {
         self.loading = false
         self.remote = remote
         self.identifier = UUID()
+        
+        self.state.refreshDirectory = self.reload
     }
     
     func id() -> String {
@@ -51,30 +53,77 @@ class RepositoryFileBrowserManager: ConnectionUser {
                 return
             }
             
-            let traverser = BreadthFirstPathTraversal(root: self.root, load: self.get)
-            traverser.onNodeLoaded = self.onTraversalLoadedNode
-            self.loading = true
-            try await traverser.traverse()
-            
-            DispatchQueue.main.async {
-                self.loading = false
-            }
+            try await self.load(node: self.root)
         } catch {
             DispatchQueue.main.async {
                 self.state.error = error
             }
         }
-
+    }
+    
+    func reload(folder: File) {
+        guard folder.isFolder else {
+            return
+        }
+        
+        self.state.root.update(subnode: folder.path, loaded: false, subnodes: [])
+        
+        Task {
+            do {
+                let node = PathNode(file: folder, subnodes: [])
+                try await self.load(node: node)
+            } catch {
+                print("Failed to load \(error)")
+            }
+        }
+    }
+    
+    func load(node: PathNode) async throws {
+        let isRoot = node.file.path == self.root.file.path
+        if isRoot {
+            self.loading = true
+        }
+        
+        let traverser = BreadthFirstPathTraversal(root: node, load: self.get)
+        traverser.onNodeLoaded = self.onTraversalLoadedNode
+        try await traverser.traverse()
+        if isRoot {
+            self.loading = false
+        }
     }
     
     func onTraversalLoadedNode(_ traverser: BreadthFirstPathTraversal, node: PathNode) {
-        self.root = traverser.root.copy()
+        let view = FileCellViewState(node: node)
         DispatchQueue.main.async {
-            self.state.root = FileCellViewState(node: self.root)
+            if view.file.path == self.path {
+                self.state.root = view
+                return 
+            }
+            self.state.root.update(subnode: view.file.path, loaded: node.loaded, subnodes: view.subnodes)
+        }
+        
+        var oldNode: PathNode?
+        if node.file.path == self.path {
+            oldNode = self.root
+            self.root = node
+            
+        } else {
+            oldNode = self.root.update(node: node)
+        }
+        
+        if let oldNode = oldNode {
+            self.removeNodeFromTrie(node: oldNode)
         }
         
         for n in node.subnodes {
             self.trieRoot.insert(value: n, for: n.file.name)
+        }
+    }
+    
+    private func removeNodeFromTrie(node: PathNode) {
+        self.trieRoot.remove(value: node, for: node.file.name)
+        for n in node.subnodes {
+            self.removeNodeFromTrie(node: n)
         }
     }
     
@@ -92,7 +141,7 @@ class RepositoryFileBrowserManager: ConnectionUser {
             do {
                 try await client.close(response: response)
             } catch {
-                print("Failed to close \(path)")
+                print("Failed to close \(path): \(error)")
             }
         }
         return response.viewFiles(path)

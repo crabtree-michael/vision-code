@@ -7,14 +7,56 @@
 
 import SwiftUI
 
+struct IconOnlyButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration
+            .label
+            .labelStyle(.iconOnly)
+            .padding()
+            .hoverEffect()
+    }
+}
+
+
 struct RepositoryFilesView: View {
     @ObservedObject var state: RepositoryFilesViewState
     
     var body: some View {
         ZStack {
             VStack {
+                HStack(alignment: .center) {
+                    Text(state.root.file.name)
+                        .font(.title)
+                    Spacer()
+                    if (state.root.loaded) {
+                        Button(action: {
+                            self.state.refreshDirectory?(state.root.file)
+                        }, label: {
+                            Label(title: {
+                                Text("Refresh")
+                            }, icon: {
+                                Image(systemName: "arrow.clockwise")
+                            })
+                        })
+                        .buttonStyle(IconOnlyButtonStyle())
+                    } else {
+                        ProgressView()
+                            .scaleEffect(
+                                CGSize(width: 0.4, height: 0.4))
+                    }
+                }
+                .padding([.top, .horizontal], 4)
                 ScrollView {
-                    FileCellView(state: state.root, indentationLevel: 0, collapsed: false, onOpen: state.onOpenFile)
+                    LazyVStack(spacing: 4)
+                    {
+                        ForEach(state.root.subnodes, id: \.file.path) { state in
+                            FileCellView(state: state,
+                                         indentationLevel: 0,
+                                         collapsed: true,
+                                         onOpen: self.state.onOpenFile,
+                                         onReloadDirectory: self.state.refreshDirectory)
+                        }
+                    }
                 }
                 Spacer(minLength: 46)
             }
@@ -72,14 +114,17 @@ struct RepositoryFilewsView_Previews: PreviewProvider {
         let file4 = File(path: "/michael/smith/text.txt", isFolder: false)
         let file5 = File(path: "/michael/test.txt", isFolder: false)
         
-        return PathNode(file: File(path: "/michael"), subnodes: [
-            PathNode(file: File(path: "/michael/george", icon: .folder, isFolder: true), subnodes: [
-                PathNode(file: file1, subnodes: [], loaded: true),
-                PathNode(file: file2, subnodes: [], loaded: true)], loaded: true),
-            PathNode(file: File(path: "/michael/smith", icon: .folder, isFolder: true), subnodes:
-                        [PathNode(file: file4, subnodes: []),
-                         PathNode(file: File(path: "/michael/smith/john", icon: .folder, isFolder: true), subnodes: [PathNode(file: file3, subnodes: [])])]),
-            PathNode(file: file5, subnodes: [])], loaded: true)
+        return PathNode(file: File(path: "/michael"),
+                        subnodes: [
+                            PathNode(file: File(path: "/michael/george", icon: .folder, isFolder: true), subnodes: [
+                                PathNode(file: file1, subnodes: [], loaded: true),
+                                PathNode(file: file2, subnodes: [], loaded: true)], loaded: true),
+                            PathNode(file: File(path: "/michael/smith", icon: .folder, isFolder: true), subnodes:
+                                        [PathNode(file: file4, subnodes: []),
+                                         PathNode(file: File(path: "/michael/smith/john", icon: .folder, isFolder: true), subnodes: [PathNode(file: file3, subnodes: [])])]),
+                            PathNode(file: file5, subnodes: [])
+                        ],
+                        loaded: false)
     }
     
     static var connectionState: ConnectionViewState {

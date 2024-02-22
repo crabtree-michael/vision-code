@@ -92,13 +92,18 @@ class BreadthFirstPathTraversal {
                 childCount += 1
             }
             
-            parents.append(PlannedPathNode(node: node, childCount: childCount))
+            
+            if childCount > 0 {
+                parents.append(PlannedPathNode(node: node, childCount: childCount))
+            }
+               
             if currentParentIndex != -1 {
                 self.appendToParent(node)
             } else {
                 currentParentIndex += 1
+                self.onNodeLoaded?(self, self.root)
             }
-                           
+            
             node.visited = true
             currentIndex += 1
         }

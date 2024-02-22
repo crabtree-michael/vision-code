@@ -28,6 +28,10 @@ struct File {
     var modifiedDate: Date?
     var accessedDate : Date?
     
+    var pathComponents: [String] {
+        return (self.path as NSString).pathComponents
+    }
+    
     init(path: String, icon: FileIcon = .file, isFolder: Bool = false, content: String = "") {
         self.path = path
         self.icon = isFolder ? .folder : .file
@@ -51,7 +55,7 @@ struct File {
     }
 }
 
-class PathNode {
+class PathNode: Hashable {
     let file: File
     var subnodes: [PathNode] = []
     var visited: Bool = false
@@ -62,6 +66,14 @@ class PathNode {
         self.file = file
         self.subnodes = subnodes
         self.loaded = loaded
+    }
+    
+    static func == (lhs: PathNode, rhs: PathNode) -> Bool {
+        return lhs.file.path == rhs.file.path
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(file.path)
     }
     
     func copy() -> PathNode {
@@ -75,5 +87,31 @@ class PathNode {
         c.loaded = self.loaded
         c.skipped = self.skipped
         return c
+    }
+    
+    func update(node: PathNode) -> PathNode? {
+        guard let parentNode = self.findParent(path: node.file.path, currentComponentIndex: self.file.pathComponents.count),
+              let index = parentNode.subnodes.firstIndex(where: { $0.file.path == node.file.path }) else {
+            return nil
+        }
+        let oldNode = parentNode.subnodes[index]
+        parentNode.subnodes[index] = node
+        
+        return oldNode
+    }
+    
+    private func findParent(path: String, currentComponentIndex: Int) -> PathNode? {
+        let component = (path as NSString).pathComponents[currentComponentIndex]
+        
+        for node in self.subnodes {
+            if node.file.path == path {
+                return self
+            }
+            if node.file.name == component {
+                return node.findParent(path: path, currentComponentIndex: currentComponentIndex + 1)
+            }
+        }
+        
+        return nil
     }
 }
