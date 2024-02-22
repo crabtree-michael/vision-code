@@ -77,10 +77,8 @@ struct FileCellView: View {
                     }
                     .frame(maxWidth: 12)
                     Text(state.file.name)
-                        .padding(.vertical, 6)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                    Color.black.opacity(0.0001)
-                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
                 }
             }
             .onTapGesture {
@@ -110,7 +108,7 @@ struct FileCellView: View {
                                 [PathNode(file: File(path: "test/green.txt"), subnodes: []),
                                  PathNode(file: File(path: "test/green2.txt"), subnodes: []),
                                  PathNode(file: File(path: "test/blue.txt"), subnodes: [], loaded: true),
-                                  PathNode(file: File(path: "test/blue2.txt"), subnodes: [], loaded: true)]
+                                  PathNode(file: File(path: "test/blue2asdflajsdfaslkdf.txt"), subnodes: [], loaded: true)]
                             )
         root.loaded = true
         return FileCellViewState(node: root)
