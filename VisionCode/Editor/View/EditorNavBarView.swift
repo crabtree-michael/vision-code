@@ -54,6 +54,27 @@ struct EditorNavBar: View {
             .opacity(0.0001)
             .keyboardShortcut("w", modifiers: .command)
             
+            Button {
+                if let index = state.activeIndex {
+                    self.state.openFileStates[index].onSave?()
+                }
+            } label: {
+                Label("Save", systemImage: "test")
+            }
+            .opacity(0.0001)
+            .keyboardShortcut("s", modifiers: .command)
+            
+            Button {
+                if let index = state.activeIndex {
+                    self.state.openFileStates[index].showFindInFile = true
+                }
+            } label: {
+                Label("Save", systemImage: "test")
+            }
+            .opacity(0.0001)
+            .keyboardShortcut("f", modifiers: .command)
+            
+            
             VStack(spacing: 2) {
                 Button(action: {
                     self.state.onQuickOpen?()

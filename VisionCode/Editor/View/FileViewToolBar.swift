@@ -16,7 +16,7 @@ struct FileViewToolBar: View {
         HStack {
             Spacer()
             HStack {
-                if !state.isWriting {
+            if !state.isWriting {
                 Button {
                     state.onSave?()
                 } label: {
@@ -26,7 +26,6 @@ struct FileViewToolBar: View {
                         Image(systemName: "network.badge.shield.half.filled")
                     }
                 }
-                .keyboardShortcut("s", modifiers: .command)
                 .controlSize(.regular)
             } else {
                 ProgressView()
@@ -47,7 +46,6 @@ struct FileViewToolBar: View {
                     Image(systemName: "magnifyingglass")
                 }
             }
-            .keyboardShortcut("f", modifiers: .command)
             .controlSize(.regular)
                 Picker("Language", selection: $state.language) {
                 ForEach(CodeLanguage.allLanguages, id: \.id) { language in
