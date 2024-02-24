@@ -31,6 +31,7 @@ class Highlighter: TreeSitterManagerObserver {
     private let theme: Theme
     
     private var allActiveAttributes = [RangedAttribute]()
+    private var treeSitterManager: TreeSitterManager
     
     
     init(theme: Theme,
@@ -42,7 +43,8 @@ class Highlighter: TreeSitterManagerObserver {
         self.provider = provider
         self.highlightQuery = treeSitterManager.config.queries[.highlights]!
         
-        treeSitterManager.add(observer: self)
+        self.treeSitterManager = treeSitterManager
+        self.treeSitterManager.add(observer: self)
     }
     
    func treeWillChange() {
@@ -67,7 +69,11 @@ class Highlighter: TreeSitterManagerObserver {
     }
     
     func highlightName(for range: NSTextRange, in text: String) -> String? {
-        let cursor = self.highlightQuery.execute(in: self.lastTree!)
+        guard let tree = treeSitterManager.mutableTree else {
+            return nil
+        }
+        
+        let cursor = self.highlightQuery.execute(in: tree)
         let highlights = cursor.resolve(with: .init(string: text)).highlights()
         
         for namedRange in highlights {
