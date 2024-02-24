@@ -30,7 +30,6 @@
 		D81BAC632B6E5D0500A080DF /* TreeSitterSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D81BAC622B6E5D0500A080DF /* TreeSitterSwift */; };
 		D81BAC672B6EB74200A080DF /* Highlighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81BAC662B6EB74200A080DF /* Highlighter.swift */; };
 		D81BAC692B6EB80200A080DF /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81BAC682B6EB80200A080DF /* Content.swift */; };
-		D81BAC6B2B6F281F00A080DF /* theme.json in Resources */ = {isa = PBXBuildFile; fileRef = D81BAC6A2B6F281F00A080DF /* theme.json */; };
 		D81BAC6D2B6F29E100A080DF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81BAC6C2B6F29E000A080DF /* Theme.swift */; };
 		D8393BAE2B6870E9004018DC /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8393BAD2B6870E9004018DC /* Models.swift */; };
 		D8393BB02B687113004018DC /* GutterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8393BAF2B687113004018DC /* GutterView.swift */; };
@@ -127,7 +126,6 @@
 		D80E37AC2B744A9B008D0FFA /* XTerm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XTerm.swift; sourceTree = "<group>"; };
 		D81BAC662B6EB74200A080DF /* Highlighter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Highlighter.swift; sourceTree = "<group>"; };
 		D81BAC682B6EB80200A080DF /* Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Content.swift; sourceTree = "<group>"; };
-		D81BAC6A2B6F281F00A080DF /* theme.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = theme.json; sourceTree = "<group>"; };
 		D81BAC6C2B6F29E000A080DF /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		D8393BAD2B6870E9004018DC /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		D8393BAF2B687113004018DC /* GutterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GutterView.swift; sourceTree = "<group>"; };
@@ -343,7 +341,6 @@
 				D840A68D2B5A0A31002F3303 /* VisionCodeApp.swift */,
 				D840A6912B5A0A32002F3303 /* Assets.xcassets */,
 				D840A6932B5A0A32002F3303 /* VisionCode.entitlements */,
-				D81BAC6A2B6F281F00A080DF /* theme.json */,
 				D840A6942B5A0A32002F3303 /* Preview Content */,
 			);
 			path = VisionCode;
@@ -618,7 +615,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D81BAC6B2B6F281F00A080DF /* theme.json in Resources */,
 				D840A6962B5A0A32002F3303 /* Preview Assets.xcassets in Resources */,
 				D803F0FB2B89C939008DAE32 /* OneDark-Pro.json in Resources */,
 				D840A6922B5A0A32002F3303 /* Assets.xcassets in Resources */,
