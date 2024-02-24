@@ -12,7 +12,7 @@ class Theme {
     private let map:[String: UIColor]
     
     init(name: String) throws {
-        guard let path = Bundle.main.path(forResource: "theme", ofType: "json") else {
+        guard let path = Bundle.main.path(forResource: name, ofType: "json") else {
             throw CommonError.objectNotFound
         }
         
@@ -42,32 +42,14 @@ class Theme {
     }
     
     func color(forHighlight str: String) -> UIColor? {
-        let name = highlightNameToThemeName(str)
-        return self.map[name]
+        return self.map[str]
     }
     
-    private func highlightNameToThemeName(_ str: String) -> String {
-        var result = str
-        if let firstChar = result.first {
-            result.replaceSubrange(result.startIndex...result.startIndex, with: String(firstChar).uppercased())
-        }
-        result = "TS" + result
-        var i = result.startIndex
-        while i < result.endIndex {
-            if result[i] == "." {
-                let nextIndex = result.index(after: i)
-                if nextIndex < result.endIndex {
-                    let nextChar = result[nextIndex]
-                    result.replaceSubrange(i...nextIndex, with: String(nextChar).uppercased())
-                    i = result.index(i, offsetBy: 2, limitedBy: result.endIndex) ?? result.endIndex
-                } else {
-                    result.remove(at: i)
-                    i = nextIndex
-                }
-            } else {
-                i = result.index(after: i)
-            }
-        }
-        return result
+    func primaryColor() -> UIColor? {
+        return self.map["primary"]
+    }
+    
+    func backgroundColor() -> UIColor? {
+        return self.map["background"]
     }
 }

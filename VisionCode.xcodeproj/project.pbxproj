@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D803F0FB2B89C939008DAE32 /* OneDark-Pro.json in Resources */ = {isa = PBXBuildFile; fileRef = D803F0FA2B89C939008DAE32 /* OneDark-Pro.json */; };
 		D80881D82B63DBB500582C41 /* FinderFolderViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881D72B63DBB500582C41 /* FinderFolderViewManager.swift */; };
 		D80881DA2B63DC8300582C41 /* FinderViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881D92B63DC8300582C41 /* FinderViewManager.swift */; };
 		D80881DC2B63DCF300582C41 /* RepositoryFileBrowserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881DB2B63DCF300582C41 /* RepositoryFileBrowserManager.swift */; };
@@ -106,6 +107,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D803F0FA2B89C939008DAE32 /* OneDark-Pro.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "OneDark-Pro.json"; sourceTree = "<group>"; };
 		D80881D72B63DBB500582C41 /* FinderFolderViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderFolderViewManager.swift; sourceTree = "<group>"; };
 		D80881D92B63DC8300582C41 /* FinderViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderViewManager.swift; sourceTree = "<group>"; };
 		D80881DB2B63DCF300582C41 /* RepositoryFileBrowserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryFileBrowserManager.swift; sourceTree = "<group>"; };
@@ -216,6 +218,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D803F0F72B89C8F3008DAE32 /* themes */ = {
+			isa = PBXGroup;
+			children = (
+				D803F0FA2B89C939008DAE32 /* OneDark-Pro.json */,
+			);
+			path = themes;
+			sourceTree = "<group>";
+		};
 		D80881D52B63DB5E00582C41 /* Finder */ = {
 			isa = PBXGroup;
 			children = (
@@ -322,6 +332,7 @@
 		D840A68C2B5A0A31002F3303 /* VisionCode */ = {
 			isa = PBXGroup;
 			children = (
+				D803F0F72B89C8F3008DAE32 /* themes */,
 				D81BAC642B6E63BD00A080DF /* TreeSitterSwift_TreeSitterSwift */,
 				D80881E22B63DE8900582C41 /* Repository */,
 				D80881DD2B63DD2D00582C41 /* Models */,
@@ -609,6 +620,7 @@
 			files = (
 				D81BAC6B2B6F281F00A080DF /* theme.json in Resources */,
 				D840A6962B5A0A32002F3303 /* Preview Assets.xcassets in Resources */,
+				D803F0FB2B89C939008DAE32 /* OneDark-Pro.json in Resources */,
 				D840A6922B5A0A32002F3303 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -26,10 +26,7 @@ class VCTextEditorViewController: UIViewController,
     
     let contentStorage = NSTextContentStorage()
     
-    let attributes: TextAttributes = [
-        .font: UIFont(name: "Menlo", size: 12)!,
-        .foregroundColor: UIColor.white
-    ]
+    let attributes: TextAttributes
     
     var onTextChanges: ((String) -> ())?
     
@@ -45,8 +42,28 @@ class VCTextEditorViewController: UIViewController,
     var findController: FindViewController!
     
     var overlayView = UIView()
-
+    
+    let theme: Theme
+    var backgroundColor: UIColor {
+        return theme.backgroundColor() ?? .darkGray
+    }
+    
+    init() {
+        self.theme = try! Theme(name: "OneDark-Pro")
+        self.attributes = [
+            .foregroundColor: self.theme.primaryColor() ?? .white,
+            .font: UIFont(name: "Menlo", size: 14)!,
+        ]
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
+        self.view.backgroundColor = self.backgroundColor
+        
         let container = NSTextContainer(size: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         textView = VCTextInputView(
             manager: layoutManager,
@@ -95,7 +112,7 @@ class VCTextEditorViewController: UIViewController,
             self?.gutterView.setNeedsDisplay()
         })
         
-        self.gutterView.backgroundColor = .darkGray.withAlphaComponent(0.95)
+        self.gutterView.backgroundColor = self.backgroundColor.withAlphaComponent(0.9)
         self.textView.addSubview(gutterView)
         
         self.textView.addSubview(overlayView)
@@ -209,7 +226,8 @@ class VCTextEditorViewController: UIViewController,
         if language != .default && language != self.treeSitterManager?.language {
             do {
                 let treeSitter = try TreeSitterManager(language: language)
-                let highlighter = try Highlighter(treeSitterManager: treeSitter,
+                let highlighter = try Highlighter(theme: self.theme,
+                                                treeSitterManager: treeSitter,
                                                   layoutManager: self.layoutManager,
                                                   provider: self.contentStorage)
                 

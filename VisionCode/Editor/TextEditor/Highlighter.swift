@@ -28,14 +28,18 @@ class Highlighter: TreeSitterManagerObserver {
     private var highlightQuery: Query
     private var provider: NSTextElementProvider
     
-    private let theme: Theme?
+    private let theme: Theme
     
     private var allActiveAttributes = [RangedAttribute]()
     
-    init(treeSitterManager: TreeSitterManager, layoutManager: NSTextLayoutManager, provider: NSTextElementProvider) throws {
+    
+    init(theme: Theme,
+        treeSitterManager: TreeSitterManager,
+         layoutManager: NSTextLayoutManager,
+         provider: NSTextElementProvider) throws {
+        self.theme = theme
         self.layoutManager = layoutManager
         self.provider = provider
-        self.theme = try? Theme(name: "theme")
         self.highlightQuery = treeSitterManager.config.queries[.highlights]!
         
         treeSitterManager.add(observer: self)
@@ -55,11 +59,29 @@ class Highlighter: TreeSitterManagerObserver {
                 let end = provider.location?(start, offsetBy: namedRange.range.length),
                let range = NSTextRange(location: start, end: end)
             {
-                if let color = theme?.color(forHighlight: namedRange.name) {
+                if let color = theme.color(forHighlight: namedRange.name) {
                     self.addAttribute(.foregroundColor, value: color, for: range)
                 }
             }
         }
+    }
+    
+    func highlightName(for range: NSTextRange, in text: String) -> String? {
+        let cursor = self.highlightQuery.execute(in: self.lastTree!)
+        let highlights = cursor.resolve(with: .init(string: text)).highlights()
+        
+        for namedRange in highlights {
+            if
+               let start = provider.location?(provider.documentRange.location, offsetBy: namedRange.range.location),
+                let end = provider.location?(start, offsetBy: namedRange.range.length),
+               let highlightRange = NSTextRange(location: start, end: end),
+               highlightRange.intersects(range)
+            {
+                return namedRange.name
+            }
+        }
+
+        return nil
     }
     
     func tokenRange(at index: NSTextLocation) {
