@@ -20,6 +20,7 @@ struct SFTPMessageType: OptionSet {
     static let FSTAT = SFTPMessageType(rawValue: 8)
     static let OPENDIR = SFTPMessageType(rawValue: 11)
     static let READDIR = SFTPMessageType(rawValue: 12)
+    static let MKDIR = SFTPMessageType(rawValue: 14)
     static let STATUS = SFTPMessageType(rawValue: 101)
     static let HANDLE = SFTPMessageType(rawValue: 102)
     static let DATA = SFTPMessageType(rawValue: 103)

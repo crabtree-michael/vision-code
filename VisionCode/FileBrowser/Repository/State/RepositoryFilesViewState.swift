@@ -27,6 +27,8 @@ class RepositoryFilesViewState: ObservableObject {
     
     var onOpenFile: FileLambda? = nil
     var refreshDirectory: FileLambda? = nil
+    var createFile: ((File, String) -> ())? = nil
+    var createFolder: ((File, String) -> ())? = nil
     
     init(root: PathNode, connectionState: ConnectionViewState) {
         self.root = FileCellViewState(node: root)

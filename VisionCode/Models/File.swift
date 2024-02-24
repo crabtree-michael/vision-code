@@ -100,8 +100,28 @@ class PathNode: Hashable {
         return oldNode
     }
     
+    func add(node: PathNode) -> PathNode? {
+        guard let parentNode = self.findParent(path: node.file.path, currentComponentIndex: self.file.pathComponents.count) else {
+            return nil
+        }
+        
+        if let index = parentNode.subnodes.firstIndex(where: { $0.file.name == node.file.name }) {
+            return nil
+        }
+
+        parentNode.subnodes.append(node)
+        return parentNode
+    }
+    
     private func findParent(path: String, currentComponentIndex: Int) -> PathNode? {
-        let component = (path as NSString).pathComponents[currentComponentIndex]
+        let components = (path as NSString).pathComponents
+        let component = components[currentComponentIndex]
+        
+        if currentComponentIndex > 0 &&
+            currentComponentIndex == components.count - 1 &&
+            self.file.name == components[currentComponentIndex - 1] {
+            return self
+        }
         
         for node in self.subnodes {
             if node.file.path == path {

@@ -8,6 +8,7 @@
 import Foundation
 
 enum CommonError: LocalizedError {
+    case fileAlreadyExists
     case notPrepared
     case invalidPort
     case objectNotFound
@@ -16,6 +17,8 @@ enum CommonError: LocalizedError {
     
     var errorDescription: String? {
         switch(self) {
+        case .fileAlreadyExists:
+            return "File already exists"
         case .notPrepared:
             return "System is not prepared"
         case .invalidPort:

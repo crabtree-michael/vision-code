@@ -146,3 +146,18 @@ class SFTPReadResponse: SFTPResponse {
         }
     }
 }
+
+class SFTPMkDirResponse: SFTPResponse {
+    override func complete(with message: SFTPFullMessage) throws {
+        switch (message) {
+        case let message as SFTPStatusMessage:
+            if message.code == .OK {
+                self.promise.succeed()
+                return
+            }
+            self.promise.fail(SFTPError.serverSuppliedError(message: message.message))
+        default:
+            throw SFTPError.unsupportedMessage
+        }
+    }
+}

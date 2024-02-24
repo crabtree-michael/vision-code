@@ -126,3 +126,13 @@ class SFTPWriteRequest: SFTPFullRequest {
         super.init(requestId: requestId, type: .WRITE, bytes: data)
     }
 }
+
+class SFTPMkDirRequest: SFTPFullRequest {
+    init(requestId: UInt32, path: String) {
+        var buffer = ByteBuffer()
+        buffer.writeBytes(path.toUTF8PaddedString())
+        buffer.writeInteger(UInt32(0), endianness: .big) // Write 0 for file attributes
+        let data = buffer.readBytes(length: buffer.readableBytes)!
+        super.init(requestId: requestId, type: .MKDIR, bytes: data)
+    }
+}

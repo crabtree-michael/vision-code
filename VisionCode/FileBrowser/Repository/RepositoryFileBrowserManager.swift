@@ -37,6 +37,8 @@ class RepositoryFileBrowserManager: ConnectionUser {
         self.identifier = UUID()
         
         self.state.refreshDirectory = self.reload
+        self.state.createFile = self.createFile
+        self.state.createFolder = self.createFolder
     }
     
     func id() -> String {
@@ -93,11 +95,15 @@ class RepositoryFileBrowserManager: ConnectionUser {
     }
     
     func onTraversalLoadedNode(_ traverser: BreadthFirstPathTraversal, node: PathNode) {
+        self.update(node: node)
+    }
+    
+    private func update(node: PathNode) {
         let view = FileCellViewState(node: node)
         DispatchQueue.main.async {
             if view.file.path == self.path {
                 self.state.root = view
-                return 
+                return
             }
             self.state.root.update(subnode: view.file.path, loaded: node.loaded, subnodes: view.subnodes)
         }
@@ -117,6 +123,49 @@ class RepositoryFileBrowserManager: ConnectionUser {
         
         for n in node.subnodes {
             self.trieRoot.insert(value: n, for: n.file.name)
+        }
+    }
+    
+    func add(node: PathNode) {
+        guard let parent = self.root.add(node: node) else {
+            return
+        }
+        parent.sortSubnodes()
+        self.update(node: parent)
+    }
+    
+    func createFile(parent: File, name: String) {
+        guard let client = client, !name.isEmpty else {
+            return
+        }
+        
+        let fullPath = parent.path + "/" + name
+        let newNode = PathNode(file: File(path: fullPath), subnodes: [], loaded: true)
+        Task {
+            do {
+                let r = try await client.open(file: fullPath, permissions: [.CREAT])
+                self.add(node: newNode)
+                try await client.close(response: r)
+            } catch {
+                self.state.error = error
+            }
+        }
+    }
+    
+    func createFolder(parent: File, name: String) {
+        guard let client = client, !name.isEmpty else {
+            return
+        }
+        
+        let fullPath = parent.path + "/" + name
+        let newNode = PathNode(file: File(path: fullPath, isFolder: true), subnodes: [], loaded: true)
+        Task {
+            do {
+                try await client.makeDirectory(at: fullPath)
+                self.add(node: newNode)
+            } catch {
+                self.state.error = error
+            }
         }
     }
     

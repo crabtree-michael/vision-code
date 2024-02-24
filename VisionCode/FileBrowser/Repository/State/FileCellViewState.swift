@@ -11,6 +11,7 @@ class FileCellViewState: ObservableObject, CustomStringConvertible {
     let file: File
     @Published var loaded: Bool
     @Published var subnodes: [FileCellViewState]
+    @Published var newFileName: String = ""
     
     var description: String {
         return "Node at \(file.path) \(loaded ? "loaded" : "not loaded") with \(subnodes.count)"

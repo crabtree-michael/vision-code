@@ -12,7 +12,7 @@ import NIOCore
 import NIOPosix
 import Dispatch
 
-enum SFTPError: Error {
+public enum SFTPError: Error {
     case notPrepared
     case malformedMessage
     case unsupportedMessage
@@ -148,6 +148,12 @@ class SFTPHandler: ChannelDuplexHandler {
     func fstat(handle: String) async throws -> SFTPStatResponse {
         return try await self.executeRequest { id in
             SFTPFStatRequest(requestId: id, handle: handle)
+        }
+    }
+    
+    func mkdir(path: String) async throws -> SFTPMkDirResponse {
+        return try await self.executeRequest { id in
+            SFTPMkDirRequest(requestId: id, path: path)
         }
     }
     
@@ -325,6 +331,26 @@ public class RCSFTPClient {
         return result
     }
     
+    public func exists(file: String) async throws -> Bool {
+        var r: HandleResponse?
+        do {
+            r = try await self.open(file: file, permissions: [.READ])
+        } catch {
+            if let error = error as? SFTPError {
+                switch(error) {
+                case (.serverSuppliedError(_)):
+                    return false
+                default:
+                    break
+                }
+            }
+        }
+        if let r = r {
+            _ = try await self.close(response: r)
+        }
+        return true
+    }
+    
     public func open(file: String, permissions: SFTPPermission = [.TRUNC, .CREAT, .WRITE]) async throws -> Handle {
         let sftpHandle = try await self.handler.open(path: file, permissions: permissions)
         return Handle(handle: sftpHandle.handle)
@@ -398,5 +424,9 @@ public class RCSFTPClient {
         }
         
         _ = try await self.handler.close(handle: handle)
+    }
+    
+    public func makeDirectory(at path: String) async throws {
+        _ = try await self.handler.mkdir(path: path)
     }
 }

@@ -95,6 +95,8 @@ class BreadthFirstPathTraversal {
             
             if childCount > 0 {
                 parents.append(PlannedPathNode(node: node, childCount: childCount))
+            } else {
+                node.loaded = true
             }
                
             if currentParentIndex != -1 {
@@ -114,17 +116,23 @@ class BreadthFirstPathTraversal {
         parent.node.subnodes.append(node)
         if parent.node.subnodes.count == parent.childCount {
             parent.node.loaded = true
-            parent.node.subnodes = parent.node.subnodes.sorted(by: { a, b in
-                if a.file.isFolder && !b.file.isFolder {
-                    return true
-                }
-                if !a.file.isFolder && b.file.isFolder {
-                    return false
-                }
-                return a.file.name < b.file.name
-            })
+            parent.node.sortSubnodes()
             self.onNodeLoaded?(self, parent.node)
             currentParentIndex += 1
         }
+    }
+}
+
+extension PathNode {
+    func sortSubnodes() {
+        self.subnodes = self.subnodes.sorted(by: { a, b in
+            if a.file.isFolder && !b.file.isFolder {
+                return true
+            }
+            if !a.file.isFolder && b.file.isFolder {
+                return false
+            }
+            return a.file.name < b.file.name
+        })
     }
 }

@@ -54,7 +54,10 @@ struct RepositoryFilesView: View {
                                          indentationLevel: 0,
                                          collapsed: true,
                                          onOpen: self.state.onOpenFile,
-                                         onReloadDirectory: self.state.refreshDirectory)
+                                         onReloadDirectory: self.state.refreshDirectory,
+                                         createFile: self.state.createFile,
+                                         createFolder: self.state.createFolder
+                                         )
                         }
                     }
                 }
