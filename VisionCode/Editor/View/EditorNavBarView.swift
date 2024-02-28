@@ -66,13 +66,33 @@ struct EditorNavBar: View {
             
             Button {
                 if let index = state.activeIndex {
-                    self.state.openFileStates[index].showFindInFile = true
+                    let state = self.state.openFileStates[index]
+                    if state.findInFileState != .hidden {
+                        state.findInFileState = .hidden
+                    } else {
+                        state.findInFileState = .find
+                    }
                 }
             } label: {
-                Label("Save", systemImage: "test")
+                Label("Find", systemImage: "test")
             }
             .opacity(0.0001)
             .keyboardShortcut("f", modifiers: .command)
+            
+            Button {
+                if let index = state.activeIndex {
+                    let state = self.state.openFileStates[index]
+                    if state.findInFileState == .findAndReplace {
+                        state.findInFileState = .hidden
+                    } else {
+                        state.findInFileState = .findAndReplace
+                    }
+                }
+            } label: {
+                Label("Find & Replace", systemImage: "test")
+            }
+            .opacity(0.0001)
+            .keyboardShortcut("f", modifiers: [.command, .option])
             
             
             VStack(spacing: 2) {

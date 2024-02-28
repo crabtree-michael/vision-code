@@ -68,6 +68,11 @@ class RepositoryEditorViewManager {
     }
     
     func openQuickOpen() {
+        guard self.state.quickOpenSate == nil else {
+            self.closeQuickOpen()
+            return
+        }
+        
         self.state.quickOpenSate = QuickOpenViewState(query: "", files: [])
         self.state.quickOpenSate?.onFileSelected = { file in
             self.openFile(file)

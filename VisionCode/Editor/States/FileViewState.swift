@@ -18,7 +18,7 @@ class FileViewState: ObservableObject {
     @Published var hasChanges: Bool = false
     @Published var presentUnsavedChangesAlert: Bool = false
     @Published var presentRemoteModifiedAlert: Bool = false
-    @Published var showFindInFile: Bool = false
+    @Published var findInFileState: FindInFileState = .hidden
     @Published var tabWidth: TabWidth = .fourTabs
     let file: File
     

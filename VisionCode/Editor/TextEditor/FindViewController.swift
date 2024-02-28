@@ -7,6 +7,13 @@
 
 import Foundation
 import UIKit
+import SwiftUI
+
+enum FindInFileState {
+    case hidden
+    case find
+    case findAndReplace
+}
 
 class Search {
     var storage: NSTextContentStorage
@@ -52,7 +59,8 @@ class Search {
         }
         
         guard currentIndex + 1 < self.results.count else {
-            return false
+            selectedIndex = 0
+            return true
         }
         
         selectedIndex = currentIndex + 1
@@ -88,6 +96,7 @@ class Search {
 
 protocol FindViewportController {
     func scroll(to point: CGPoint)
+    func replace(_ range: NSTextRange, with value: String)
 }
 
 class UpDownControlSegment: UIView {
@@ -123,10 +132,11 @@ class UpDownControlSegment: UIView {
 }
 
 class FindViewController: UIViewController, UITextFieldDelegate {
+    let defaultHeight: CGFloat = 50
     var width: CGFloat = 335
     var height: CGFloat = 50
     
-    var didSetIsActive: ((Bool) -> ())? = nil
+    var didSetState: ((FindInFileState) -> ())? = nil
     var isActive: Bool {
         didSet {
             self.view.isHidden = !isActive
@@ -137,12 +147,17 @@ class FindViewController: UIViewController, UITextFieldDelegate {
                 self.removeAllAttributes()
                 self.layoutManager.textViewportLayoutController.layoutViewport()
             }
-            self.didSetIsActive?(isActive)
+            if isActive {
+                self.didSetState?(self.isShowingReplace ? .findAndReplace : .find)
+            } else {
+                self.didSetState?(.hidden)
+            }
         }
     }
     
     let containerView = UIView()
     let textField = UITextField()
+    let resultCountLabel: UILabel
     
     var layoutManager: NSTextLayoutManager
     var storage: NSTextContentStorage
@@ -166,7 +181,12 @@ class FindViewController: UIViewController, UITextFieldDelegate {
     let controls: UpDownControlSegment
     let close: UIButton
     
-    let resultCountLabel: UILabel
+    let replaceTextField = UITextField()
+    let replaceContainerView = UIView()
+    let openReplaceButton: UIButton
+    let replaceButton: UIButton
+    let replaceAllButton: UIButton
+    var isShowingReplace = false
     
     init(layoutManager: NSTextLayoutManager, storage: NSTextContentStorage) {
         self.layoutManager = layoutManager
@@ -176,6 +196,9 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         self.resultCountLabel = UILabel()
         self.resultCountLabel.text = ""
         self.close = UIButton(type: .close)
+        self.openReplaceButton = UIButton(type: .custom)
+        self.replaceAllButton = UIButton(type: .custom)
+        self.replaceButton = UIButton(type: .custom)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -198,11 +221,22 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         close.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             close.leftAnchor.constraint(equalTo: containerView.leftAnchor),
-            close.widthAnchor.constraint(equalToConstant: 25),
-            close.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            close.heightAnchor.constraint(equalTo: containerView.heightAnchor)
+            close.centerYAnchor.constraint(equalTo: textField.centerYAnchor),
+            close.heightAnchor.constraint(equalToConstant: defaultHeight)
         ])
         close.addTarget(self, action: #selector(self.closeWindow), for: .touchUpInside)
+        
+        self.containerView.addSubview(openReplaceButton)
+        openReplaceButton.setImage(UIImage(systemName: "chevron.forward")?.withTintColor(.white), for: .normal)
+        openReplaceButton.tintColor = .white
+        openReplaceButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            openReplaceButton.leftAnchor.constraint(equalTo: close.rightAnchor),
+            openReplaceButton.widthAnchor.constraint(equalToConstant: 25),
+            openReplaceButton.centerYAnchor.constraint(equalTo: textField.centerYAnchor),
+            openReplaceButton.heightAnchor.constraint(equalToConstant: defaultHeight)
+        ])
+        openReplaceButton.addTarget(self, action: #selector(self.toggleReplace), for: .touchUpInside)
         
         self.containerView.addSubview(controls)
         controls.translatesAutoresizingMaskIntoConstraints = false
@@ -226,9 +260,9 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         textField.leftViewMode = .always
         
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.leftAnchor.constraint(equalTo: close.rightAnchor, constant: 5).isActive = true
-        textField.rightAnchor.constraint(equalTo: controls.leftAnchor).isActive = true
-        textField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
+        textField.leftAnchor.constraint(equalTo: openReplaceButton.rightAnchor, constant: 5).isActive = true
+        textField.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        textField.heightAnchor.constraint(equalToConstant: defaultHeight).isActive = true
         textField.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
         
         textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
@@ -239,6 +273,61 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         textField.rightView = resultCountLabel
         textField.rightViewMode = .always
         textField.autocorrectionType = .no
+        
+        containerView.addSubview(replaceContainerView)
+        replaceContainerView.isHidden = true
+        replaceContainerView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            replaceContainerView.leftAnchor.constraint(equalTo: containerView.leftAnchor),
+            replaceContainerView.rightAnchor.constraint(equalTo: containerView.rightAnchor),
+            replaceContainerView.topAnchor.constraint(equalTo: textField.bottomAnchor),
+            replaceContainerView.heightAnchor.constraint(equalToConstant: defaultHeight)
+        ])
+        
+        replaceContainerView.addSubview(replaceTextField)
+        replaceContainerView.addSubview(replaceAllButton)
+        replaceContainerView.addSubview(replaceButton)
+        
+        let replaceIconView = UIImageView(image: UIImage(systemName: "rectangle.and.pencil.and.ellipsis"))
+        replaceIconView.tintColor = .white
+        
+        replaceTextField.translatesAutoresizingMaskIntoConstraints = false
+        replaceTextField.placeholder = "Replace"
+        replaceTextField.leftView = replaceIconView
+        replaceTextField.leftViewMode = .always
+        replaceTextField.delegate = self
+        replaceTextField.autocapitalizationType = .none
+        replaceTextField.autocorrectionType = .no
+        NSLayoutConstraint.activate([
+            replaceTextField.leftAnchor.constraint(equalTo: replaceContainerView.leftAnchor, constant: 5),
+            replaceTextField.rightAnchor.constraint(equalTo: replaceButton.leftAnchor),
+            replaceTextField.bottomAnchor.constraint(equalTo: replaceContainerView.bottomAnchor),
+            replaceTextField.heightAnchor.constraint(equalTo: replaceContainerView.heightAnchor)
+        ])
+        
+        replaceAllButton.setImage(UIImage(systemName: "arrowshape.turn.up.left.2.fill"), for: .normal)
+        replaceAllButton.tintColor = .white
+        replaceAllButton.isEnabled = false
+        replaceAllButton.translatesAutoresizingMaskIntoConstraints = false
+        replaceAllButton.addTarget(self, action: #selector(performReplaceAll), for: .touchUpInside)
+        NSLayoutConstraint.activate([
+            replaceAllButton.centerXAnchor.constraint(equalTo: controls.up.centerXAnchor),
+            replaceAllButton.widthAnchor.constraint(equalToConstant: 25),
+            replaceAllButton.bottomAnchor.constraint(equalTo: replaceContainerView.bottomAnchor),
+            replaceAllButton.heightAnchor.constraint(equalTo: replaceContainerView.heightAnchor)
+        ])
+        
+        replaceButton.setImage(UIImage(systemName: "arrowshape.turn.up.backward.fill"), for: .normal)
+        replaceButton.tintColor = .white
+        replaceButton.isEnabled = false
+        replaceButton.addTarget(self, action: #selector(performReplace), for: .touchUpInside)
+        replaceButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            replaceButton.centerXAnchor.constraint(equalTo: controls.down.centerXAnchor),
+            replaceButton.widthAnchor.constraint(equalToConstant: 25),
+            replaceButton.bottomAnchor.constraint(equalTo: replaceContainerView.bottomAnchor),
+            replaceButton.heightAnchor.constraint(equalTo: replaceContainerView.heightAnchor)
+        ])
     }
     
     @objc func textFieldDidChange(_ textField: UITextField) {
@@ -257,6 +346,23 @@ class FindViewController: UIViewController, UITextFieldDelegate {
         self.isActive = false
     }
     
+    @objc func toggleReplace() {
+        self.isShowingReplace = !self.isShowingReplace
+        self.replaceContainerView.isHidden = !self.isShowingReplace
+        
+        let containerViewHeight: CGFloat = isShowingReplace ? defaultHeight * 2 : defaultHeight
+        height = containerViewHeight
+        self.containerView.frame = CGRect(x: containerView.frame.minX,
+                                          y: containerView.frame.minY,
+                                          width: containerView.frame.width,
+                                          height: containerViewHeight)
+        
+        let openImage = isShowingReplace ? "chevron.down" : "chevron.forward"
+        self.openReplaceButton.setImage(UIImage(systemName: openImage), for: .normal)
+        
+        self.didSetState?(self.isShowingReplace ? .findAndReplace : .find)
+    }
+    
     func performSearch() {
         guard let query = textField.text else {
             return
@@ -265,16 +371,22 @@ class FindViewController: UIViewController, UITextFieldDelegate {
             self.currentSearch = nil
             self.resultCountLabel.text = ""
             self.controls.isEnabled = false
+            self.replaceButton.isEnabled = false
+            self.replaceAllButton.isEnabled = false
             self.removeAllAttributes()
             self.layoutManager.textViewportLayoutController.layoutViewport()
             return
         }
+        
+        self.replaceButton.isEnabled = false
+        self.replaceAllButton.isEnabled = false
         
         let search = Search(with: query, storage: storage)
         search.perform()
         currentSearch = search
         
         self.controls.isEnabled = !search.results.isEmpty
+        self.replaceAllButton.isEnabled = !search.results.isEmpty
         self.resultCountLabel.text = "\(search.results.count) results"
         
         self.removeAllAttributes()
@@ -286,10 +398,101 @@ class FindViewController: UIViewController, UITextFieldDelegate {
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == self.replaceTextField {
+            self.performReplace()
+            return true
+        }
+        
         if self.currentSearch == nil {
             self.performSearch()
         }
         return !advanceSearhIndex(forward: true)
+    }
+    
+    @objc func performReplace() {
+        if let currentSearch = self.currentSearch,
+            let range = currentSearch.currentSelection() {
+            self.willPerformReplacement()
+            self.viewportController?.replace(range, with: replaceTextField.text ?? "")
+            self.didPerformReplacement()
+            return
+        }
+        
+        if let search = self.currentSearch, 
+            search.selectedIndex == nil {
+            _ = self.advanceSearhIndex(forward: true)
+        }
+    }
+    
+    @objc func performReplaceAll() {
+        guard let query = self.currentSearch?.query, !query.isEmpty else {
+            return
+        }
+        
+        self.willPerformReplacement()
+        
+        // Perform replacement in reverse we don't have to deal with range changes
+        for result in self.currentSearch?.results.reversed() ?? [] {
+            self.viewportController?.replace(result, with: replaceTextField.text ?? "")
+        }
+        
+        self.didPerformReplacement()
+    }
+    
+    func willPerformReplacement() {
+        self.removeAllAttributes()
+    }
+    
+    func didPerformReplacement() {
+        guard let selectedIndex = currentSearch?.selectedIndex,
+            let oldResultCount = self.currentSearch?.results.count else {
+            return
+        }
+        
+        self.performSearch()
+        guard let newResults = self.currentSearch?.results, !newResults.isEmpty else {
+            return
+        }
+        
+        var newIndex: Int
+        if oldResultCount == newResults.count {
+            newIndex = selectedIndex + 1
+        } else {
+            newIndex = selectedIndex
+        }
+        if newIndex >= newResults.count {
+            newIndex = 0
+        }
+        self.setSearchIndex(index: newIndex)
+    }
+    
+    func setSearchIndex(index: Int) {
+        self.selectionIndexWillChange()
+        self.currentSearch?.selectedIndex = index
+        self.selectionIndexDidChange()
+        
+    }
+    
+    func selectionIndexWillChange() {
+        guard let _ = self.currentSearch else {
+            return
+        }
+        self.removeAttributeForCurrentSelection()
+        self.addNormalAttributeForCurrentSelection()
+    }
+    
+    func selectionIndexDidChange() {
+        guard let search = self.currentSearch else {
+            return
+        }
+        
+        self.resultCountLabel.text = "\((search.selectedIndex ?? 0) + 1) of \(search.results.count)"
+        self.addHighlightAttributeForCurrentSelection()
+        if let rect = rectForCurrentSelection() {
+            self.viewportController?.scroll(to: rect.origin)
+        }
+        self.layoutManager.textViewportLayoutController.layoutViewport()
+        replaceButton.isEnabled = search.selectedIndex != nil
     }
     
     func advanceSearhIndex(forward: Bool) -> Bool {
@@ -297,8 +500,7 @@ class FindViewController: UIViewController, UITextFieldDelegate {
             return true
         }
         
-        self.removeAttributeForCurrentSelection()
-        self.addNormalAttributeForCurrentSelection()
+        self.selectionIndexWillChange()
         
         let didAdvance: Bool
         if forward {
@@ -307,15 +509,7 @@ class FindViewController: UIViewController, UITextFieldDelegate {
             didAdvance = search.moveBackIfPossible()
         }
         
-        self.resultCountLabel.text = "\((search.selectedIndex ?? 0) + 1) of \(search.results.count)"
-       
-        self.addHighlightAttributeForCurrentSelection()
-        
-        if let rect = rectForCurrentSelection() {
-            self.viewportController?.scroll(to: rect.origin)
-        }
-        self.layoutManager.textViewportLayoutController.layoutViewport()
-        
+        self.selectionIndexDidChange()
         return !didAdvance
     }
     
@@ -395,6 +589,6 @@ class FindViewController: UIViewController, UITextFieldDelegate {
     }
     
     override func viewDidLayoutSubviews() {
-        containerView.frame = CGRect(x: self.view.frame.width - width - 2, y: 0, width: width - 2, height: height)
+        containerView.frame = CGRect(x: self.view.frame.width - width - 2, y: 5, width: width - 2, height: height)
     }
 }

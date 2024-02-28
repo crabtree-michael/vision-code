@@ -30,7 +30,7 @@ class VCTextEditorViewController: UIViewController,
     
     var onTextChanges: ((String) -> ())?
     
-    var onFindInFileSet: ((Bool) -> ())?
+    var onFindInFileSet: ((FindInFileState) -> ())?
     
     let editMenu = EditMenu()
     
@@ -152,7 +152,7 @@ class VCTextEditorViewController: UIViewController,
         self.textView.onDidSelectText = {
             self.editMenu.isHidden = false
             self.findController.isActive = false
-            self.onFindInFileSet?(self.findController.isActive)
+            self.onFindInFileSet?(.hidden)
         }
         
         self.textView.onDidDeslectText = {
@@ -161,7 +161,7 @@ class VCTextEditorViewController: UIViewController,
         
         self.textView.onOpenFindInFile = {
             self.findController.isActive = true
-            self.onFindInFileSet?(self.findController.isActive)
+            self.onFindInFileSet?(.find)
         }
         
         findController = FindViewController(layoutManager: layoutManager, storage: contentStorage)
@@ -179,7 +179,7 @@ class VCTextEditorViewController: UIViewController,
         ])
         
         findController.isActive = false
-        findController.didSetIsActive = { value in
+        findController.didSetState = { value in
             self.onFindInFileSet?(value)
         }
         
@@ -205,8 +205,20 @@ class VCTextEditorViewController: UIViewController,
         layoutManager.textViewportLayoutController.layoutViewport()
     }
     
-    func update(_ text: String, language: CodeLanguage, showFindInFile: Bool, tabWidth: TabWidth) {
-        self.findController.isActive = showFindInFile
+    func update(_ text: String, language: CodeLanguage, findInFileState: FindInFileState, tabWidth: TabWidth) {
+        switch(findInFileState) {
+        case .find:
+            self.findController.isActive = true
+        case .findAndReplace:
+            self.findController.isActive = true
+            if !self.findController.isShowingReplace {
+                self.findController.toggleReplace()
+            }
+        case .hidden:
+            self.findController.isActive = false
+        }
+        
+        
         textView.tabWidth = tabWidth
         
         guard (text != contentStorage.textStorage?.string || language.id != (self.treeSitterManager?.language.id ?? .plainText)) else {
@@ -262,6 +274,19 @@ class VCTextEditorViewController: UIViewController,
         self.textView.scrollRectToVisible(CGRect(x: point.x, y: point.y, width: 100, height: 100), animated: true)
     }
     
+    func replace(_ range: NSTextRange, with value: String) {
+        self.contentStorage.textStorage?.replaceCharacters(in:  NSRange(range, provider: self.contentStorage), with: value)
+        self.layoutManager.textViewportLayoutController.layoutViewport()
+        if  let endLocation = contentStorage.location(range.location, offsetBy: value.count),
+            let newRange = NSTextRange(location: range.location,
+                                       end: endLocation) {
+            self.treeSitterManager?.textDidChange(in: self.textView,
+                                                  oldRange: range,
+                                                  newRange: newRange,
+                                                  newValue: self.contentStorage.textStorage?.string ?? "")
+        }
+    }
+    
 }
 
 struct VCTextEditor: UIViewControllerRepresentable {
@@ -269,7 +294,7 @@ struct VCTextEditor: UIViewControllerRepresentable {
     
     @Binding var text: String
     @Binding var language: CodeLanguage
-    @Binding var showFindInFile: Bool
+    @Binding var findInFileState: FindInFileState
     @Binding var tabWidth: TabWidth
     
     func makeUIViewController(context: Context) -> VCTextEditorViewController {
@@ -286,13 +311,13 @@ struct VCTextEditor: UIViewControllerRepresentable {
             }
         }
         uiViewController.onFindInFileSet = { value in
-            if value != self.showFindInFile {
-                self.showFindInFile = value
+            if value != self.findInFileState {
+                self.findInFileState = value
             }
         }
         uiViewController.update(text, 
                                 language: language, 
-                                showFindInFile: showFindInFile,
+                                findInFileState: findInFileState,
                                 tabWidth: tabWidth)
     }
 }

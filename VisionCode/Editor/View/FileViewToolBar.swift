@@ -58,7 +58,7 @@ struct FileViewToolBar: View {
                 }
             
                 Button {
-                    state.showFindInFile = true
+                    state.findInFileState = .find
                 } label: {
                     Label(title: {
                         Text("Find")

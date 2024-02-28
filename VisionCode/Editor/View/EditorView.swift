@@ -52,7 +52,7 @@ struct Editor: View {
         state.isLoading = false
         state.content = longFile
         state.presentUnsavedChangesAlert = false
-        state.showFindInFile = true
+        state.findInFileState = .findAndReplace
         return state
     }
     

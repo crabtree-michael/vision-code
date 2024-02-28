@@ -29,7 +29,7 @@ struct FileView: View {
                 ZStack{
                     VCTextEditor(text: $state.content,
                                  language: $state.language,
-                                 showFindInFile: $state.showFindInFile,
+                                 findInFileState: $state.findInFileState,
                                  tabWidth: $state.tabWidth)
                 }
             }
@@ -78,7 +78,7 @@ struct FileView: View {
         state.isLoading = false
         state.content = longFile
         state.presentUnsavedChangesAlert = false
-        state.showFindInFile = true
+        state.findInFileState = .findAndReplace
         return state
     }
     
