@@ -32,7 +32,7 @@ class TextLayoutFragmentView: UIView {
     
     func change(to fragment: NSTextLayoutFragment) {
         self.layoutFragment = fragment
-        self.frame = layoutFragment!.layoutFragmentFrame
+        self.frame = layoutFragment!.renderingSurfaceBounds
         self.setNeedsDisplay()
     }
 }
