@@ -1,4 +1,5 @@
 {
+    "selection": "#666666",
     "primary": "#FFFFFF",
     "background": "#282C34",
     "comment": "#7f848e",
@@ -50,5 +51,5 @@
     "text.literal": "#98c379",
     "type.builtin": "#d19a66",
     "underline": "#c678dd",
-    "variable.builtin": "#d19a66"
+    "variable.builtin": "#d19a66",
 }

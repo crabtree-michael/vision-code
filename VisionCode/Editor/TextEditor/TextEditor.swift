@@ -45,7 +45,7 @@ class VCTextEditorViewController: UIViewController,
     
     let theme: Theme
     var backgroundColor: UIColor {
-        return theme.backgroundColor() ?? .darkGray
+        return theme.backgroundColor
     }
     
     init() {
@@ -67,7 +67,8 @@ class VCTextEditorViewController: UIViewController,
         let container = NSTextContainer(size: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude))
         textView = VCTextInputView(
             manager: layoutManager,
-            content: contentStorage)
+            content: contentStorage,
+            theme: theme)
         textView.contentSize = CGSize(width: 100, height: 10000)
     
         layoutManager.textContainer = container

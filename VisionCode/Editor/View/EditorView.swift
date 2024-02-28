@@ -22,7 +22,7 @@ struct Editor: View {
                 ZStack {
                     ForEach(Array(zip(state.openFileStates.indices, state.openFileStates)),
                             id: \.0) { (index, fileState) in
-                        VStack {
+                        VStack(spacing: 0) {
                             FileView(state: fileState)
                             FileViewToolBar(state: fileState)
                                 .background(.clear)

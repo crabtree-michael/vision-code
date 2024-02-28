@@ -23,6 +23,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     let contentView = UIView()
     var layoutManager: NSTextLayoutManager
     var contentStore: NSTextContentStorage
+    var theme: Theme
     
     let carrot = Carrot()
     var carrotLocation: NSTextLocation? = nil
@@ -56,7 +57,10 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             self.lineHeight = size.height
         }
     }
-    var highlightColor: UIColor = .blue
+    
+    var highlightColor: UIColor {
+        return theme.selectionColor
+    }
     
     var recycler = TextLayoutFragmentViewRecycler()
     
@@ -209,12 +213,13 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         self.widestTextFragement = widest
     }
     
-    init(manager: NSTextLayoutManager, content: NSTextContentStorage) {
+    init(manager: NSTextLayoutManager, content: NSTextContentStorage, theme: Theme) {
         self.layoutManager = manager
         self.contentStore = content
         self.fragmentLayerMap = .weakToWeakObjects()
         self.lineHeight = 12
         self.tabWidth = .fourTabs
+        self.theme = theme
         super.init(frame: .zero)
         
         self.addSubview(contentView)

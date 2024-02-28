@@ -86,7 +86,7 @@ struct EditorNavBar: View {
                 .padding()
                 
                 ScrollView(.horizontal) {
-                    HStack(spacing: 4) {
+                    HStack(spacing: 2) {
                         ForEach(Array(zip(state.openFileStates.indices, state.openFileStates)),
                                 id: \.0) { arrayIndex, fileState in
   
@@ -94,7 +94,7 @@ struct EditorNavBar: View {
                                 EditorNavBarButton(state: fileState) {
                                     self.state.onFileClose?(fileState.file)
                                 }
-                                .background(.ultraThinMaterial)
+                                .background(Color(Theme.current.backgroundColor).opacity(0.7))
                                 .hoverEffect()
                                 .onTapGesture {
                                     self.state.onFileSelected?(fileState.file)
@@ -103,7 +103,7 @@ struct EditorNavBar: View {
                                 EditorNavBarButton(state: fileState) {
                                     self.state.onFileClose?(fileState.file)
                                 }
-                                .background(.black.opacity(0.46))
+                                .background(Color(Theme.current.backgroundColor))
                             }
                             
                         }
@@ -151,7 +151,6 @@ struct EditorNavBarButton: View {
         .padding(.vertical, 4)
         .padding(.leading)
         .padding(.trailing, 6)
-        .border(.background)
         .frame(maxWidth: 450)
     }
 }
@@ -172,6 +171,7 @@ struct EditorNavBarButton: View {
     var state: EditorViewState {
         let state = EditorViewState(title: "test")
         state.openFileStates = openFiles
+        state.activeIndex = 0
         return state
     }
     

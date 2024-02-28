@@ -9,6 +9,22 @@ import Foundation
 import UIKit
 
 class Theme {
+    static var current: Theme {
+        if _current == nil {
+            _current = try! Theme(name: "OneDark-Pro")
+        }
+        return _current!
+    }
+    private static var _current: Theme?
+    
+    var backgroundColor: UIColor {
+        return self.getBackgroundColor() ?? .darkGray
+    }
+    
+    var selectionColor: UIColor {
+        return self.map["selection"] ?? .blue
+    }
+    
     private let map:[String: UIColor]
     
     init(name: String) throws {
@@ -49,7 +65,7 @@ class Theme {
         return self.map["primary"]
     }
     
-    func backgroundColor() -> UIColor? {
+    func getBackgroundColor() -> UIColor? {
         return self.map["background"]
     }
 }
