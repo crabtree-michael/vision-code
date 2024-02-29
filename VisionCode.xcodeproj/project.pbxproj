@@ -44,6 +44,7 @@
 		D84BD2732B83186D00CD709D /* TreeSitterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84BD2722B83186D00CD709D /* TreeSitterManager.swift */; };
 		D84BD2752B848C2800CD709D /* TabWidth.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84BD2742B848C2800CD709D /* TabWidth.swift */; };
 		D84FF79B2B691686008D99F7 /* Carrot.swift in Sources */ = {isa = PBXBuildFile; fileRef = D84FF79A2B691686008D99F7 /* Carrot.swift */; };
+		D86985E52B9003850003A915 /* TextUndoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D86985E42B9003850003A915 /* TextUndoManager.swift */; };
 		D870C6D32B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D870C6D22B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift */; };
 		D87BB58A2B6ABBEB004222F8 /* EditMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB5892B6ABBEB004222F8 /* EditMenu.swift */; };
 		D87BB58D2B6BB777004222F8 /* RepositoryManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB58C2B6BB777004222F8 /* RepositoryManagerView.swift */; };
@@ -144,6 +145,7 @@
 		D84BD2722B83186D00CD709D /* TreeSitterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeSitterManager.swift; sourceTree = "<group>"; };
 		D84BD2742B848C2800CD709D /* TabWidth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabWidth.swift; sourceTree = "<group>"; };
 		D84FF79A2B691686008D99F7 /* Carrot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carrot.swift; sourceTree = "<group>"; };
+		D86985E42B9003850003A915 /* TextUndoManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextUndoManager.swift; sourceTree = "<group>"; };
 		D870C6D22B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreadthFirstPathTraversal.swift; sourceTree = "<group>"; };
 		D87BB5892B6ABBEB004222F8 /* EditMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMenu.swift; sourceTree = "<group>"; };
 		D87BB58C2B6BB777004222F8 /* RepositoryManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryManagerView.swift; sourceTree = "<group>"; };
@@ -371,6 +373,7 @@
 				D8EE47282B7CAFAB0073E129 /* FindViewController.swift */,
 				D84BD2702B83183B00CD709D /* Tokenizer.swift */,
 				D84BD2722B83186D00CD709D /* TreeSitterManager.swift */,
+				D86985E42B9003850003A915 /* TextUndoManager.swift */,
 			);
 			path = TextEditor;
 			sourceTree = "<group>";
@@ -697,6 +700,7 @@
 				D80881F92B63E23100582C41 /* EditorNavBarView.swift in Sources */,
 				D84BD2712B83183B00CD709D /* Tokenizer.swift in Sources */,
 				D87BB5992B6C1BB7004222F8 /* HostManager.swift in Sources */,
+				D86985E52B9003850003A915 /* TextUndoManager.swift in Sources */,
 				D8F23A552B725E7900A47A13 /* Connection.swift in Sources */,
 				D8A9BF1B2B63E6FF00115D77 /* FileCellViewState.swift in Sources */,
 				D840A68E2B5A0A31002F3303 /* VisionCodeApp.swift in Sources */,

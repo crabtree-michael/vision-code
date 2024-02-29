@@ -80,7 +80,10 @@ class TreeSitterManager: TextInputObserver {
 //            self.tree = parser.parse(tree: self.tree, string: newValue)
 //            self.setHighlightsFromTree(newValue)
 //        }
-        self.set(text: newValue)
-
+//        self.set(text: newValue)
+    }
+    
+    @objc func textDidFinishChanges(in textView: VCTextInputView, text: String) {
+        self.set(text: text)
     }
 }

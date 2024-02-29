@@ -8,15 +8,30 @@
 import Foundation
 import UIKit
 
+class Replacement: NSObject {
+    var text: String
+    var range: NSTextRange
+    
+    init(text: String, range: NSTextRange) {
+        self.text = text
+        self.range = range
+    }
+}
+
 @objc protocol TextInputObserver {
     @objc func id() -> String
     
+    @objc optional func textDidFinishChanges(in textView: VCTextInputView, text: String)
     @objc optional func textDidChange(in textView: VCTextInputView,
                                       oldRange: NSTextRange,
                                       newRange: NSTextRange,
                                       newValue: String)
     
     @objc optional func textWillChange(in textView: VCTextInputView)
+    
+    @objc optional func textViewWillInsert(_ textView: VCTextInputView, text: String, at: NSTextLocation)
+    @objc optional func textViewWillPerform(_ textView: VCTextInputView, replacements: [Replacement])
+    @objc optional func textViewWillDelete(_ textView: VCTextInputView, charactersIn: NSTextRange)
 }
 
 class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UITextInputTraits {
@@ -68,6 +83,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     var onDidSelectText: VoidLambda? = nil
     var onDidDeslectText: VoidLambda? = nil
     var onOpenFindInFile: VoidLambda? = nil
+    var onUndoPressed: VoidLambda? = nil
+    var onRedoPressed: VoidLambda? = nil
     
     var tabWidth: TabWidth
     
@@ -434,10 +451,6 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     }
     
     func insertText(_ text: String) {
-        guard let carrotLocation = self.carrotLocation, let textStore = self.contentStore.textStorage else {
-            return
-        }
-        
         var text = text
         if text == "“" || text == "”"{
             text = "\""
@@ -446,77 +459,140 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             text = "'"
         }
         
+        if let selectionRange = selectionRange {
+            self.replace(range: selectionRange, with: text)
+            self.selectionRange = nil
+            return
+        }
+        
+        if let location = carrotLocation {
+            self.insert(text: text, at: location)
+            return
+        }
+    }
+    
+    func insert(text: String, at location: NSTextLocation) {
+        guard let textStore = self.contentStore.textStorage else {
+            return
+        }
+        
         self.inputDelegate?.textWillChange(self)
         
         for observer in textObservers {
             observer.textWillChange?(in: self)
+            observer.textViewWillInsert?(self, text: text, at: location)
         }
-    
-        let selectionRange = self.selectionRange
-        self.selectionRange = nil
-    
-        // Update the text content
-        textStore.beginEditing()
-        if let selectionRange = selectionRange {
-            let range = NSRange(selectionRange, provider: self.contentStore)
-            textStore.replaceCharacters(in: range, with: text)
-        } else {
-            let offset = contentStore.offset(from: contentStore.documentRange.location, to: carrotLocation)
-            textStore.insert(NSAttributedString(string: text, attributes: self.attributes), at: offset)
-        }
-        textStore.endEditing()
+        
+        let offset = contentStore.offset(from: contentStore.documentRange.location, to: location)
+        textStore.insert(NSAttributedString(string: text, attributes: self.attributes), at: offset)
         
         for observer in textObservers {
-            if let selectionRange = selectionRange {
-                let end = contentStore.location(selectionRange.location, offsetBy: text.count)
-                let newRange = NSTextRange(location: selectionRange.location, end: end)!
-                observer.textDidChange?(in: self, oldRange: selectionRange, newRange: newRange, newValue: textStore.string)
-            } else {
-                let end = contentStore.location(carrotLocation, offsetBy: text.count)
-                let newRange = NSTextRange(location: carrotLocation, end: end)!
-                observer.textDidChange?(in: self, oldRange: NSTextRange(location: carrotLocation), newRange: newRange, newValue: textStore.string)
-            }
-
+            let end = contentStore.location(location, offsetBy: text.count)
+            let newRange = NSTextRange(location: location, end: end)!
+            observer.textDidChange?(in: self, oldRange: NSTextRange(location: location), newRange: newRange, newValue: textStore.string)
+            observer.textDidFinishChanges?(in: self, text: textStore.string)
         }
-    
+        
         layoutManager.textViewportLayoutController.layoutViewport()
         
-        // Update teh carret
-        if let selectionRange = selectionRange {
-            self.carrotLocation = contentStore.location(selectionRange.location, offsetBy: text.count)
-        } else {
-            self.carrotLocation = contentStore.location(carrotLocation, offsetBy: text.count)
-        }
-        
+        self.carrotLocation = contentStore.location(location, offsetBy: text.count)
         self.updateCarrotLocation()
         
         self.inputDelegate?.textDidChange(self)
     }
     
-    func deleteBackward() {
-        guard let textStore = contentStore.textStorage,
-            let carrotLocation = self.carrotLocation else {
+    func replace(range: NSTextRange, with text: String) {
+        guard let textStore = self.contentStore.textStorage else {
+            return
+        }
+        
+        self.perform(replacements: [Replacement(text: text, range: range)])
+    }
+    
+    // Replacements should be put in a descending order of range or else the ranges will change
+    // As the replacements are being made
+    func perform(replacements: [Replacement]) {
+        guard let textStore = self.contentStore.textStorage else {
             return
         }
         
         self.inputDelegate?.textWillChange(self)
+        
         for observer in textObservers {
             observer.textWillChange?(in: self)
+            observer.textViewWillPerform?(self, replacements: replacements)
+        }
+        
+        // We calculate the total text delta before the last location for the cursor placement at the end
+        var textDelta: Int = 0
+        for replacement in replacements.reversed().dropLast() {
+            if let oldString = contentStore.string(in: replacement.range, inclusive: false) {
+                textDelta += replacement.text.count - oldString.count
+            }
+        }
+        
+        for replacement in replacements {
+            let text = replacement.text
+            let range = replacement.range
+            let r = NSRange(range, provider: self.contentStore)
+            textStore.replaceCharacters(in: r, with: text)
+            
+            for observer in textObservers {
+                let end = contentStore.location(range.location, offsetBy: text.count)
+                let newRange = NSTextRange(location: range.location, end: end)!
+                observer.textDidChange?(in: self, oldRange: range, newRange: newRange, newValue: textStore.string)
+            }
+        }
+        
+        for observer in textObservers {
+            observer.textDidFinishChanges?(in: self, text: textStore.string)
+        }
+
+        layoutManager.textViewportLayoutController.layoutViewport()
+        
+        if let lastRange = replacements.first,
+           let start = contentStore.location(lastRange.range.location, offsetBy: textDelta) {
+            let range = lastRange.range
+            let text = lastRange.text
+            self.carrotLocation = contentStore.location(start, offsetBy: text.count)
+            self.updateCarrotLocation()
+        }
+        
+        self.inputDelegate?.textDidChange(self)
+    }
+    
+    func deleteBackward() {
+        guard let carrotLocation = self.carrotLocation else {
+            return
         }
         
         var range: NSTextRange? = nil
-        var nsRange: NSRange? = nil
         if let selectionRange = self.selectionRange {
-            range = selectionRange
+            let inclusiveEnd = contentStore.location(selectionRange.endLocation, offsetBy: -1)
+            range = NSTextRange(location: selectionRange.location, end: inclusiveEnd)
             self.selectionRange = nil
-            nsRange = NSRange(range!, provider: contentStore, inclusive: false)
         } else if let start = contentStore.location(carrotLocation, offsetBy: -1) {
             range = NSTextRange(location: start, end: start)
-            nsRange = NSRange(range!, provider: contentStore, inclusive: true)
         }
         
-        guard let range = range, let r = nsRange else {
+        guard let range = range else {
             return
+        }
+        
+        self.delete(range: range)
+    }
+    
+    func delete(range: NSTextRange) {
+        guard let textStore = contentStore.textStorage else {
+            return
+        }
+        
+        let r = NSRange(range, provider: self.contentStore, inclusive: true)
+        
+        self.inputDelegate?.textWillChange(self)
+        for observer in textObservers {
+            observer.textWillChange?(in: self)
+            observer.textViewWillDelete?(self, charactersIn: range)
         }
         
         textStore.beginEditing()
@@ -524,7 +600,11 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         textStore.endEditing()
         
         for observer in textObservers {
-            observer.textDidChange?(in: self, oldRange: range, newRange: NSTextRange(location: range.location), newValue: textStore.string)
+            observer.textDidChange?(in: self,
+                                    oldRange: range,
+                                    newRange: NSTextRange(location: range.location),
+                                    newValue: textStore.string)
+            observer.textDidFinishChanges?(in: self, text: textStore.string)
         }
         
         layoutManager.textViewportLayoutController.layoutViewport()
@@ -739,6 +819,15 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         case .keyboardTab:
             self.insertTab()
             return
+        case .keyboardZ:
+            if press.key?.modifierFlags == .command {
+                self.onUndoPressed?()
+                return
+            }
+            if press.key?.modifierFlags == [.command, .shift] {
+                self.onRedoPressed?()
+                return
+            }
         default: break
         }
         

@@ -25,6 +25,7 @@ class VCTextEditorViewController: UIViewController,
     var hasUpdateAllYs: Bool = true
     
     let contentStorage = NSTextContentStorage()
+    let textUndoManager: TextUndoManager
     
     let attributes: TextAttributes
     
@@ -54,6 +55,7 @@ class VCTextEditorViewController: UIViewController,
             .foregroundColor: self.theme.primaryColor() ?? .white,
             .font: UIFont(name: "Menlo", size: 14)!,
         ]
+        self.textUndoManager = TextUndoManager(storage: self.contentStorage)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -161,8 +163,12 @@ class VCTextEditorViewController: UIViewController,
         
         self.textView.onOpenFindInFile = {
             self.findController.isActive = true
+            self.findController.textField.becomeFirstResponder()
             self.onFindInFileSet?(.find)
         }
+        
+        self.textView.onUndoPressed = self.textUndoManager.undo
+        self.textView.onRedoPressed = self.textUndoManager.redo
         
         findController = FindViewController(layoutManager: layoutManager, storage: contentStorage)
         self.overlayView.addSubview(findController.view)
@@ -186,6 +192,7 @@ class VCTextEditorViewController: UIViewController,
         gutterView.lineHeight = textView.lineHeight
         
         textView.languageTokenizer = Tokenizer(provider: self.contentStorage)
+        self.textView.add(observer: self.textUndoManager)
     }
     
     deinit {
@@ -275,16 +282,12 @@ class VCTextEditorViewController: UIViewController,
     }
     
     func replace(_ range: NSTextRange, with value: String) {
-        self.contentStorage.textStorage?.replaceCharacters(in:  NSRange(range, provider: self.contentStorage), with: value)
-        self.layoutManager.textViewportLayoutController.layoutViewport()
-        if  let endLocation = contentStorage.location(range.location, offsetBy: value.count),
-            let newRange = NSTextRange(location: range.location,
-                                       end: endLocation) {
-            self.treeSitterManager?.textDidChange(in: self.textView,
-                                                  oldRange: range,
-                                                  newRange: newRange,
-                                                  newValue: self.contentStorage.textStorage?.string ?? "")
-        }
+        self.textView.replace(range: range, with: value)
+    }
+    
+    func replaceAll(_ ranges: [NSTextRange], with value: String) {
+        let replacements = ranges.map { Replacement(text: value, range: $0) }
+        self.textView.perform(replacements: replacements)
     }
     
 }

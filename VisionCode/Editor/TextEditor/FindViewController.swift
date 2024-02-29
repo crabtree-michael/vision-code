@@ -97,6 +97,7 @@ class Search {
 protocol FindViewportController {
     func scroll(to point: CGPoint)
     func replace(_ range: NSTextRange, with value: String)
+    func replaceAll(_ range: [NSTextRange], with value: String)
 }
 
 class UpDownControlSegment: UIView {
@@ -425,17 +426,14 @@ class FindViewController: UIViewController, UITextFieldDelegate {
     }
     
     @objc func performReplaceAll() {
-        guard let query = self.currentSearch?.query, !query.isEmpty else {
+        // Perform replacement in reverse we don't have to deal with range changes
+        guard let results = currentSearch?.results,
+            let query = self.currentSearch?.query, !query.isEmpty else {
             return
         }
         
         self.willPerformReplacement()
-        
-        // Perform replacement in reverse we don't have to deal with range changes
-        for result in self.currentSearch?.results.reversed() ?? [] {
-            self.viewportController?.replace(result, with: replaceTextField.text ?? "")
-        }
-        
+        self.viewportController?.replaceAll(results.reversed(), with: replaceTextField.text ?? "")
         self.didPerformReplacement()
     }
     
