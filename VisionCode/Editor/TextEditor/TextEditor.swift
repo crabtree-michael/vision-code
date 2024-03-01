@@ -200,6 +200,16 @@ class VCTextEditorViewController: UIViewController,
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if let viewRange = layoutManager.textViewportLayoutController.viewportRange,
+           !(highlighter?.highlightedRange?.has(subrange: viewRange, in: self.contentStorage) ?? true) {
+            let start = self.contentStorage.location(viewRange.location, offsetBy: -1000) ?? self.contentStorage.documentRange.location
+            let end = self.contentStorage.location(viewRange.endLocation, offsetBy: 1000) ?? self.contentStorage.documentRange.endLocation
+            
+            if let range = NSTextRange(location: start, end: end){
+                highlighter?.highlight(in: range)
+            }
+        }
+        
         layoutManager.textViewportLayoutController.layoutViewport()
         
         gutterView.frame = CGRect(x: textView.contentOffset.x, 
@@ -209,6 +219,7 @@ class VCTextEditorViewController: UIViewController,
     }
     
     override func viewDidLayoutSubviews() {
+        highlighter?.highlightViewport()
         layoutManager.textViewportLayoutController.layoutViewport()
     }
     
@@ -245,7 +256,8 @@ class VCTextEditorViewController: UIViewController,
         
         if language != .default && language != self.treeSitterManager?.language {
             do {
-                let treeSitter = try TreeSitterManager(language: language)
+                let treeSitter = try TreeSitterManager(language: language,
+                                                       provider: self.contentStorage)
                 let highlighter = try Highlighter(theme: self.theme,
                                                 treeSitterManager: treeSitter,
                                                   layoutManager: self.layoutManager,
@@ -340,5 +352,17 @@ extension String {
         }
 
         return indices
+    }
+}
+
+extension NSTextRange {
+    func has(subrange: NSTextRange, in provider: NSTextElementProvider) -> Bool? {
+        guard let start = self.offset(provider: provider), let end = self.endOffset(provider: provider),
+              let subStart = subrange.offset(provider: provider),
+                let subEnd = subrange.endOffset(provider: provider) else {
+            return nil
+        }
+        
+        return start <= subStart && end >= subEnd
     }
 }

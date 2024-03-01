@@ -171,9 +171,6 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     
     func textViewportLayoutControllerWillLayout(_ textViewportLayoutController: NSTextViewportLayoutController) {
         recycler.prepareForReuse()
-        layoutManager.enumerateTextLayoutFragments(from: textViewportLayoutController.viewportRange?.location) { fragment in
-            return textViewportLayoutController.viewportRange?.contains(fragment.rangeInElement.endLocation) ?? true
-        }
     }
     
     func textViewportLayoutController(_ textViewportLayoutController: NSTextViewportLayoutController, configureRenderingSurfaceFor textLayoutFragment: NSTextLayoutFragment) {
@@ -600,10 +597,15 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         textStore.endEditing()
         
         for observer in textObservers {
-            observer.textDidChange?(in: self,
-                                    oldRange: range,
-                                    newRange: NSTextRange(location: range.location),
-                                    newValue: textStore.string)
+            if let exclusiveEnd = contentStore.location(range.endLocation, offsetBy: 1),
+               let oldRange = NSTextRange(location: range.location, end: exclusiveEnd),
+               let newRange = NSTextRange(location: range.location, end: range.location) {
+                observer.textDidChange?(in: self,
+                                        oldRange: oldRange,
+                                        newRange: newRange,
+                                        newValue: textStore.string)
+            }
+            
             observer.textDidFinishChanges?(in: self, text: textStore.string)
         }
         

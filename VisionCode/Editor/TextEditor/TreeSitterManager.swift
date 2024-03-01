@@ -28,6 +28,7 @@ class TreeSitterManager: TextInputObserver {
     let observerId: UUID
     let language: CodeLanguage
     let config: LanguageConfiguration
+    let provider: NSTextElementProvider
     
     private let tsLanguage: Language
     private var tree: MutableTree?
@@ -35,10 +36,13 @@ class TreeSitterManager: TextInputObserver {
     
     private var observers = [TreeSitterManagerObserver]()
     
+    private var changeSizeDelta: Int = 0
     
-    init(language: CodeLanguage) throws {
+    
+    init(language: CodeLanguage, provider: NSTextElementProvider) throws {
         self.language = language
         self.tsLanguage = language.language!
+        self.provider = provider
         
         self.observerId = UUID()
         
@@ -65,25 +69,23 @@ class TreeSitterManager: TextInputObserver {
     }
     
     @objc func textDidChange(in textView: VCTextInputView, oldRange: NSTextRange, newRange: NSTextRange, newValue: String) {
-//        if let oldStartOffset = oldRange.offset(provider: self.provider),
-//           let oldEndOffset = oldRange.endOffset(provider: self.provider),
-//           let newEndOffset = newRange.endOffset(provider: self.provider) {
-//            let edit = InputEdit(startByte: oldStartOffset,
-//                                 oldEndByte: oldEndOffset,
-//                                 newEndByte: newEndOffset,
-//                                 startPoint: .zero,
-//                                 oldEndPoint:.zero,
-//                                 newEndPoint: .zero)
-//            tree?.edit(edit)
-//
-//
-//            self.tree = parser.parse(tree: self.tree, string: newValue)
-//            self.setHighlightsFromTree(newValue)
-//        }
-//        self.set(text: newValue)
+        if let oldStartOffset = oldRange.offset(provider: self.provider),
+           let oldEndOffset = oldRange.endOffset(provider: self.provider),
+           let newEndOffset = newRange.endOffset(provider: self.provider) {
+            let edit = InputEdit(startByte: oldStartOffset * 2,
+                                 oldEndByte: oldEndOffset * 2,
+                                 newEndByte: newEndOffset * 2,
+                                 startPoint: .zero,
+                                 oldEndPoint:.zero,
+                                 newEndPoint: .zero)
+            tree?.edit(edit)
+            self.tree = parser.parse(tree: tree, string: newValue)
+        }
     }
     
     @objc func textDidFinishChanges(in textView: VCTextInputView, text: String) {
-        self.set(text: text)
+        for observer in observers {
+            observer.treeDidChange(tree!, with: text)
+        }
     }
 }

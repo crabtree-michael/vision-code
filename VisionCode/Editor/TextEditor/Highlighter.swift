@@ -14,24 +14,26 @@ import CodeEditLanguages
 
 class RangedAttribute {
     let attribute: NSAttributedString.Key
-    let range: NSTextRange
+    var range: NSTextRange
+    let value: Any
     
-    init(attribute: NSAttributedString.Key, range: NSTextRange) {
+    init(attribute: NSAttributedString.Key, range: NSTextRange, value: Any) {
         self.attribute = attribute
         self.range = range
+        self.value = value
     }
 }
 
 class Highlighter: TreeSitterManagerObserver {
     let layoutManager: NSTextLayoutManager
     
+    var highlightedRange: NSTextRange? = nil
+    
     private var highlightQuery: Query
     private var provider: NSTextElementProvider
-    
     private let theme: Theme
-    
-    private var allActiveAttributes = [RangedAttribute]()
     private var treeSitterManager: TreeSitterManager
+    private var queryQueue = DispatchQueue(label: "highlight.query")
     
     
     init(theme: Theme,
@@ -48,24 +50,54 @@ class Highlighter: TreeSitterManagerObserver {
     }
     
    func treeWillChange() {
-        self.removeAllAttributes()
-    }
+   }
     
-    func treeDidChange(_ tree: MutableTree, with text: String) {
+    func resetHighlights(withTree tree: MutableTree, text: String) {
         let cursor = self.highlightQuery.execute(in: tree)
         let highlights = cursor.resolve(with: .init(string: text)).highlights()
         
         for namedRange in highlights {
-            if
-               let start = provider.location?(provider.documentRange.location, offsetBy: namedRange.range.location),
-                let end = provider.location?(start, offsetBy: namedRange.range.length),
-               let range = NSTextRange(location: start, end: end)
-            {
-                if let color = theme.color(forHighlight: namedRange.name) {
-                    self.addAttribute(.foregroundColor, value: color, for: range)
-                }
+            self.addAttribute(at: namedRange)
+        }
+    }
+    
+    func addAttribute(at namedRange: NamedRange) {
+        if
+           let start = provider.location?(provider.documentRange.location, offsetBy: namedRange.range.location),
+            let end = provider.location?(start, offsetBy: namedRange.range.length),
+           let range = NSTextRange(location: start, end: end)
+        {
+            if let color = theme.color(forHighlight: namedRange.name) {
+                self.layoutManager.addRenderingAttribute(.foregroundColor, value: color, for: range)
             }
         }
+    }
+    
+    func highlight(in range: NSTextRange, async: Bool = true) {
+        guard let tree = self.treeSitterManager.mutableTree else {
+            return
+        }
+        
+        if async {
+            self.getHighlights(range, in: tree) { highlights in
+                DispatchQueue.main.async {
+                    self.highlight(highlights: highlights, in: range)
+                }
+            }
+        } else {
+            let highlights = self.highlights(range, in: tree)
+            self.highlight(highlights: highlights, in: range)
+        }
+    }
+    
+    func highlightViewport(async: Bool = true) {
+        if let range = self.layoutManager.textViewportLayoutController.viewportRange {
+            self.highlight(in: range, async: async)
+        }
+    }
+    
+    func treeDidChange(_ tree: MutableTree, with text: String) {
+        self.highlightViewport(async: false)
     }
     
     func highlightName(for range: NSTextRange, in text: String) -> String? {
@@ -90,24 +122,34 @@ class Highlighter: TreeSitterManagerObserver {
         return nil
     }
     
-    func tokenRange(at index: NSTextLocation) {
-    }
-    
-    private func addAttribute(_ attribute: NSAttributedString.Key, value: Any, for range: NSTextRange) 
-    {
-        self.allActiveAttributes.append(RangedAttribute(attribute: attribute, range: range))
-        layoutManager.addRenderingAttribute(attribute, value: value, for: range)
-    }
-    
-    private func removeAllAttributes() {
-        for range in self.allActiveAttributes {
-            layoutManager.removeRenderingAttribute(range.attribute, for: range.range)
+    private func highlights(_ range: NSTextRange, in tree: MutableTree) -> [NamedRange] {
+        guard
+              let startOffset = range.offset(provider: provider),
+              let endOffset = range.endOffset(provider: provider) else {
+            return []
         }
-
-        allActiveAttributes = []
+        
+        let cursor = self.highlightQuery.execute(in: tree)
+        cursor.setByteRange(range: (UInt32(startOffset*2)..<UInt32(endOffset*2)))
+        let highlights = cursor.highlights()
+        return highlights
+    }
+    
+    private func getHighlights(_ range: NSTextRange, in tree: MutableTree, completion: @escaping ([NamedRange]) -> ()) {
+        self.queryQueue.async {
+            completion(self.highlights(range, in: tree))
+        }
+    }
+    
+    private func highlight(highlights: [NamedRange], in range: NSTextRange) {
+        self.layoutManager.removeRenderingAttribute(.foregroundColor, for: range)
+        for namedRange in highlights {
+            self.addAttribute(at: namedRange)
+        }
+        self.layoutManager.textViewportLayoutController.layoutViewport()
+        self.highlightedRange = range
     }
 }
-
 
 extension Point {
     static func zero() -> Point {

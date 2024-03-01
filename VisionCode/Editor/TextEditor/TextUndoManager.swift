@@ -24,13 +24,16 @@ class TextUndoManager: UndoManager, TextInputObserver {
     }
     
     func textViewWillInsert(_ textView: VCTextInputView, text: String, at location: NSTextLocation) {
-        guard let r = NSTextRange(location: location, end: location) else {
-            // Something strange happened... we have to clear because now the other ranges won't work
-            self.removeAllActions()
-            return
-        }
+        let endLocation = self.storage.location(location, offsetBy: text.count - 1)
         self.registerUndo(withTarget: self) { target in
-            textView.delete(range: r)
+            guard let endLocation = endLocation,
+                  let range = NSTextRange(location: location, end: endLocation)else {
+                // Something strange happened... we have to clear because now the other ranges won't work
+                self.removeAllActions()
+                return
+            }
+            
+            textView.delete(range: range)
         }
     }
     

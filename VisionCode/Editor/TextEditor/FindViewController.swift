@@ -564,7 +564,7 @@ class FindViewController: UIViewController, UITextFieldDelegate {
     
     private func addAttribute(_ attribute: NSAttributedString.Key, value: Any, for range: NSTextRange)
     {
-        self.allActiveAttributes.append(RangedAttribute(attribute: attribute, range: range))
+        self.allActiveAttributes.append(RangedAttribute(attribute: attribute, range: range, value: value))
         layoutManager.addRenderingAttribute(attribute, value: value, for: range)
     }
     
