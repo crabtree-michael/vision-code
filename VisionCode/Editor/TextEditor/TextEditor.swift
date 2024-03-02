@@ -236,23 +236,7 @@ class VCTextEditorViewController: UIViewController,
             self.findController.isActive = false
         }
         
-        
         textView.tabWidth = tabWidth
-        
-        guard (text != contentStorage.textStorage?.string || language.id != (self.treeSitterManager?.language.id ?? .plainText)) else {
-            return
-        }
-        
-        textView.prepareForReplacement()
-        
-        let attributedString = NSAttributedString(string: text, attributes: attributes)
-        
-        contentStorage.performEditingTransaction {
-            contentStorage.textStorage!.setAttributedString(attributedString)
-        }
-
-        textView.findWidestTextFragement()
-        layoutManager.textViewportLayoutController.layoutViewport()
         
         if language != .default && language != self.treeSitterManager?.language {
             do {
@@ -275,6 +259,19 @@ class VCTextEditorViewController: UIViewController,
                 print("Failed to initalize highlighter \(error)")
             }
         }
+        
+        guard (text != contentStorage.textStorage?.string) else {
+            return
+        }
+        
+        textView.prepareForReplacement()
+        let attributedString = NSAttributedString(string: text, attributes: attributes)
+        contentStorage.performEditingTransaction {
+            contentStorage.textStorage!.setAttributedString(attributedString)
+        }
+        textView.findWidestTextFragement()
+        highlighter?.highlightViewport(async: false)
+        layoutManager.textViewportLayoutController.layoutViewport()
     }
     
     func textStorage(_ textStorage: NSTextStorage, didProcessEditing editedMask: NSTextStorage.EditActions, range editedRange: NSRange, changeInLength delta: Int) {
