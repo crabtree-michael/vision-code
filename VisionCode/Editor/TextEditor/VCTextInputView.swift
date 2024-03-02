@@ -499,10 +499,6 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     }
     
     func replace(range: NSTextRange, with text: String) {
-        guard let textStore = self.contentStore.textStorage else {
-            return
-        }
-        
         self.perform(replacements: [Replacement(text: text, range: range)])
     }
     
@@ -549,7 +545,6 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         
         if let lastRange = replacements.first,
            let start = contentStore.location(lastRange.range.location, offsetBy: textDelta) {
-            let range = lastRange.range
             let text = lastRange.text
             self.carrotLocation = contentStore.location(start, offsetBy: text.count)
             self.updateCarrotLocation()
@@ -766,7 +761,67 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     }
     
     func insertTab() {
-        self.insertText(self.tabWidth.tabString)
+        if let selectionRange = self.selectionRange {
+            self.tab(range: selectionRange)
+        } else {
+            self.insertText(self.tabWidth.tabString)
+        }
+    }
+    
+    func tab(range: NSTextRange) {
+        let documentStart = contentStore.documentRange.location
+        guard let str = self.contentStore.string(in: range, inclusive: false),
+              let globalOffset = range.offset(provider: self.contentStore) else {
+            return
+        }
+        
+        self.selectionRange = nil
+        
+        var replacements = [Replacement]()
+        
+        // This section handles lines that are not completely selected
+        // We find the first occurance of a \n and at that to be tabbed
+        var location = range.location
+        while location.compare(documentStart) == .orderedDescending {
+            let character = self.contentStore.string(in: NSTextRange(location: location, end: location)!, inclusive: true)
+            if character == "\n" {
+                break
+            }
+            location = self.contentStore.location(location, offsetBy: -1) ?? documentStart
+        }
+        let lineRange = NSTextRange(location: location,
+                                end: self.contentStore.location(location, offsetBy: 1)!)!
+        if location.compare(range.location) == .orderedSame {
+            // Do nothing the whole line was selected
+        } else if location.compare(documentStart) == .orderedSame {
+            replacements.append(Replacement(text: self.tabWidth.tabString,
+                                            range: lineRange))
+        } else {
+            replacements.append(Replacement(text: "\n" + self.tabWidth.tabString,
+                                            range: lineRange))
+        }
+        
+        // Create replacements for every new line to add a tab to it
+        str.iterateOverOccurances(of: "\n") { range in
+            if let start = self.contentStore.location(documentStart, offsetBy: range.lowerBound.utf16Offset(in: str) + globalOffset),
+               let end = self.contentStore.location(documentStart, offsetBy: range.upperBound.utf16Offset(in: str) + globalOffset),
+               let range = NSTextRange(location: start, end: end ) {
+                replacements.append(Replacement(text: "\n" + self.tabWidth.tabString, range: range))
+            }
+            return true
+        }
+        
+        // Find the only replacement we have is the one we forced then just replace the range with a tab
+        guard replacements.count > 1 else {
+            self.replace(range: range, with: self.tabWidth.tabString)
+            return
+        }
+        
+        // Add a no-op replacement for cursor placement
+        replacements.append(Replacement(text: "", range: NSTextRange(location: range.endLocation, end: range.endLocation)!))
+        
+        // Perform replacements
+        self.perform(replacements: replacements.reversed())
     }
     
     @objc func copySelection() {
@@ -871,3 +926,20 @@ public extension NSTextRange {
     }
 }
 
+public extension String {
+    func iterateOverOccurances(of str: String, block: @escaping (Range<Substring.Index>) -> Bool) {
+        var currentIndex = self.startIndex
+        while (currentIndex < self.endIndex) {
+            let substring = self[currentIndex...]
+            if let range = substring.firstRange(of: "\n") {
+                let shouldContinue = block(range)
+                guard shouldContinue else {
+                    return
+                }
+                currentIndex = range.upperBound
+            } else {
+                currentIndex = self.endIndex
+            }
+        }
+    }
+}
