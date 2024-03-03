@@ -18,6 +18,11 @@ class Replacement: NSObject {
     }
 }
 
+protocol TextViewEditDelegate {
+    func textViewShouldInsert(_ textView: VCTextInputView, text: String, at location: NSTextLocation) -> Bool
+    func textViewShouldDelete(_ textView: VCTextInputView, range: NSTextRange) -> Bool
+}
+
 @objc protocol TextInputObserver {
     @objc func id() -> String
     
@@ -135,6 +140,39 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     }
     
     var lineHeight: CGFloat
+    
+    // TextInterface
+    var selectedRange: NSRange {
+        get {
+            if let selectionRange = self.selectionRange {
+                return NSRange(selectionRange, provider: self.contentStore)
+            }
+            if let cursorLocation = self.carrotLocation {
+                let offset = self.contentStore.offset(from: contentStore.documentRange.location, to: cursorLocation)
+                return NSRange((offset..<offset))
+            }
+            
+            return NSRange((0...0))
+        }
+        set {
+            guard let range = newValue.textRange(from: self.contentStore) else {
+                return
+            }
+            
+            if range.isEmpty {
+                self.carrotLocation = range.location
+                self.updateCarrotLocation()
+            } else {
+                self.selectionRange = range
+            }
+        }
+    }
+    var length: Int {
+        return self.contentStore.length
+    }
+    
+    var editDelegate: TextViewEditDelegate?
+    
     
     override var keyCommands: [UIKeyCommand]? {
         return [
@@ -468,8 +506,13 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         }
     }
     
-    func insert(text: String, at location: NSTextLocation) {
+    func insert(text: String, at location: NSTextLocation, ignoreEditingDelegate: Bool = false, moveCarrot: Bool = true) {
         guard let textStore = self.contentStore.textStorage else {
+            return
+        }
+        
+        if !ignoreEditingDelegate && 
+            !(self.editDelegate?.textViewShouldInsert(self, text: text, at: location) ?? true) {
             return
         }
         
@@ -492,8 +535,10 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         
         layoutManager.textViewportLayoutController.layoutViewport()
         
-        self.carrotLocation = contentStore.location(location, offsetBy: text.count)
-        self.updateCarrotLocation()
+        if moveCarrot {
+            self.carrotLocation = contentStore.location(location, offsetBy: text.count)
+            self.updateCarrotLocation()
+        }
         
         self.inputDelegate?.textDidChange(self)
     }
@@ -574,8 +619,13 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         self.delete(range: range)
     }
     
-    func delete(range: NSTextRange) {
+    func delete(range: NSTextRange, ignoreEditingDelegate: Bool = false) {
         guard let textStore = contentStore.textStorage else {
+            return
+        }
+        
+        if !ignoreEditingDelegate &&
+            !(self.editDelegate?.textViewShouldDelete(self, range: range) ?? true) {
             return
         }
         

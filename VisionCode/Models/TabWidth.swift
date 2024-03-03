@@ -45,6 +45,15 @@ struct TabWidth: Equatable, Hashable, Identifiable {
         }
     }
     
+    var unit: String {
+        switch(self.spacing) {
+        case .tab:
+            return "\t"
+        case .space:
+            return " "
+        }
+    }
+    
     var tabString: String {
         switch(self.spacing) {
         case .tab:

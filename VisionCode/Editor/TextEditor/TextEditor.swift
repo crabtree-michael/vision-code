@@ -49,6 +49,8 @@ class VCTextEditorViewController: UIViewController,
         return theme.backgroundColor
     }
     
+    var filterManager: TextFilterManager? = nil
+    
     init() {
         self.theme = try! Theme(name: "OneDark-Pro")
         self.attributes = [
@@ -193,6 +195,9 @@ class VCTextEditorViewController: UIViewController,
         
         textView.languageTokenizer = Tokenizer(provider: self.contentStorage)
         self.textView.add(observer: self.textUndoManager)
+        
+        self.filterManager = TextFilterManager(width: self.textView.tabWidth, storage: self.contentStorage)
+        self.textView.editDelegate = self.filterManager
     }
     
     deinit {
@@ -237,6 +242,7 @@ class VCTextEditorViewController: UIViewController,
         }
         
         textView.tabWidth = tabWidth
+        filterManager?.tabWidth = tabWidth
         
         if language != .default && language != self.treeSitterManager?.language {
             do {

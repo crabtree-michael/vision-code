@@ -24,10 +24,13 @@ class TextUndoManager: UndoManager, TextInputObserver {
     }
     
     func textViewWillInsert(_ textView: VCTextInputView, text: String, at location: NSTextLocation) {
+        guard text.count > 0 else {
+            return
+        }
         let endLocation = self.storage.location(location, offsetBy: text.count - 1)
         self.registerUndo(withTarget: self) { target in
             guard let endLocation = endLocation,
-                  let range = NSTextRange(location: location, end: endLocation)else {
+                  let range = NSTextRange(location: location, end: endLocation) else {
                 // Something strange happened... we have to clear because now the other ranges won't work
                 self.removeAllActions()
                 return
@@ -87,7 +90,7 @@ class TextUndoManager: UndoManager, TextInputObserver {
         }
         
         self.registerUndo(withTarget: self) { _ in
-            textView.insert(text: text, at: range.location)
+            textView.insert(text: text, at: range.location, ignoreEditingDelegate: true)
         }
     }
     
