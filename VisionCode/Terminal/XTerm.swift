@@ -44,6 +44,7 @@ class XTermViewController: UIViewController, TerminalViewDelegate, ConnectionUse
         terminalView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
         terminalView.backgroundColor = .clear
         terminalView.nativeForegroundColor = .white
+        terminalView.nativeBackgroundColor = .black
         
         terminalView.terminalDelegate = self
         
@@ -60,6 +61,16 @@ class XTermViewController: UIViewController, TerminalViewDelegate, ConnectionUse
                 try! await shell.setSize(terminalCharacterWidth: newCols, terminalRowHeight: newRows, terminalPixelWidth: Int(terminalView.contentSize.width), terminalPixelHeight: Int(terminalView.contentSize.height))
             }
         }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        if let shell = self.shell {
+            Task {
+                let dims = self.terminalView.getTerminal().getDims()
+                try await shell.setSize(terminalCharacterWidth: dims.cols, terminalRowHeight: dims.rows, terminalPixelWidth: Int(terminalView.contentSize.width), terminalPixelHeight: Int(terminalView.contentSize.height))
+            }
+        }
+
     }
     
     func setTerminalTitle(source: SwiftTerm.TerminalView, title: String) {
