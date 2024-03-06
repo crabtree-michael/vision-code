@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 
 import SwiftTreeSitter
-import TreeSitterSwift
 import CodeEditLanguages
 
 class RangedAttribute {

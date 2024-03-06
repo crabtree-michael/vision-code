@@ -98,32 +98,6 @@
         "revision" : "8883fa739aa213e70e6cb109bfbf0a0b551e4cb5",
         "version" : "0.8.0"
       }
-    },
-    {
-      "identity" : "tree-sitter-dockerfile",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/camdencheek/tree-sitter-dockerfile",
-      "state" : {
-        "branch" : "main",
-        "revision" : "33e22c33bcdbfc33d42806ee84cfd0b1248cc392"
-      }
-    },
-    {
-      "identity" : "tree-sitter-go",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/tree-sitter/tree-sitter-go",
-      "state" : {
-        "branch" : "master",
-        "revision" : "ff86c7f1734873c8c4874ca4dd95603695686d7a"
-      }
-    },
-    {
-      "identity" : "tree-sitter-swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/alex-pinkus/tree-sitter-swift",
-      "state" : {
-        "revision" : "eda05af7ac41adb4eb19c346883c0fa32fe3bdd8"
-      }
     }
   ],
   "version" : 2

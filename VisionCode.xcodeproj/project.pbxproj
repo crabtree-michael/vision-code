@@ -24,19 +24,20 @@
 		D80881F92B63E23100582C41 /* EditorNavBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881F82B63E23100582C41 /* EditorNavBarView.swift */; };
 		D80881FB2B63E25E00582C41 /* EditorErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881FA2B63E25E00582C41 /* EditorErrors.swift */; };
 		D80881FD2B63E27200582C41 /* Lambdas.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881FC2B63E27200582C41 /* Lambdas.swift */; };
+		D80D08F72B98937500E5D7F7 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D80D08F62B98937500E5D7F7 /* RealmSwift */; };
 		D80E37AD2B744A9B008D0FFA /* XTerm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80E37AC2B744A9B008D0FFA /* XTerm.swift */; };
 		D80E37B02B744BC3008D0FFA /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = D80E37AF2B744BC3008D0FFA /* SwiftTerm */; };
 		D80E37B22B744BC3008D0FFA /* SwiftTermFuzz in Frameworks */ = {isa = PBXBuildFile; productRef = D80E37B12B744BC3008D0FFA /* SwiftTermFuzz */; };
 		D81804AE2B934F21006682D2 /* TextFilterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81804AD2B934F21006682D2 /* TextFilterManager.swift */; };
-		D81804B12B9354F5006682D2 /* TextFormation in Frameworks */ = {isa = PBXBuildFile; productRef = D81804B02B9354F5006682D2 /* TextFormation */; };
 		D81804B32B935F4B006682D2 /* VCTextInputView+TextInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81804B22B935F4B006682D2 /* VCTextInputView+TextInterface.swift */; };
 		D81804B62B941C17006682D2 /* SimplePairInsertationFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81804B52B941C17006682D2 /* SimplePairInsertationFilter.swift */; };
 		D81804B82B941CB6006682D2 /* DeleteBlockCloseFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81804B72B941CB6006682D2 /* DeleteBlockCloseFilter.swift */; };
 		D81804BA2B941D2B006682D2 /* DeleteWhitespaceFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81804B92B941D2B006682D2 /* DeleteWhitespaceFilter.swift */; };
-		D81BAC632B6E5D0500A080DF /* TreeSitterSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D81BAC622B6E5D0500A080DF /* TreeSitterSwift */; };
+		D81804BC2B94E624006682D2 /* VCTextInputView+GroupEdits.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81804BB2B94E624006682D2 /* VCTextInputView+GroupEdits.swift */; };
 		D81BAC672B6EB74200A080DF /* Highlighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81BAC662B6EB74200A080DF /* Highlighter.swift */; };
 		D81BAC692B6EB80200A080DF /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81BAC682B6EB80200A080DF /* Content.swift */; };
 		D81BAC6D2B6F29E100A080DF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81BAC6C2B6F29E000A080DF /* Theme.swift */; };
+		D832FB5E2B95F16B00D7E3B2 /* VCRemoteCommand in Frameworks */ = {isa = PBXBuildFile; productRef = D832FB5D2B95F16B00D7E3B2 /* VCRemoteCommand */; };
 		D8393BAE2B6870E9004018DC /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8393BAD2B6870E9004018DC /* Models.swift */; };
 		D8393BB02B687113004018DC /* GutterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8393BAF2B687113004018DC /* GutterView.swift */; };
 		D8393BB22B6871EE004018DC /* Recycler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8393BB12B6871EE004018DC /* Recycler.swift */; };
@@ -61,7 +62,6 @@
 		D87BB5972B6BCEB0004222F8 /* HostManagamentViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB5962B6BCEB0004222F8 /* HostManagamentViewState.swift */; };
 		D87BB5992B6C1BB7004222F8 /* HostManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB5982B6C1BB7004222F8 /* HostManager.swift */; };
 		D87BB59C2B6C1C41004222F8 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = D87BB59B2B6C1C41004222F8 /* Realm */; };
-		D87BB59E2B6C1C41004222F8 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D87BB59D2B6C1C41004222F8 /* RealmSwift */; };
 		D87BB5A02B6C20DC004222F8 /* RepositoryManagmentViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87BB59F2B6C20DC004222F8 /* RepositoryManagmentViewManager.swift */; };
 		D8874E5F2B6C6A350062A920 /* ProjectsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8874E5E2B6C6A350062A920 /* ProjectsManager.swift */; };
 		D8874E612B6C6A4E0062A920 /* ProjectManagementViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8874E602B6C6A4E0062A920 /* ProjectManagementViewState.swift */; };
@@ -69,10 +69,6 @@
 		D8874E652B6CEED10062A920 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8874E642B6CEED10062A920 /* ConnectionManager.swift */; };
 		D8874E672B6CF2280062A920 /* RepositoryViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8874E662B6CF2280062A920 /* RepositoryViewManager.swift */; };
 		D8874E6A2B6D279D0062A920 /* SwiftTreeSitter in Frameworks */ = {isa = PBXBuildFile; productRef = D8874E692B6D279D0062A920 /* SwiftTreeSitter */; };
-		D8874E6C2B6D279D0062A920 /* SwiftTreeSitterLayer in Frameworks */ = {isa = PBXBuildFile; productRef = D8874E6B2B6D279D0062A920 /* SwiftTreeSitterLayer */; };
-		D8874E722B6D2D6F0062A920 /* TreeSitterGo in Frameworks */ = {isa = PBXBuildFile; productRef = D8874E712B6D2D6F0062A920 /* TreeSitterGo */; };
-		D8874E752B6D2F500062A920 /* TreeSitterDockerfile in Frameworks */ = {isa = PBXBuildFile; productRef = D8874E742B6D2F500062A920 /* TreeSitterDockerfile */; };
-		D89C87DD2B6FCA170031A87E /* CodeEditLanguages in Frameworks */ = {isa = PBXBuildFile; productRef = D89C87DC2B6FCA170031A87E /* CodeEditLanguages */; };
 		D8A9BF012B63E33500115D77 /* FinderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF002B63E33500115D77 /* FinderView.swift */; };
 		D8A9BF042B63E4C900115D77 /* FinderViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF032B63E4C900115D77 /* FinderViewState.swift */; };
 		D8A9BF062B63E4F400115D77 /* FolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF052B63E4F400115D77 /* FolderView.swift */; };
@@ -85,6 +81,8 @@
 		D8A9BF182B63E6D000115D77 /* FileCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF172B63E6D000115D77 /* FileCellView.swift */; };
 		D8A9BF1B2B63E6FF00115D77 /* FileCellViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF1A2B63E6FF00115D77 /* FileCellViewState.swift */; };
 		D8A9BF1D2B63E74700115D77 /* RepositoryFilesViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF1C2B63E74700115D77 /* RepositoryFilesViewState.swift */; };
+		D8B5333E2B95EF8200048303 /* CodeEditLanguages in Frameworks */ = {isa = PBXBuildFile; productRef = D8B5333D2B95EF8200048303 /* CodeEditLanguages */; };
+		D8B533412B95EFF300048303 /* TextFormation in Frameworks */ = {isa = PBXBuildFile; productRef = D8B533402B95EFF300048303 /* TextFormation */; };
 		D8CA54A52B74FFD6009D5770 /* QuickOpenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CA54A42B74FFD6009D5770 /* QuickOpenView.swift */; };
 		D8CCC7092B66E21000730B45 /* TextLayoutFragmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CCC7082B66E21000730B45 /* TextLayoutFragmentView.swift */; };
 		D8CCC70B2B66EE8100730B45 /* VCTextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CCC70A2B66EE8100730B45 /* VCTextInputView.swift */; };
@@ -97,7 +95,6 @@
 		D8F89CE32B7544CA00444923 /* TrieNodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F89CD42B75443100444923 /* TrieNodeTests.swift */; };
 		D8F89CE42B75451900444923 /* TrieNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F89CD22B7543FF00444923 /* TrieNode.swift */; };
 		D8FC3F192B5DA5CD00C6E099 /* Terminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FC3F182B5DA5CD00C6E099 /* Terminal.swift */; };
-		D8FC3F1C2B5DD39E00C6E099 /* VCRemoteCommand in Frameworks */ = {isa = PBXBuildFile; productRef = D8FC3F1B2B5DD39E00C6E099 /* VCRemoteCommand */; };
 		D8FC3F1F2B5DF7CA00C6E099 /* TerminalManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FC3F1E2B5DF7CA00C6E099 /* TerminalManager.swift */; };
 		D8FC3F212B5DF83300C6E099 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FC3F202B5DF83300C6E099 /* Model.swift */; };
 /* End PBXBuildFile section */
@@ -136,6 +133,7 @@
 		D81804B52B941C17006682D2 /* SimplePairInsertationFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimplePairInsertationFilter.swift; sourceTree = "<group>"; };
 		D81804B72B941CB6006682D2 /* DeleteBlockCloseFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteBlockCloseFilter.swift; sourceTree = "<group>"; };
 		D81804B92B941D2B006682D2 /* DeleteWhitespaceFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteWhitespaceFilter.swift; sourceTree = "<group>"; };
+		D81804BB2B94E624006682D2 /* VCTextInputView+GroupEdits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VCTextInputView+GroupEdits.swift"; sourceTree = "<group>"; };
 		D81BAC662B6EB74200A080DF /* Highlighter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Highlighter.swift; sourceTree = "<group>"; };
 		D81BAC682B6EB80200A080DF /* Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Content.swift; sourceTree = "<group>"; };
 		D81BAC6C2B6F29E000A080DF /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
@@ -205,18 +203,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D87BB59E2B6C1C41004222F8 /* RealmSwift in Frameworks */,
+				D80D08F72B98937500E5D7F7 /* RealmSwift in Frameworks */,
 				D87BB59C2B6C1C41004222F8 /* Realm in Frameworks */,
-				D89C87DD2B6FCA170031A87E /* CodeEditLanguages in Frameworks */,
-				D8874E752B6D2F500062A920 /* TreeSitterDockerfile in Frameworks */,
-				D8874E6C2B6D279D0062A920 /* SwiftTreeSitterLayer in Frameworks */,
-				D8874E722B6D2D6F0062A920 /* TreeSitterGo in Frameworks */,
 				D80E37B02B744BC3008D0FFA /* SwiftTerm in Frameworks */,
-				D8FC3F1C2B5DD39E00C6E099 /* VCRemoteCommand in Frameworks */,
+				D832FB5E2B95F16B00D7E3B2 /* VCRemoteCommand in Frameworks */,
 				D80E37B22B744BC3008D0FFA /* SwiftTermFuzz in Frameworks */,
-				D81804B12B9354F5006682D2 /* TextFormation in Frameworks */,
+				D8B5333E2B95EF8200048303 /* CodeEditLanguages in Frameworks */,
 				D8874E6A2B6D279D0062A920 /* SwiftTreeSitter in Frameworks */,
-				D81BAC632B6E5D0500A080DF /* TreeSitterSwift in Frameworks */,
+				D8B533412B95EFF300048303 /* TextFormation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -399,6 +393,7 @@
 				D86985E42B9003850003A915 /* TextUndoManager.swift */,
 				D81804AD2B934F21006682D2 /* TextFilterManager.swift */,
 				D81804B22B935F4B006682D2 /* VCTextInputView+TextInterface.swift */,
+				D81804BB2B94E624006682D2 /* VCTextInputView+GroupEdits.swift */,
 			);
 			path = TextEditor;
 			sourceTree = "<group>";
@@ -554,18 +549,14 @@
 			);
 			name = VisionCode;
 			packageProductDependencies = (
-				D8FC3F1B2B5DD39E00C6E099 /* VCRemoteCommand */,
 				D87BB59B2B6C1C41004222F8 /* Realm */,
-				D87BB59D2B6C1C41004222F8 /* RealmSwift */,
 				D8874E692B6D279D0062A920 /* SwiftTreeSitter */,
-				D8874E6B2B6D279D0062A920 /* SwiftTreeSitterLayer */,
-				D8874E712B6D2D6F0062A920 /* TreeSitterGo */,
-				D8874E742B6D2F500062A920 /* TreeSitterDockerfile */,
-				D81BAC622B6E5D0500A080DF /* TreeSitterSwift */,
-				D89C87DC2B6FCA170031A87E /* CodeEditLanguages */,
 				D80E37AF2B744BC3008D0FFA /* SwiftTerm */,
 				D80E37B12B744BC3008D0FFA /* SwiftTermFuzz */,
-				D81804B02B9354F5006682D2 /* TextFormation */,
+				D8B5333D2B95EF8200048303 /* CodeEditLanguages */,
+				D8B533402B95EFF300048303 /* TextFormation */,
+				D832FB5D2B95F16B00D7E3B2 /* VCRemoteCommand */,
+				D80D08F62B98937500E5D7F7 /* RealmSwift */,
 			);
 			productName = VisionCode;
 			productReference = D840A68A2B5A0A31002F3303 /* VisionCode.app */;
@@ -618,17 +609,14 @@
 			);
 			mainGroup = D840A6812B5A0A31002F3303;
 			packageReferences = (
-				D840A6AD2B5C48AB002F3303 /* XCLocalSwiftPackageReference "VCRemoteCommand" */,
 				D840A6B02B5C4BB3002F3303 /* XCRemoteSwiftPackageReference "swift-nio" */,
 				D840A6B12B5C4C26002F3303 /* XCRemoteSwiftPackageReference "swift-nio-ssh" */,
 				D87BB59A2B6C1C41004222F8 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				D8874E682B6D279D0062A920 /* XCRemoteSwiftPackageReference "SwiftTreeSitter" */,
-				D8874E702B6D2D6F0062A920 /* XCRemoteSwiftPackageReference "tree-sitter-go" */,
-				D8874E732B6D2F500062A920 /* XCRemoteSwiftPackageReference "tree-sitter-dockerfile" */,
-				D81BAC612B6E5D0500A080DF /* XCRemoteSwiftPackageReference "tree-sitter-swift" */,
-				D89C87DB2B6FCA170031A87E /* XCLocalSwiftPackageReference "../CodeEditLanguages" */,
 				D80E37AE2B744BC3008D0FFA /* XCLocalSwiftPackageReference "SwiftTerm" */,
-				D81804AF2B9354F5006682D2 /* XCLocalSwiftPackageReference "TextFormation" */,
+				D8B5333C2B95EF8200048303 /* XCLocalSwiftPackageReference "CodeEditLanguages" */,
+				D8B5333F2B95EFF300048303 /* XCLocalSwiftPackageReference "TextFormation" */,
+				D8B533422B95F00C00048303 /* XCLocalSwiftPackageReference "VCRemoteCommand" */,
 			);
 			productRefGroup = D840A68B2B5A0A31002F3303 /* Products */;
 			projectDirPath = "";
@@ -683,6 +671,7 @@
 				D8A9BF012B63E33500115D77 /* FinderView.swift in Sources */,
 				D8393BB62B6902DF004018DC /* FileViewToolBar.swift in Sources */,
 				D8A9BF112B63E5B700115D77 /* RepositoryEditorView.swift in Sources */,
+				D81804BC2B94E624006682D2 /* VCTextInputView+GroupEdits.swift in Sources */,
 				D81804BA2B941D2B006682D2 /* DeleteWhitespaceFilter.swift in Sources */,
 				D80881E62B63DEE900582C41 /* RepositoryEditorViewManager.swift in Sources */,
 				D8A9BF1D2B63E74700115D77 /* RepositoryFilesViewState.swift in Sources */,
@@ -1036,29 +1025,21 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = SwiftTerm;
 		};
-		D81804AF2B9354F5006682D2 /* XCLocalSwiftPackageReference "TextFormation" */ = {
+		D8B5333C2B95EF8200048303 /* XCLocalSwiftPackageReference "CodeEditLanguages" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = CodeEditLanguages;
+		};
+		D8B5333F2B95EFF300048303 /* XCLocalSwiftPackageReference "TextFormation" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = TextFormation;
 		};
-		D840A6AD2B5C48AB002F3303 /* XCLocalSwiftPackageReference "VCRemoteCommand" */ = {
+		D8B533422B95F00C00048303 /* XCLocalSwiftPackageReference "VCRemoteCommand" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = VCRemoteCommand;
-		};
-		D89C87DB2B6FCA170031A87E /* XCLocalSwiftPackageReference "../CodeEditLanguages" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../CodeEditLanguages;
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		D81BAC612B6E5D0500A080DF /* XCRemoteSwiftPackageReference "tree-sitter-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/alex-pinkus/tree-sitter-swift";
-			requirement = {
-				kind = revision;
-				revision = eda05af7ac41adb4eb19c346883c0fa32fe3bdd8;
-			};
-		};
 		D840A6B02B5C4BB3002F3303 /* XCRemoteSwiftPackageReference "swift-nio" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-nio.git";
@@ -1091,25 +1072,14 @@
 				minimumVersion = 0.8.0;
 			};
 		};
-		D8874E702B6D2D6F0062A920 /* XCRemoteSwiftPackageReference "tree-sitter-go" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/tree-sitter/tree-sitter-go";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
-		D8874E732B6D2F500062A920 /* XCRemoteSwiftPackageReference "tree-sitter-dockerfile" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/camdencheek/tree-sitter-dockerfile";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D80D08F62B98937500E5D7F7 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D87BB59A2B6C1C41004222F8 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
 		D80E37AF2B744BC3008D0FFA /* SwiftTerm */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftTerm;
@@ -1118,53 +1088,27 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftTermFuzz;
 		};
-		D81804B02B9354F5006682D2 /* TextFormation */ = {
+		D832FB5D2B95F16B00D7E3B2 /* VCRemoteCommand */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = TextFormation;
-		};
-		D81BAC622B6E5D0500A080DF /* TreeSitterSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D81BAC612B6E5D0500A080DF /* XCRemoteSwiftPackageReference "tree-sitter-swift" */;
-			productName = TreeSitterSwift;
+			productName = VCRemoteCommand;
 		};
 		D87BB59B2B6C1C41004222F8 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D87BB59A2B6C1C41004222F8 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = Realm;
 		};
-		D87BB59D2B6C1C41004222F8 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D87BB59A2B6C1C41004222F8 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = RealmSwift;
-		};
 		D8874E692B6D279D0062A920 /* SwiftTreeSitter */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D8874E682B6D279D0062A920 /* XCRemoteSwiftPackageReference "SwiftTreeSitter" */;
 			productName = SwiftTreeSitter;
 		};
-		D8874E6B2B6D279D0062A920 /* SwiftTreeSitterLayer */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D8874E682B6D279D0062A920 /* XCRemoteSwiftPackageReference "SwiftTreeSitter" */;
-			productName = SwiftTreeSitterLayer;
-		};
-		D8874E712B6D2D6F0062A920 /* TreeSitterGo */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D8874E702B6D2D6F0062A920 /* XCRemoteSwiftPackageReference "tree-sitter-go" */;
-			productName = TreeSitterGo;
-		};
-		D8874E742B6D2F500062A920 /* TreeSitterDockerfile */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D8874E732B6D2F500062A920 /* XCRemoteSwiftPackageReference "tree-sitter-dockerfile" */;
-			productName = TreeSitterDockerfile;
-		};
-		D89C87DC2B6FCA170031A87E /* CodeEditLanguages */ = {
+		D8B5333D2B95EF8200048303 /* CodeEditLanguages */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CodeEditLanguages;
 		};
-		D8FC3F1B2B5DD39E00C6E099 /* VCRemoteCommand */ = {
+		D8B533402B95EFF300048303 /* TextFormation */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D840A6AD2B5C48AB002F3303 /* XCLocalSwiftPackageReference "VCRemoteCommand" */;
-			productName = VCRemoteCommand;
+			productName = TextFormation;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

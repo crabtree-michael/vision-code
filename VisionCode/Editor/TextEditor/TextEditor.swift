@@ -242,6 +242,7 @@ class VCTextEditorViewController: UIViewController,
         }
         
         textView.tabWidth = tabWidth
+        textView.language = language
         filterManager?.tabWidth = tabWidth
         
         if language != .default && language != self.treeSitterManager?.language {
