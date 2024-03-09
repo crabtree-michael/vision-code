@@ -23,13 +23,13 @@ class RepositoryViewManager {
     
     var connectionCancellable: AnyCancellable? = nil
     
+    var openHostId: ObjectId? = nil
+    
     var isOpeningProject: Bool = false {
         didSet {
             state.managerState.projectsManagmentState?.isOpeningProject = self.isOpeningProject
         }
     }
-    
-    @Environment(\.openWindow) private var openWindow
     
     init(realm: Realm,
          connectionManager: ConnectionManager,
@@ -45,15 +45,19 @@ class RepositoryViewManager {
            let project = realm.object(ofType: Project.self, forPrimaryKey: id) {
             self.open(project: project)
         }
+        
+        self.state.didOpenFromBackground = self.didOpenFromBackground
     }
     
-    func open(project: Project) {
+    func open(project: Project, openWindow: OpenWindowAction? = nil) {
         guard let hostID = project.host?.id else {
             print("Attempt to open project with no host")
             return
         }
         guard self.editorManager == nil else {
-            openWindow(id: "editor", value: project.id)
+            if let openWindow = openWindow {
+                openWindow(id: "editor", value: project.id)
+            }
             return
         }
         
@@ -87,6 +91,13 @@ class RepositoryViewManager {
             self.isOpeningProject = false
             self.state.tabSelection = .repository
         }
+        self.openHostId = project.host?.id
     }
     
+    private func didOpenFromBackground() {
+        guard let id = self.openHostId else {
+            return
+        }
+        self.connectionManager.reloadIfNeeded(id: id)
+    }
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 import RealmSwift
+import SwiftUI
 
 class ProjectManagementViewState: ObservableObject {
     var id:ObjectId?
@@ -19,7 +20,7 @@ class ProjectManagementViewState: ObservableObject {
     @Published var isOpeningProject: Bool = false
     
     var onSave: ((ProjectManagementViewState) -> ())? = nil
-    var onOpen: ((ProjectManagementViewState) -> ())? = nil 
+    var onOpen: ((ProjectManagementViewState, OpenWindowAction) -> ())? = nil
     var onDelete: ((ProjectManagementViewState) -> ())? = nil
     
     init(project: Project?) {

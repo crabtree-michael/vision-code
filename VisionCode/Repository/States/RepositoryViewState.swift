@@ -17,5 +17,7 @@ class RepositoryViewState: ObservableObject {
     @Published var editorState: RepositoryEditorViewState?
     @Published var tabSelection: RepositoryViewTab = .managment
     
-    var error: CommonError? = nil
+    @Published var error: CommonError? = nil
+    var onDisappear: VoidLambda? = nil
+    var didOpenFromBackground: VoidLambda? = nil
 }

@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ProjectManagmentView: View {
     @ObservedObject var state: ProjectManagementViewState
+    @Environment(\.openWindow) var openWindow
     
     init(state: ProjectManagementViewState) {
         self.state = state
@@ -44,7 +45,7 @@ struct ProjectManagmentView: View {
             }
             if (state.canOpen && !state.isOpeningProject) {
                 Button {
-                    state.onOpen?(state)
+                    state.onOpen?(state, openWindow)
                 } label: {
                     Label(
                         title: { Text("Open") },

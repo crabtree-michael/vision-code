@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 import Combine
+import SwiftUI
 
 class ProjectsManager {
     let realm: Realm
@@ -15,7 +16,7 @@ class ProjectsManager {
     let projects: any Publisher<[Project], Error>
     
     var onClosed: ((ProjectsManager) -> Void)? = nil
-    var onOpened: ((Project) -> Void)? = nil
+    var onOpened: ((Project, OpenWindowAction?) -> Void)? = nil
     
     init(realm: Realm) {
         self.realm = realm
@@ -81,13 +82,13 @@ class ProjectsManager {
         self.onClosed?(self)
     }
     
-    func open(state: ProjectManagementViewState) {
+    func open(state: ProjectManagementViewState, action: OpenWindowAction) {
         let project = project(for: state)
         guard project.isValid() else {
             return
         }
         
-        self.onOpened?(project)
+        self.onOpened?(project, action)
     }
     
     private func project(for state: ProjectManagementViewState) -> Project {

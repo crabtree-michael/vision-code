@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ConnectionState {
+enum ConnectionState: Equatable {
     case connected
     case notStarted
     case connecting
@@ -23,6 +23,21 @@ enum ConnectionState {
             return "Connecting"
         case .failed(_):
             return "Failure"
+        }
+    }
+    
+    static func == (lhs: ConnectionState, rhs: ConnectionState) -> Bool {
+        switch(lhs, rhs) {
+        case (.connected, .connected):
+            return true
+        case (.notStarted, .notStarted):
+            return true
+        case (.connecting, .connecting):
+            return true
+        case (.failed(_), .failed(_)):
+            return true
+        default:
+            return false
         }
     }
 }

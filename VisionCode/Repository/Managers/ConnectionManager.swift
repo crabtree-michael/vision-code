@@ -26,6 +26,22 @@ class ConnectionManager {
         
     }
     
+    func reloadIfNeeded(id: ObjectId) {
+        guard let connection = self.connectionMap[id],
+            connection.hasUsers() else {
+            return
+        }
+        
+        switch(connection.state.status) {
+        case .failed(_), .notStarted:
+            Task {
+                await self.reload(id: id)
+            }
+        default:
+            break
+        }
+    }
+    
     @MainActor func didDisconnect(for id: ObjectId, withResult result: Result<Void, Error>)  {
         guard let connection = connectionMap[id] else {
             return

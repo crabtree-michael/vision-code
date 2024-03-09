@@ -34,7 +34,7 @@ class ConnectionViewState: ObservableObject {
             return nil
         case .notStarted:
             return "arrow.clockwise"
-        case .failed(let error):
+        case .failed(_):
             return "arrow.clockwise"
             
         }

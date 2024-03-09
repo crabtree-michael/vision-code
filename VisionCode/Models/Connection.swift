@@ -38,4 +38,12 @@ class Connection {
         
         return try await connection.createTerminal(settings: settings)
     }
+    
+    func remove(user: ConnectionUser) {
+        self.users.removeAll { $0.id() == user.id() } 
+    }
+    
+    func hasUsers() -> Bool {
+        return !self.users.isEmpty
+    }
 }

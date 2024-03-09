@@ -11,6 +11,8 @@ import SwiftUI
 struct RepositoryView: View {
     @ObservedObject var state: RepositoryViewState
     
+    @Environment(\.scenePhase) private var scenePhase
+    
     var isShowingError:Binding<Bool> {
         Binding {
             state.error != nil
@@ -43,6 +45,15 @@ struct RepositoryView: View {
             }
         }
         .alert(isPresented: isShowingError, error: state.error) {
+            
+        }
+        .onDisappear {
+            self.state.onDisappear?()
+        }
+        .onChange(of: scenePhase) { oldValue, newValue in
+            if oldValue == .background && newValue == .active {
+                self.state.didOpenFromBackground?()
+            }
         }
     }
 }
