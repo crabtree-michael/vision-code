@@ -108,6 +108,7 @@ class ConnectionManager {
                 
                 if let existingConnection = connectionMap[host.id], reuse {
                     promise(.success(existingConnection))
+                    return
                 }
                 
                 let ip = host.ipAddress
