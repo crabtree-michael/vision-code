@@ -78,7 +78,7 @@ VisionCode is an ambitious project to bring a full, native IDE to visionOS. The 
                          
 You are already helping. You are one of the first beta testers on VisionCode! Your feedback and experiences are extremely helpful to grow VisionCode. Please reach out through one of the various methods below.
 
-If you would like access to the source code, please check back here for updates. I am working hard on getting the repositories set up for external contributions. You can xpect them to be released towards the end of March. I will update this page when they are available.
+If you would like access to the source code, check back here for updates regularly. I am working hard on getting the repositories set up for external contributions. You can expect them to be released towards the end of March. I will update this page when they are available.
 """
 
 let emailURL = URL(string: "mailto:visioncode@macmail.app")!

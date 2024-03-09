@@ -88,8 +88,32 @@ struct RepositoryManagerView: View {
                 ProjectManagmentView(state: projectsState)
             }
             else {
-                Text("")
-                    .font(.title3)
+                ScrollView {
+                    VStack {
+                        HStack {
+                            Text("Welcome 👋")
+                                .font(.extraLargeTitle)
+                            Spacer()
+                        }
+                        .padding()
+                        HStack {
+                            Text(description)
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                        HStack {
+                            Text(instructions)
+                        }
+                        .padding(.horizontal)
+                        HStack {
+                            Text(footnote)
+                            Spacer()
+                        }
+                        .padding(.horizontal)
+                    }
+                    
+                }
+                
             }
   
             
@@ -103,10 +127,29 @@ struct RepositoryManagerView: View {
         let state = RepositoryManagmentViewState()
         state.hosts = [Host(name: "Michael's iMac"), Host(name: "Work Computer")]
         state.projects = [Project()]
-        state.projectsManagmentState = ProjectManagementViewState(project: nil)
-        state.hostManagmentState?.attemptingConnection = true
+//        state.projectsManagmentState = ProjectManagementViewState(project: nil)
+//        state.hostManagmentState?.attemptingConnection = true
         return state
     }
    
     return RepositoryManagerView(state:state)
 }
+
+let description =
+"""
+VisionCode uses SSH and SFTP to connect a host where you can run your development tools. To get started follow the steps below:
+
+"""
+
+let instructions =
+"""
+1. Add a host. This can be any computer that you do your primary development on now. VisionCode is best when connected to a host on your local network.
+2. Add a project. A project is the path on the host that contains your code.
+3. Start coding! You can open the project from your the project's page.
+"""
+
+let footnote =
+"""
+
+You are one of the first beta testers for VisionCode. All feedback is appreciated and will help make VisionCode better. Send your feedback to visioncode@macmail.app.
+"""

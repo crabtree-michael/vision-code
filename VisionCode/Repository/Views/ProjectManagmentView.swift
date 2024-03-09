@@ -23,6 +23,8 @@ struct ProjectManagmentView: View {
                     HStack {
                         Text("Name")
                         TextField("", text: $state.name)
+                            .autocapitalization(.none)
+                            .autocorrectionDisabled()
                     }
                     if state.hosts.count > 0 {
                         Picker("Host", selection: $state.selectedHost) {
@@ -38,27 +40,38 @@ struct ProjectManagmentView: View {
                     HStack {
                         Text("Path")
                         TextField("Project root", text: $state.rootPath)
+                            .autocapitalization(.none)
+                            .autocorrectionDisabled()
                     }
                 } header: {
                     Text("Setttings")
                 }
             }
-            if (state.canOpen && !state.isOpeningProject) {
-                Button {
-                    state.onOpen?(state, openWindow)
-                } label: {
-                    Label(
-                        title: { Text("Open") },
-                        icon: { Image(systemName: "") }
-                    )
+            HStack {
+                if (state.hasChanges) {
+                    Button {
+                        state.onSave?(state)
+                    } label: {
+                        Label("Save", systemImage: "pencil")
+                    }
                 }
-                .padding()
                 
-                Spacer()
-            } else if state.isOpeningProject {
-                ProgressView()
-                    .padding()
+                if (state.canOpen && !state.isOpeningProject) {
+                    Button {
+                        state.onOpen?(state, openWindow)
+                    } label: {
+                        Label(
+                            title: { Text("Open") },
+                            icon: { Image(systemName: "macwindow") }
+                        )
+                    }
+                    .padding(.horizontal)
+                } else if state.isOpeningProject {
+                    ProgressView()
+                        .padding(.horizontal)
+                }
             }
+            .padding()
         }
         .toolbar(content: {
             Button {
@@ -104,7 +117,9 @@ struct ProjectManagmentView: View {
         let state = ProjectManagementViewState(project: nil)
         state.hosts = [a, b]
         
-        state.isOpeningProject = true
+        state.isOpeningProject = false
+        state.canOpen = true
+        state.hasChanges = true
         return state
     }
    

@@ -28,6 +28,8 @@ struct HostManagamentView: View {
                         Text("Name")
                             .foregroundColor(.gray)
                         TextField("", text: $state.name)
+                            .autocapitalization(.none)
+                            .autocorrectionDisabled()
                     }
                 }
                 Section("Connection") {
@@ -35,16 +37,22 @@ struct HostManagamentView: View {
                         Text("IP Address")
                             .foregroundColor(.gray)
                         TextField("", text: $state.ipAddress)
+                            .autocapitalization(.none)
+                            .autocorrectionDisabled()
                     }
                     HStack {
                         Text("Port")
                             .foregroundColor(.gray)
                         TextField("", text: $state.port)
+                            .autocapitalization(.none)
+                            .autocorrectionDisabled()
                     }
                     HStack {
                         Text("Username")
                             .foregroundColor(.gray)
                         TextField("", text: $state.username)
+                            .autocapitalization(.none)
+                            .autocorrectionDisabled()
                     }
                     HStack {
                         Text("Password")
@@ -96,9 +104,37 @@ struct HostManagamentView: View {
                     }
                 }
             }
+            if self.state.hasChanges {
+                Button {
+                    state.onSave?(state)
+                } label: {
+                    Label {
+                        Text("Save")
+                    } icon: {
+                        Image(systemName: "pencil")
+                    }
+                }
+            }
+            Button {
+                UIApplication.shared.open(sftpInstructionURL!)
+            } label: {
+                Text("How to enable SSH and SFTP on Mac OS")
+                    .foregroundColor(.blue)
+            }
+            .buttonStyle(.borderless)
+
         }
         .navigationTitle(state.title)
         .alert(isPresented: self.isShowingError, error: state.error) {
         }
     }
+}
+
+let sftpInstructionURL = URL(string: "https://support.apple.com/guide/mac-help/allow-a-remote-computer-to-access-your-mac-mchlp1066/mac")
+
+
+#Preview {
+    let state = HostManagamentViewState(host: nil)
+    state.hasChanges = true
+    return HostManagamentView(state: state)
 }

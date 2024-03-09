@@ -7,6 +7,7 @@
 
 import Foundation
 import RealmSwift
+import Combine
 
 typealias HostManagamentViewStateLambda = (HostManagamentViewState) -> Void
 
@@ -19,6 +20,14 @@ class HostManagamentViewState: ObservableObject {
     @Published var username: String
     @Published var password: String
     @Published var error: CommonError? = nil
+    @Published var hasChanges: Bool = false
+    
+    var textChangePublisher: AnyPublisher<HostManagamentViewState, Never> {
+        return Publishers.CombineLatest(Publishers.CombineLatest4($name, $ipAddress, $port, $username), $password).map { _ in
+            return self
+        }
+        .eraseToAnyPublisher()
+    }
     
     var onSave: HostManagamentViewStateLambda? = nil
     var onDelete: HostManagamentViewStateLambda? = nil
@@ -45,6 +54,14 @@ class HostManagamentViewState: ObservableObject {
             username = ""
             password = ""
         }
+    }
+    
+    func hasChangedFrom(host: Host?) -> Bool {
+        return ipAddress != host?.ipAddress ?? "" ||
+            name != host?.name ?? "" ||
+            port != (host != nil ? "\(host?.port ?? 0)" : "") ||
+            username != host?.username ?? "" ||
+            password != host?.password ?? ""
     }
     
 }

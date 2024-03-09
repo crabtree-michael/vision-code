@@ -18,6 +18,10 @@ class ProjectsManager {
     var onClosed: ((ProjectsManager) -> Void)? = nil
     var onOpened: ((Project, OpenWindowAction?) -> Void)? = nil
     
+    var lastSavedProject: Project? = nil
+    
+    private var tasks = Set<AnyCancellable>()
+    
     init(realm: Realm) {
         self.realm = realm
         self.projects = realm.objects(Project.self).collectionPublisher
@@ -31,6 +35,7 @@ class ProjectsManager {
     }
     
     func open(_ project: Project?, selectedHost: Host?) -> ProjectManagementViewState {
+        lastSavedProject = project
         let state = ProjectManagementViewState(project: project)
         if project == nil {
             state.selectedHost = selectedHost
@@ -46,6 +51,10 @@ class ProjectsManager {
         state.onDelete = self.delete
         state.onOpen = self.open
         state.canOpen = project?.isValid() ?? false
+        
+        state.changePublisher.sink { [weak self] state in
+            state.hasChanges = state.hasChanges(from: self?.lastSavedProject)
+        }.store(in: &self.tasks)
         
         return state
     }
@@ -63,6 +72,9 @@ class ProjectsManager {
         state.id = project.id
         state.canOpen = project.isValid()
         state.title = project.name
+        state.hasChanges = false
+        
+        self.lastSavedProject = project
     }
     
     func delete(state: ProjectManagementViewState) {

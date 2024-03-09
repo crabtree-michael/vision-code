@@ -18,6 +18,10 @@ class HostManager {
     
     var onCloseManagmentView: VoidLambda? = nil
     
+    var latestHost: Host? = nil
+    
+    var tasks = Set<AnyCancellable>()
+    
     init(realm: Realm) {
         self.realm = realm
         self.currentState = nil
@@ -33,11 +37,18 @@ class HostManager {
     }
     
     func open(host: Host?) -> HostManagamentViewState {
+        self.latestHost = host
         let state = HostManagamentViewState(host: host)
         currentState = state
         currentState?.onSave = self.save
         currentState?.onDelete = self.delete
         currentState?.onTestConnection = self.testConnection
+        
+        state.textChangePublisher.sink { [weak self] value in
+            self?.currentState?.hasChanges = value.hasChangedFrom(host: self?.latestHost)
+        }
+        .store(in: &self.tasks)
+        
         return state
     }
     
@@ -62,6 +73,9 @@ class HostManager {
         
         state.title = host.name
         state.id = host.id
+        
+        self.latestHost = host
+        currentState?.hasChanges = false 
     }
     
     func delete(state: HostManagamentViewState) {
