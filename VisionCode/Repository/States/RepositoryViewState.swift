@@ -10,6 +10,7 @@ import Foundation
 enum RepositoryViewTab {
     case managment
     case repository
+    case contact
 }
 
 class RepositoryViewState: ObservableObject {

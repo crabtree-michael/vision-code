@@ -43,6 +43,15 @@ struct RepositoryView: View {
                 }
                 .tag(RepositoryViewTab.repository)
             }
+            ContactView()
+            .tabItem {
+                Label {
+                    Text("About")
+                } icon: {
+                    Image(systemName: "person.fill")
+                }
+            }
+            .tag(RepositoryViewTab.contact)
         }
         .alert(isPresented: isShowingError, error: state.error) {
             

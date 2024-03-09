@@ -81,6 +81,7 @@
 		D8A9BF182B63E6D000115D77 /* FileCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF172B63E6D000115D77 /* FileCellView.swift */; };
 		D8A9BF1B2B63E6FF00115D77 /* FileCellViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF1A2B63E6FF00115D77 /* FileCellViewState.swift */; };
 		D8A9BF1D2B63E74700115D77 /* RepositoryFilesViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF1C2B63E74700115D77 /* RepositoryFilesViewState.swift */; };
+		D8AA4C1E2B9BFD4300CB00D1 /* ContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AA4C1D2B9BFD4300CB00D1 /* ContactView.swift */; };
 		D8B5333E2B95EF8200048303 /* CodeEditLanguages in Frameworks */ = {isa = PBXBuildFile; productRef = D8B5333D2B95EF8200048303 /* CodeEditLanguages */; };
 		D8B533412B95EFF300048303 /* TextFormation in Frameworks */ = {isa = PBXBuildFile; productRef = D8B533402B95EFF300048303 /* TextFormation */; };
 		D8CA54A52B74FFD6009D5770 /* QuickOpenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CA54A42B74FFD6009D5770 /* QuickOpenView.swift */; };
@@ -182,6 +183,7 @@
 		D8A9BF172B63E6D000115D77 /* FileCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCellView.swift; sourceTree = "<group>"; };
 		D8A9BF1A2B63E6FF00115D77 /* FileCellViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileCellViewState.swift; sourceTree = "<group>"; };
 		D8A9BF1C2B63E74700115D77 /* RepositoryFilesViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryFilesViewState.swift; sourceTree = "<group>"; };
+		D8AA4C1D2B9BFD4300CB00D1 /* ContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactView.swift; sourceTree = "<group>"; };
 		D8CA54A42B74FFD6009D5770 /* QuickOpenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickOpenView.swift; sourceTree = "<group>"; };
 		D8CCC7082B66E21000730B45 /* TextLayoutFragmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLayoutFragmentView.swift; sourceTree = "<group>"; };
 		D8CCC70A2B66EE8100730B45 /* VCTextInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTextInputView.swift; sourceTree = "<group>"; };
@@ -448,6 +450,7 @@
 				D87BB5942B6BCE71004222F8 /* HostManagmentView.swift */,
 				D8874E622B6C6C6C0062A920 /* ProjectManagmentView.swift */,
 				D8CA54A42B74FFD6009D5770 /* QuickOpenView.swift */,
+				D8AA4C1D2B9BFD4300CB00D1 /* ContactView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -720,6 +723,7 @@
 				D80881F92B63E23100582C41 /* EditorNavBarView.swift in Sources */,
 				D81804B82B941CB6006682D2 /* DeleteBlockCloseFilter.swift in Sources */,
 				D84BD2712B83183B00CD709D /* Tokenizer.swift in Sources */,
+				D8AA4C1E2B9BFD4300CB00D1 /* ContactView.swift in Sources */,
 				D87BB5992B6C1BB7004222F8 /* HostManager.swift in Sources */,
 				D86985E52B9003850003A915 /* TextUndoManager.swift in Sources */,
 				D8F23A552B725E7900A47A13 /* Connection.swift in Sources */,
