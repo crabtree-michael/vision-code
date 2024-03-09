@@ -33,7 +33,7 @@ class RepositoryEditorViewManager {
         
         self.state.onClose = self.onClose
         
-        self.browser.state.onOpenFile = self.openFile
+        self.browser.open = self.openFile
         
         self.editor.state.onQuickOpen = self.openQuickOpen
         self.state.closeQuickOpen = self.closeQuickOpen

@@ -25,6 +25,8 @@ class BreadthFirstPathTraversal {
     
     var onNodeLoaded: ((BreadthFirstPathTraversal, PathNode) -> Void)? = nil
     
+    var allowLargeFolders = false
+    
     let root: PathNode
     private let load: AsyncLoadDirLambda
     
@@ -70,7 +72,7 @@ class BreadthFirstPathTraversal {
             
             var files = try await self.load(node.file.path)
             
-            guard files.count < maxChildCount else {
+            guard (files.count < maxChildCount || self.allowLargeFolders) else {
                 currentIndex += 1
                 node.loaded = true
                 node.visited = true

@@ -105,6 +105,14 @@ struct RepositoryFilesView: View {
                 }
             }
         }
+        .alert(isPresented: self.$state.showLargeFolderWarning) {
+            Alert(title: Text("Load large folder?"),
+                  message: Text("This folder was skipped because it was deemed too large. Would you like to load it any way?"),
+                  primaryButton: .default(Text("Load folder")) {
+                state.loadLargeFolder?()
+                    },
+                  secondaryButton: .cancel())
+        }
     }
 }
 

@@ -20,6 +20,7 @@ class RepositoryFilesViewState: ObservableObject {
     }
     
     @Published var manualUpdate: Int = 0
+    @Published var showLargeFolderWarning: Bool = false
     
    var subscriptions: [AnyCancellable]
     
@@ -29,6 +30,7 @@ class RepositoryFilesViewState: ObservableObject {
     var refreshDirectory: FileLambda? = nil
     var createFile: ((File, String) -> ())? = nil
     var createFolder: ((File, String) -> ())? = nil
+    var loadLargeFolder: VoidLambda? = nil
     
     init(root: PathNode, connectionState: ConnectionViewState) {
         self.root = FileCellViewState(node: root)

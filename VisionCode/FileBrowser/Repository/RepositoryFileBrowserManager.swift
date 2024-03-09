@@ -27,6 +27,10 @@ class RepositoryFileBrowserManager: ConnectionUser {
     
     let trieRoot = TrieNode<String, PathNode>()
     
+    var open: FileLambda? = nil
+    
+    var largeFolder: File? = nil
+    
     init(path: String, remote: Connection) {
         self.path = path
         
@@ -36,9 +40,13 @@ class RepositoryFileBrowserManager: ConnectionUser {
         self.remote = remote
         self.identifier = UUID()
         
-        self.state.refreshDirectory = self.reload
+        self.state.refreshDirectory = { folder in
+            self.reload(folder: folder, allowLargeFolders: false)
+        }
         self.state.createFile = self.createFile
         self.state.createFolder = self.createFolder
+        self.state.onOpenFile = self.onOpen
+        self.state.loadLargeFolder = self.loadLargeFolder
     }
     
     func id() -> String {
@@ -63,7 +71,7 @@ class RepositoryFileBrowserManager: ConnectionUser {
         }
     }
     
-    func reload(folder: File) {
+    func reload(folder: File, allowLargeFolders: Bool = false) {
         guard folder.isFolder else {
             return
         }
@@ -73,20 +81,21 @@ class RepositoryFileBrowserManager: ConnectionUser {
         Task {
             do {
                 let node = PathNode(file: folder, subnodes: [])
-                try await self.load(node: node)
+                try await self.load(node: node, allowLargeFolders: allowLargeFolders)
             } catch {
                 print("Failed to load \(error)")
             }
         }
     }
     
-    func load(node: PathNode) async throws {
+    func load(node: PathNode, allowLargeFolders: Bool = false) async throws {
         let isRoot = node.file.path == self.root.file.path
         if isRoot {
             self.loading = true
         }
         
         let traverser = BreadthFirstPathTraversal(root: node, load: self.get)
+        traverser.allowLargeFolders = allowLargeFolders
         traverser.onNodeLoaded = self.onTraversalLoadedNode
         try await traverser.traverse()
         if isRoot {
@@ -167,6 +176,24 @@ class RepositoryFileBrowserManager: ConnectionUser {
                 self.state.error = error
             }
         }
+    }
+    
+    func onOpen(file: File) {
+        if file.isFolder {
+            self.largeFolder = file
+            self.state.showLargeFolderWarning = true
+        } else {
+            self.open?(file)
+        }
+    }
+    
+    func loadLargeFolder() {
+        state.showLargeFolderWarning = false
+        guard let folder = self.largeFolder else {
+            return
+        }
+        
+        self.reload(folder: folder, allowLargeFolders: true)
     }
     
     private func removeNodeFromTrie(node: PathNode) {
