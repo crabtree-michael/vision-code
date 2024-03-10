@@ -10,6 +10,7 @@ import CodeEditLanguages
 
 struct FileView: View {
     @ObservedObject var state: FileViewState
+    var isVisible: Bool
     
     var isShowingError:Binding<Bool> {
         Binding {
@@ -30,7 +31,8 @@ struct FileView: View {
                     VCTextEditor(text: $state.content,
                                  language: $state.language,
                                  findInFileState: $state.findInFileState,
-                                 tabWidth: $state.tabWidth)
+                                 tabWidth: $state.tabWidth,
+                                 isVisible: isVisible)
                 }
             }
         }
@@ -82,5 +84,5 @@ struct FileView: View {
         return state
     }
     
-    return FileView(state: state)
+    return FileView(state: state, isVisible: true)
 }

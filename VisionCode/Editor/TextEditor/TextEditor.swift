@@ -227,7 +227,12 @@ class VCTextEditorViewController: UIViewController,
         layoutManager.textViewportLayoutController.layoutViewport()
     }
     
-    func update(_ text: String, language: CodeLanguage, findInFileState: FindInFileState, tabWidth: TabWidth) {
+    func update(_ text: String, language: CodeLanguage, findInFileState: FindInFileState, tabWidth: TabWidth,
+                isVisible: Bool) {
+        if !isVisible && textView.isFirstResponder {
+            _ = textView.resignFirstResponder()
+        }
+        
         switch(findInFileState) {
         case .find:
             self.findController.isActive = true
@@ -314,6 +319,7 @@ struct VCTextEditor: UIViewControllerRepresentable {
     @Binding var language: CodeLanguage
     @Binding var findInFileState: FindInFileState
     @Binding var tabWidth: TabWidth
+    var isVisible: Bool
     
     func makeUIViewController(context: Context) -> VCTextEditorViewController {
         let controller = VCTextEditorViewController()
@@ -333,10 +339,12 @@ struct VCTextEditor: UIViewControllerRepresentable {
                 self.findInFileState = value
             }
         }
-        uiViewController.update(text, 
+        
+        uiViewController.update(text,
                                 language: language, 
                                 findInFileState: findInFileState,
-                                tabWidth: tabWidth)
+                                tabWidth: tabWidth,
+                                isVisible: isVisible)
     }
 }
 

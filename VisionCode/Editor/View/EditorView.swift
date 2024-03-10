@@ -23,7 +23,7 @@ struct Editor: View {
                     ForEach(Array(zip(state.openFileStates.indices, state.openFileStates)),
                             id: \.0) { (index, fileState) in
                         VStack(spacing: 0) {
-                            FileView(state: fileState)
+                            FileView(state: fileState, isVisible: activeIndex == index)
                             FileViewToolBar(state: fileState)
                                 .background(.clear)
                         }
