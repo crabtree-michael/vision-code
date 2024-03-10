@@ -10,6 +10,10 @@ import UIKit
 
 class TextPosition: UITextPosition {
     var location: Int
+    
+    func nsTextLocation(in provider: NSTextElementProvider) -> NSTextLocation? {
+        return provider.location?(provider.documentRange.location, offsetBy: location)
+    }
 
     init(location: Int) {
         self.location = location
@@ -48,5 +52,13 @@ class TextRange: UITextRange {
     init(range: NSTextRange, provider: NSTextElementProvider) {
         self._start = TextPosition(location: range.location, provider: provider)
         self._end = TextPosition(location: range.endLocation, provider: provider)
+    }
+    
+    func nsTextRange(in provider: NSTextElementProvider) -> NSTextRange? {
+        guard let start = start.nsTextLocation(in: provider),
+              let end = end.nsTextLocation(in: provider) else {
+            return nil
+        }
+        return NSTextRange(location: start, end: end)
     }
 }

@@ -90,8 +90,6 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     var onDidSelectText: VoidLambda? = nil
     var onDidDeslectText: VoidLambda? = nil
     var onOpenFindInFile: VoidLambda? = nil
-    var onUndoPressed: VoidLambda? = nil
-    var onRedoPressed: VoidLambda? = nil
     
     var tabWidth: TabWidth
     
@@ -99,15 +97,17 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     
     private var updateCursorLocationOnNextLayout: Bool = true
     
+    var primaryUndoManager: UndoManager? = nil
+    override var undoManager: UndoManager? {
+        return primaryUndoManager
+    }
+    
     var selectedTextRange: UITextRange? {
         get {
-            // TODO: Get working
-            //            guard let range = self.selectionRange else {
-            //                return nil
-            //            }
-            //            return TextRange(range: range, provider: self.contentStore)
-            
-            return nil
+            guard let range = self.selectionRange else {
+                return nil
+            }
+            return TextRange(range: range, provider: self.contentStore)
         }
         set {
             print("Attempt to set selected text range ignored")
@@ -296,6 +296,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         holdGesture.addTarget(self, action: #selector(onHoldGesture))
         holdGesture.minimumPressDuration = 0.25
         addGestureRecognizer(holdGesture)
+        
+        self.addInteraction(UIPointerInteraction(delegate: self))
     }
     
     required init?(coder: NSCoder) {
@@ -848,6 +850,23 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         self.deleteBackward()
     }
     
+    override func selectAll(_ sender: Any?) {
+        self.selectionRange = self.contentStore.documentRange
+        self.layoutManager.textViewportLayoutController.layoutViewport()
+    }
+    
+    override func copy(_ sender: Any?) {
+        self.copySelection()
+    }
+    
+    override func cut(_ sender: Any?) {
+        self.cutSelection()
+    }
+    
+    override func find(_ sender: Any?) {
+        self.onOpenFindInFile?()
+    }
+    
     override func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
         guard let press = presses.first else {
             super.pressesBegan(presses, with: event)
@@ -855,36 +874,12 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         }
     
         switch (press.key?.keyCode) {
-        case .keyboardC:
-            if press.key?.modifierFlags == .command {
-                self.copySelection()
-                return
-            }
-        case .keyboardX:
-            if press.key?.modifierFlags == .command {
-                self.cutSelection()
-                return
-            }
-        case .keyboardF:
-            if press.key?.modifierFlags == .command {
-                self.onOpenFindInFile?()
-                return
-            }
         case .keyboardTab:
             self.insertTab()
             return
         case .keyboardSlash:
             if press.key?.modifierFlags == .command {
                 self.commentSelection()
-            }
-        case .keyboardZ:
-            if press.key?.modifierFlags == .command {
-                self.onUndoPressed?()
-                return
-            }
-            if press.key?.modifierFlags == [.command, .shift] {
-                self.onRedoPressed?()
-                return
             }
         default: break
         }

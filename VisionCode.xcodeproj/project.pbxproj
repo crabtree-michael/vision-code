@@ -87,6 +87,7 @@
 		D8CA54A52B74FFD6009D5770 /* QuickOpenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CA54A42B74FFD6009D5770 /* QuickOpenView.swift */; };
 		D8CCC7092B66E21000730B45 /* TextLayoutFragmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CCC7082B66E21000730B45 /* TextLayoutFragmentView.swift */; };
 		D8CCC70B2B66EE8100730B45 /* VCTextInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CCC70A2B66EE8100730B45 /* VCTextInputView.swift */; };
+		D8DCDF7D2B9E149F00015BDA /* VCTextInputView+UIPointerInteractionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8DCDF7C2B9E149F00015BDA /* VCTextInputView+UIPointerInteractionDelegate.swift */; };
 		D8EE47292B7CAFAB0073E129 /* FindViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8EE47282B7CAFAB0073E129 /* FindViewController.swift */; };
 		D8F23A532B725A2600A47A13 /* ConnectionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F23A522B725A2600A47A13 /* ConnectionState.swift */; };
 		D8F23A552B725E7900A47A13 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F23A542B725E7900A47A13 /* Connection.swift */; };
@@ -187,6 +188,7 @@
 		D8CA54A42B74FFD6009D5770 /* QuickOpenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickOpenView.swift; sourceTree = "<group>"; };
 		D8CCC7082B66E21000730B45 /* TextLayoutFragmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLayoutFragmentView.swift; sourceTree = "<group>"; };
 		D8CCC70A2B66EE8100730B45 /* VCTextInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCTextInputView.swift; sourceTree = "<group>"; };
+		D8DCDF7C2B9E149F00015BDA /* VCTextInputView+UIPointerInteractionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VCTextInputView+UIPointerInteractionDelegate.swift"; sourceTree = "<group>"; };
 		D8EE47282B7CAFAB0073E129 /* FindViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindViewController.swift; sourceTree = "<group>"; };
 		D8F23A522B725A2600A47A13 /* ConnectionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionState.swift; sourceTree = "<group>"; };
 		D8F23A542B725E7900A47A13 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
@@ -396,6 +398,7 @@
 				D81804AD2B934F21006682D2 /* TextFilterManager.swift */,
 				D81804B22B935F4B006682D2 /* VCTextInputView+TextInterface.swift */,
 				D81804BB2B94E624006682D2 /* VCTextInputView+GroupEdits.swift */,
+				D8DCDF7C2B9E149F00015BDA /* VCTextInputView+UIPointerInteractionDelegate.swift */,
 			);
 			path = TextEditor;
 			sourceTree = "<group>";
@@ -681,6 +684,7 @@
 				D80881D82B63DBB500582C41 /* FinderFolderViewManager.swift in Sources */,
 				D80E37AD2B744A9B008D0FFA /* XTerm.swift in Sources */,
 				D8874E5F2B6C6A350062A920 /* ProjectsManager.swift in Sources */,
+				D8DCDF7D2B9E149F00015BDA /* VCTextInputView+UIPointerInteractionDelegate.swift in Sources */,
 				D8393BAE2B6870E9004018DC /* Models.swift in Sources */,
 				D8FC3F1F2B5DF7CA00C6E099 /* TerminalManager.swift in Sources */,
 				D870C6D32B6293BD0063D7D4 /* BreadthFirstPathTraversal.swift in Sources */,

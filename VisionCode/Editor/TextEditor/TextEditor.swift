@@ -169,8 +169,7 @@ class VCTextEditorViewController: UIViewController,
             self.onFindInFileSet?(.find)
         }
         
-        self.textView.onUndoPressed = self.textUndoManager.undo
-        self.textView.onRedoPressed = self.textUndoManager.redo
+        self.textView.primaryUndoManager = self.textUndoManager
         
         findController = FindViewController(layoutManager: layoutManager, storage: contentStorage)
         self.overlayView.addSubview(findController.view)

@@ -27,13 +27,11 @@ extension VCTextInputView: UITextInput {
     
     func text(in range: UITextRange) -> String? {
          guard let range = range as? TextRange,
-               let text = contentStore.textStorage?.string else {
+               let nsTextRange = range.nsTextRange(in: self.contentStore) else {
              return nil
          }
         
-         let start = text.index(text.startIndex, offsetBy: range.start.location)
-         let end = text.index(text.startIndex, offsetBy: range.end.location)
-         return String(text[start..<end])
+        return self.contentStore.string(in: nsTextRange, inclusive: false)
      }
     
     func replace(_ range: UITextRange, withText text: String) {
@@ -169,7 +167,6 @@ extension VCTextInputView: UITextInput {
     }
     
     func characterRange(byExtending position: UITextPosition, in direction: UITextLayoutDirection) -> UITextRange? {
-        
         return nil
     }
     
