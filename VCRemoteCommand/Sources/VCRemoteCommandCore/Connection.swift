@@ -16,6 +16,7 @@ public class RCConnection: NIOSSHClientUserAuthenticationDelegate, NIOSSHClientS
     
     private var group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
     private var channel: Channel?
+    private var calledAuth: Bool = false
     
     let buffer = ByteBufferAllocator()
     
@@ -58,10 +59,15 @@ public class RCConnection: NIOSSHClientUserAuthenticationDelegate, NIOSSHClientS
             throw ConnectionError.noActiveChannel
         }
         
-        let terminal = RCPseudoTerminal(settings: settings, eventLoop: channel.eventLoop)
-        let _ = try self.createChildChannel(withHandlers: [terminal.handler])
-        let _ = try await terminal.creationPromise.futureResult.get()
-        return terminal
+        let p = self.callWithTimeout({
+            let terminal = RCPseudoTerminal(settings: settings, eventLoop: channel.eventLoop)
+            let _ = try self.createChildChannel(withHandlers: [terminal.handler])
+            let _ = try await terminal.creationPromise.futureResult.get()
+            return terminal
+        }, timeout: 15)
+        
+
+        return try await p.futureResult.get()
     }
     
     public func createShell() async throws -> RCShell {
@@ -69,10 +75,14 @@ public class RCConnection: NIOSSHClientUserAuthenticationDelegate, NIOSSHClientS
             throw ConnectionError.noActiveChannel
         }
         
-        let shell = RCShell(eventLoop: channel.eventLoop)
-        let _ = try self.createChildChannel(withHandlers: [shell.handler])
-        let _ = try await shell.creationPromise.futureResult.get()
-        return shell
+        let p = self.callWithTimeout({
+            let shell = RCShell(eventLoop: channel.eventLoop)
+            let _ = try self.createChildChannel(withHandlers: [shell.handler])
+            let _ = try await shell.creationPromise.futureResult.get()
+            return shell
+        }, timeout: 15)
+        
+        return try await p.futureResult.get()
     }
     
     public func createSFTPClient() async throws -> RCSFTPClient {
@@ -80,10 +90,14 @@ public class RCConnection: NIOSSHClientUserAuthenticationDelegate, NIOSSHClientS
             throw ConnectionError.noActiveChannel
         }
         
-        let client = RCSFTPClient(eventLoop: channel.eventLoop)
-        let _ = try self.createChildChannel(withHandlers: client.handlers)
-        let _ = try await client.creationPromise.futureResult.get()
-        return client
+        let p = self.callWithTimeout({
+            let client = RCSFTPClient(eventLoop: channel.eventLoop)
+            let _ = try self.createChildChannel(withHandlers: client.handlers)
+            let _ = try await client.creationPromise.futureResult.get()
+            return client
+        }, timeout: 15)
+        
+        return try await p.futureResult.get()
     }
     
     private func createChildChannel(withHandlers handlers: [ChannelHandler]) throws -> EventLoopFuture<Channel>  {
@@ -106,12 +120,36 @@ public class RCConnection: NIOSSHClientUserAuthenticationDelegate, NIOSSHClientS
         }
     }
     
+    private func callWithTimeout<T>(_ closure: @escaping () async throws -> T, timeout: TimeInterval) -> EventLoopPromise<T> {
+        let promise = self.channel!.eventLoop.makePromise(of: T.self)
+        Task {
+            var timeoutTask: Task<Void, Never>?
+            if timeout > 0 {
+                timeoutTask = Task {
+                    try? await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
+                    promise.fail(SFTPError.timeout)
+                }
+            }
+            let result = try await closure()
+            timeoutTask?.cancel()
+            promise.succeed(result)
+        }
+        
+        return promise
+    }
+    
     public func nextAuthenticationType(availableMethods: NIOSSH.NIOSSHAvailableUserAuthenticationMethods, nextChallengePromise: NIOCore.EventLoopPromise<NIOSSH.NIOSSHUserAuthenticationOffer?>) {
         guard availableMethods.contains(.password) else {
             nextChallengePromise.fail(ConnectionError.passwordAuthNotAvailable)
             return
         }
         
+        guard !calledAuth else {
+            nextChallengePromise.succeed(.none)
+            return
+        }
+        
+        calledAuth = true
         nextChallengePromise.succeed(
             NIOSSHUserAuthenticationOffer(username: self.username,
                                           serviceName: "VisionCode",

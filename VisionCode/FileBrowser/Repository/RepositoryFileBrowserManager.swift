@@ -67,6 +67,7 @@ class RepositoryFileBrowserManager: ConnectionUser {
         } catch {
             DispatchQueue.main.async {
                 self.state.error = error
+                self.state.showErrorAlert = true
             }
         }
     }

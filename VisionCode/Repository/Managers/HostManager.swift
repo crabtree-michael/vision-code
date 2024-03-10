@@ -109,6 +109,7 @@ class HostManager {
             var success = true
             do {
                 try await connection.connect()
+                let _ = try await connection.createShell()
                 connection.close()
             } catch {
                 success = false

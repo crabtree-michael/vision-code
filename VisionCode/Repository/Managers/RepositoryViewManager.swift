@@ -87,6 +87,9 @@ class RepositoryViewManager {
         if editorManager == nil {
             self.editorManager = manager
             manager.load()
+            manager.state.browserState.closeProject = {
+                self.state.editorState = nil
+            }
             self.state.editorState = manager.state
             self.isOpeningProject = false
             self.state.tabSelection = .repository

@@ -65,46 +65,63 @@ struct RepositoryFilesView: View {
             }
             .padding(.bottom)
             .padding(.leading)
-            switch(state.connectionState.status) {
-            case .connected:
+            if (state.error != nil) {
                 VStack{
                     Spacer()
                     Button {
-                        state.connectionState.disconnect?()
+                        state.closeProject?()
                     } label: {
                         Label(
-                            title: { Text("Disconnect") },
-                            icon: { Image(systemName: "icloud") }
+                            title: { Text("Close") },
+                            icon: { Image(systemName: "x.circle") }
                         )
                     }
-                    
                 }
-                .padding()
-            default:
-                VStack {
-                    Spacer()
-                    HStack {
-                        Text(state.connectionState.displayMessage())
-                            .font(.caption)
+            } else {
+                switch(state.connectionState.status) {
+                case .connected:
+                    VStack{
                         Spacer()
-                        switch(state.connectionState.status) {
-                        case .connected: VStack{}
-                        case .connecting:
-                            ProgressView().scaleEffect(
-                                CGSize(width: 0.5, height: 0.5))
-                        case .failed(_), .notStarted:
-                            Image(systemName: "arrow.clockwise")
-                                .hoverEffect()
-                                .onTapGesture {
-                                    state.connectionState.onReload?()
-                                }
+                        Button {
+                            state.connectionState.disconnect?()
+                        } label: {
+                            Label(
+                                title: { Text("Disconnect") },
+                                icon: { Image(systemName: "icloud") }
+                            )
                         }
                     }
                     .padding()
-                    .background(.ultraThickMaterial)
+                default:
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Text(state.connectionState.displayMessage())
+                                .font(.caption)
+                            Spacer()
+                            switch(state.connectionState.status) {
+                            case .connected: VStack{}
+                            case .connecting:
+                                ProgressView().scaleEffect(
+                                    CGSize(width: 0.5, height: 0.5))
+                            case .failed(_), .notStarted:
+                                Image(systemName: "arrow.clockwise")
+                                    .hoverEffect()
+                                    .onTapGesture {
+                                        state.connectionState.onReload?()
+                                    }
+                            }
+                        }
+                        .padding()
+                        .background(.ultraThickMaterial)
+                    }
                 }
             }
         }
+        .alert("Error loading files", isPresented: $state.showErrorAlert, actions: {
+        }, message: {
+            Text(state.error?.localizedDescription ?? "Unknown")
+        })
         .alert(isPresented: self.$state.showLargeFolderWarning) {
             Alert(title: Text("Load large folder?"),
                   message: Text("This folder was skipped because it was deemed too large. Would you like to load it any way?"),
@@ -117,7 +134,7 @@ struct RepositoryFilesView: View {
 }
 
 @MainActor
-struct RepositoryFilewsView_Previews: PreviewProvider {
+struct RepositoryFilesView_Previews: PreviewProvider {
     static var root: PathNode {
         let file1 = File(path: "/michael/george/test.txt", isFolder: false)
         let file2 = File(path: "/michael/george/long.txt", isFolder: false)
@@ -153,6 +170,8 @@ struct RepositoryFilewsView_Previews: PreviewProvider {
     static var state: RepositoryFilesViewState {
         get {
             let browserState = RepositoryFilesViewState(root: root, connectionState: connectionState)
+            browserState.error = CommonError.invalidPort
+            browserState.showErrorAlert = true
             return browserState
         }
     }

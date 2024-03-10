@@ -24,6 +24,7 @@ class RepositoryFilesViewState: ObservableObject {
     
    var subscriptions: [AnyCancellable]
     
+    @Published var showErrorAlert: Bool = false
     @Published var error: Error? = nil
     
     var onOpenFile: FileLambda? = nil
@@ -31,6 +32,8 @@ class RepositoryFilesViewState: ObservableObject {
     var createFile: ((File, String) -> ())? = nil
     var createFolder: ((File, String) -> ())? = nil
     var loadLargeFolder: VoidLambda? = nil
+    
+    var closeProject: VoidLambda? = nil
     
     init(root: PathNode, connectionState: ConnectionViewState) {
         self.root = FileCellViewState(node: root)

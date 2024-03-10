@@ -28,7 +28,7 @@ enum CommonError: LocalizedError {
         case .unparsable:
             return "Object could not be parsed"
         case .genericError(let error):
-            return "Failed \(error)"
+            return "Failed \(error.localizedDescription)"
         }
     }
 }

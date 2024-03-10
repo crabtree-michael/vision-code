@@ -12,7 +12,7 @@ import NIOCore
 import NIOPosix
 import Dispatch
 
-public enum SFTPError: Error {
+public enum SFTPError: Error, LocalizedError {
     case notPrepared
     case malformedMessage
     case unsupportedMessage
@@ -21,6 +21,28 @@ public enum SFTPError: Error {
     case closedHandle
     case serverSuppliedError(message: String)
     case timeout
+    
+    public var errorDescription: String? {
+        switch(self) {
+        case .serverSuppliedError(let message):
+            return message
+        case .notPrepared:
+            return "Connection was not ready"
+        case .malformedMessage:
+            return "Received unexpected reply"
+        case .unsupportedMessage:
+            return "Message type is not supported"
+        case .unsupportedServer:
+            return "This server is not supported."
+        case .unexpectedResponse:
+            return "The response was not expected"
+        case .closedHandle:
+            return "Handle is already closed"
+        case .timeout:
+            return "The request timed out"
+        }
+        
+    }
 }
 
 class SFTPHandler: ChannelDuplexHandler {
