@@ -18,9 +18,9 @@ class RepositoryManagmentViewManager {
     private var hostsObserver: AnyCancellable? = nil
     private var projectsObserver: AnyCancellable? = nil
     
-    init(realm: Realm) {
+    init(realm: Realm, connectionManager: ConnectionManager) {
         self.realm = realm
-        self.hostManager = HostManager(realm: realm)
+        self.hostManager = HostManager(realm: realm, connectionManager: connectionManager)
         self.projectManager = ProjectsManager(realm: realm)
         
         self.state = RepositoryManagmentViewState()

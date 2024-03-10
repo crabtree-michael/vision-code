@@ -35,7 +35,7 @@ class RepositoryViewManager {
          connectionManager: ConnectionManager,
          openProject: ObjectId? = nil) {
         self.realm = realm
-        self.managmentManager = RepositoryManagmentViewManager(realm: realm)
+        self.managmentManager = RepositoryManagmentViewManager(realm: realm, connectionManager: connectionManager)
         self.editorManager = nil
         self.connectionManager = connectionManager
         self.state.managerState = self.managmentManager.state
@@ -88,6 +88,7 @@ class RepositoryViewManager {
             self.editorManager = manager
             manager.load()
             manager.state.browserState.closeProject = {
+                self.editorManager = nil
                 self.state.editorState = nil
             }
             self.state.editorState = manager.state

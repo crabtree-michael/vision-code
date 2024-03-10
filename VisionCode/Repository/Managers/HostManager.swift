@@ -22,8 +22,11 @@ class HostManager {
     
     var tasks = Set<AnyCancellable>()
     
-    init(realm: Realm) {
+    let connectionManager: ConnectionManager
+    
+    init(realm: Realm, connectionManager: ConnectionManager) {
         self.realm = realm
+        self.connectionManager = connectionManager
         self.currentState = nil
         
         self.hosts = realm.objects(Host.self).collectionPublisher
@@ -76,6 +79,11 @@ class HostManager {
         
         self.latestHost = host
         currentState?.hasChanges = false 
+        
+        let id = host.id
+        Task {
+            await connectionManager.reload(id: id)
+        }
     }
     
     func delete(state: HostManagamentViewState) {
