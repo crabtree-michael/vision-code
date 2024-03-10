@@ -39,10 +39,13 @@ class Highlighter: TreeSitterManagerObserver {
         treeSitterManager: TreeSitterManager,
          layoutManager: NSTextLayoutManager,
          provider: NSTextElementProvider) throws {
+        guard let highlightQuery = treeSitterManager.config.queries[.highlights] else {
+            throw CommonError.objectNotFound
+        }
         self.theme = theme
         self.layoutManager = layoutManager
         self.provider = provider
-        self.highlightQuery = treeSitterManager.config.queries[.highlights]!
+        self.highlightQuery = highlightQuery
         
         self.treeSitterManager = treeSitterManager
         self.treeSitterManager.add(observer: self)
