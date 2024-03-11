@@ -14,7 +14,7 @@ struct TerminalView: View {
     var body: some View {
         XTerm(connection: state.connection, rootDirectory: state.directory)
             .padding()
-            .background(.ultraThickMaterial)
+            .background(.black)
             .clipShape(.rect(cornerRadius: 5))
     }
 }
