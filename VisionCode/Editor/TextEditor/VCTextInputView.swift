@@ -874,6 +874,11 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         }
     
         switch (press.key?.keyCode) {
+        case .keyboardF:
+            if press.key?.modifierFlags == .command {
+                self.find(self)
+                return
+            }
         case .keyboardTab:
             self.insertTab()
             return
