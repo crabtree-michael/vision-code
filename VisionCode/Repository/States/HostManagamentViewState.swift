@@ -64,4 +64,43 @@ class HostManagamentViewState: ObservableObject {
             password != host?.password ?? ""
     }
     
+    func getPort() -> Int? {
+        if self.port.count == 0 {
+            return 22
+        }
+        
+        return Int(self.port)
+    }
+    
+    func getUsername() -> String {
+        if self.username.count == 0 {
+            return "root"
+        }
+        
+        return self.username
+    }
+    
+    func getPassword() -> String {
+        if self.password.count == 0 {
+            return "password"
+        }
+        
+        return self.password
+    }
+    
+    func getIPAddress() -> String {
+        if self.ipAddress.count == 0 {
+            return "192.168.1.1"
+        }
+        
+        return self.ipAddress
+    }
+    
+    func getName() -> String {
+        if self.name.isEmpty {
+            return "My Computer"
+        }
+        
+        return self.name
+    }
 }

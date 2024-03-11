@@ -27,7 +27,7 @@ struct HostManagamentView: View {
                     HStack {
                         Text("Name")
                             .foregroundColor(.gray)
-                        TextField("", text: $state.name)
+                        TextField("My Computer", text: $state.name)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
                     }
@@ -36,28 +36,28 @@ struct HostManagamentView: View {
                     HStack {
                         Text("IP Address")
                             .foregroundColor(.gray)
-                        TextField("", text: $state.ipAddress)
+                        TextField("192.168.1.1", text: $state.ipAddress)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
                     }
                     HStack {
                         Text("Port")
                             .foregroundColor(.gray)
-                        TextField("", text: $state.port)
+                        TextField("22", text: $state.port)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
                     }
                     HStack {
                         Text("Username")
                             .foregroundColor(.gray)
-                        TextField("", text: $state.username)
+                        TextField("root", text: $state.username)
                             .autocapitalization(.none)
                             .autocorrectionDisabled()
                     }
                     HStack {
                         Text("Password")
                             .foregroundColor(.gray)
-                        SecureField("", text: $state.password)
+                        SecureField("password", text: $state.password)
                     }
                 }
             }

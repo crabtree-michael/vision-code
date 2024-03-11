@@ -56,15 +56,20 @@ class HostManager {
     }
     
     func save(state: HostManagamentViewState) {
+        guard let port = state.getPort() else {
+            state.error = .invalidPort
+            return
+        }
+        
         let host = Host()
         if let id = state.id {
             host.id = id
         }
-        host.ipAddress = state.ipAddress
-        host.name = state.name
-        host.password = state.password
-        host.port = Int(state.port)!
-        host.username = state.username
+        host.ipAddress = state.getIPAddress()
+        host.name = state.getName()
+        host.password = state.getPassword()
+        host.port = port
+        host.username = state.getUsername()
         
         do {
             try realm.write {
