@@ -91,6 +91,10 @@ struct ProjectManagmentView: View {
                 )
             }
         })
+        .alert(isPresented: $state.warnOfAbsolutePath, content: {
+            Alert(title: Text("Please use full path"),
+                  message: Text("Do not use '~' or any other abbreviation."))
+        })
         .navigationTitle(state.title)
     }
 }

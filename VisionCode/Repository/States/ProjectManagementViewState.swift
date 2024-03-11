@@ -24,6 +24,7 @@ class ProjectManagementViewState: ObservableObject {
     @Published var canOpen: Bool = false
     @Published var hasChanges: Bool = false
     @Published var isOpeningProject: Bool = false
+    @Published var warnOfAbsolutePath: Bool = false
     
     var selectedHostPublisher: AnyPublisher<Host?, Never> {
         // This shouldn't be needed, but when I did the publisher on $selectedHost only

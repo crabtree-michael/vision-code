@@ -60,7 +60,7 @@ struct RepositoryView: View {
             self.state.onDisappear?()
         }
         .onChange(of: scenePhase) { oldValue, newValue in
-            if oldValue == .background && newValue == .active {
+            if (oldValue == .background || oldValue == .inactive) && newValue == .active {
                 self.state.didOpenFromBackground?()
             }
         }

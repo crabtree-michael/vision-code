@@ -60,6 +60,11 @@ class ProjectsManager {
     }
     
     func save(state: ProjectManagementViewState) {
+        guard !state.rootPath.contains("~") else {
+            state.warnOfAbsolutePath = true
+            return
+        }
+        
         let project = self.project(for: state)
         do {
             try realm.write {
@@ -95,6 +100,11 @@ class ProjectsManager {
     }
     
     func open(state: ProjectManagementViewState, action: OpenWindowAction) {
+        guard !state.rootPath.contains("~") else {
+            state.warnOfAbsolutePath = true
+            return
+        }
+        
         let project = project(for: state)
         guard project.isValid() else {
             return
