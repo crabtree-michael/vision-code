@@ -816,7 +816,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     
     func insertTab() {
         if let selectionRange = self.selectionRange {
-            self.tab(range: selectionRange)
+            let range = self.adjustRangeToIncludeNewLine(selectionRange, inclusive: false)
+            self.tab(range: range)
         } else {
             self.insertText(self.tabWidth.tabString)
         }

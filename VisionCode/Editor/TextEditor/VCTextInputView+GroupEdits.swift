@@ -32,27 +32,52 @@ extension VCTextInputView {
         self.insert(string: self.tabWidth.tabString, atAllOccurancesOf: "\n", in: range)
     }
     
-    func comment(range: NSTextRange) {
-        guard let commentStr = self.language.commentStr() else {
+    func commentSelection() {
+        var range: NSTextRange?
+        if self.selectionRange != nil {
+            range = self.selectionRange
+        }
+        else if let carrotLocation = self.carrotLocation,
+                let start = self.contentStore.location(carrotLocation, offsetBy: -1),
+           let newRange = NSTextRange(location: start, end: carrotLocation) {
+            range = newRange
+        }
+        
+        guard var range = range else {
             return
         }
-        let line = self.line(at: range.location)
-        if line?.hasPrefix(commentStr) ?? false {
-            self.replaceOccurances(of: "\n\(commentStr)", with: "\n", in: range, allowSingleLines: true)
-        } else {
-            self.insert(string: commentStr, atAllOccurancesOf: "\n", in: range, allowSingleLines: true)
-        }
+        
+        range = self.adjustRangeToIncludeNewLine(range, inclusive: true)
+        self.comment(range: range)
     }
     
-    func commentSelection() {
-        if let range = self.selectionRange {
-            self.comment(range: range)
+    func adjustRangeToIncludeNewLine(_ range: NSTextRange, inclusive: Bool) -> NSTextRange {
+        guard let text = self.contentStore.string(in: range, inclusive: inclusive) else {
+            return range
+        }
+        
+        if text.hasPrefix("\n") {
+            return range
+        }
+        
+        let preceedingLocation = self.preceedingOccurance(of: "\n", at: range.location) ?? self.contentStore.documentRange.location
+        guard let newRange = NSTextRange(location: preceedingLocation, end: range.endLocation) else {
+            return range
+        }
+        
+        return newRange
+    }
+    
+    func comment(range: NSTextRange) {
+        guard let commentStr = self.language.commentStr(),
+                let text = self.contentStore.string(in: range, inclusive: false) else {
             return
         }
-        if let carrotLocation = self.carrotLocation,
-           let range = NSTextRange(location: carrotLocation, end: carrotLocation){
-            self.comment(range: range)
-            return
+        
+        if text.hasPrefix("\n\(commentStr)") {
+            self.replaceOccurances(of: "\n\(commentStr)", with: "\n", in: range)
+        } else {
+            self.insert(string: commentStr, atAllOccurancesOf: "\n", in: range)
         }
     }
     
@@ -65,7 +90,7 @@ extension VCTextInputView {
         self.replaceOccurances(of: replacementStr, with: replacementStr + string, in: range)
     }
     
-    func replaceOccurances(of matchStr: String, with replacementStr: String, in range: NSTextRange, allowSingleLines: Bool = false) {
+    func replaceOccurances(of matchStr: String, with replacementStr: String, in range: NSTextRange) {
         let documentStart = contentStore.documentRange.location
         guard let str = self.contentStore.string(in: range, inclusive: false),
               let globalOffset = range.offset(provider: self.contentStore) else {
@@ -76,21 +101,6 @@ extension VCTextInputView {
         
         var replacements = [Replacement]()
         
-        // This section handles lines that are not completely selected
-        // We find the first occurance of the replacmentStr and at that to be tabbed
-        let location = self.contentStore.location(self.startOfLine(at: range.location), offsetBy: -1)!
-        let lineRange = NSTextRange(location: location,
-                                end: self.contentStore.location(location, offsetBy: 1)!)!
-        if location.compare(range.location) == .orderedSame {
-            // Do nothing the whole line was selected
-        } else if location.compare(documentStart) == .orderedSame {
-            replacements.append(Replacement(text: replacementStr,
-                                            range: lineRange))
-        } else {
-            replacements.append(Replacement(text: replacementStr,
-                                            range: lineRange))
-        }
-        
         // Create replacements for every new line to add a tab to it
         str.iterateOverOccurances(of: matchStr) { range in
             if let start = self.contentStore.location(documentStart, offsetBy: range.lowerBound.utf16Offset(in: str) + globalOffset),
@@ -99,12 +109,6 @@ extension VCTextInputView {
                 replacements.append(Replacement(text: replacementStr, range: range))
             }
             return true
-        }
-        
-        // Find the only replacement we have is the one we forced then just replace the range with a tab
-        guard (replacements.count > 1 || allowSingleLines) else {
-            self.replace(range: range, with: matchStr)
-            return
         }
         
         // Add a no-op replacement for cursor placement
@@ -146,7 +150,7 @@ extension VCTextInputView {
     
     func preceedingOccurance(of str: String, at location: NSTextLocation) -> NSTextLocation? {
         let documentStart = self.contentStore.documentRange.location
-        var l: NSTextLocation? = location
+        var l: NSTextLocation? = self.contentStore.location(location, offsetBy: -1)
         while let location = l,
                 location.compare(documentStart) == .orderedDescending {
             guard let range = NSTextRange(location: location, end: location) else {
