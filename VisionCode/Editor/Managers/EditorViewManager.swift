@@ -8,9 +8,7 @@
 import Foundation
 import VCRemoteCommandCore
 
-class EditorViewManager: ConnectionUser {
-    private let identifier: UUID
-    
+class EditorViewManager {
     var client: RCSFTPClient? {
         didSet {
             for m in self.openFileManagers {
@@ -52,18 +50,14 @@ class EditorViewManager: ConnectionUser {
         self.path = path
         self.state = EditorViewState(title: (path as NSString).lastPathComponent)
         self.remote = remote
-        self.identifier = UUID()
         self.state.onFileSelected = self.changeActiveFile
         self.state.onFileClose = self.close
     }
     
-    func id() -> String {
-        return identifier.uuidString
-    }
     
     func load() async  {
         do {
-            self.client = try await self.remote.createSFTPClient(user: self)
+            self.client = try await self.remote.createSFTPClient()
             for manager in openFileManagers {
                 manager.client = self.client
             }

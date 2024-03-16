@@ -20,5 +20,4 @@ class RepositoryViewState: ObservableObject {
     
     @Published var error: CommonError? = nil
     var onDisappear: VoidLambda? = nil
-    var didOpenFromBackground: VoidLambda? = nil
 }

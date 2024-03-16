@@ -56,7 +56,7 @@ struct ProjectManagmentView: View {
                     }
                 }
                 
-                if (state.canOpen && !state.isOpeningProject) {
+                if (state.canOpen) {
                     Button {
                         state.onOpen?(state, openWindow)
                     } label: {
@@ -66,9 +66,6 @@ struct ProjectManagmentView: View {
                         )
                     }
                     .padding(.horizontal)
-                } else if state.isOpeningProject {
-                    ProgressView()
-                        .padding(.horizontal)
                 }
             }
             .padding()
@@ -121,7 +118,6 @@ struct ProjectManagmentView: View {
         let state = ProjectManagementViewState(project: nil)
         state.hosts = [a, b]
         
-        state.isOpeningProject = false
         state.canOpen = true
         state.hasChanges = true
         return state

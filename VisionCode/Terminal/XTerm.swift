@@ -11,7 +11,7 @@ import SwiftTerm
 import VCRemoteCommandCore
 import Combine
 
-class XTermViewController: UIViewController, TerminalViewDelegate, ConnectionUser {
+class XTermViewController: UIViewController, TerminalViewDelegate {
     var connection: Connection
     let terminalView = SwiftTerm.TerminalView(frame: CGRect(x: 100, y: 100, width: 800, height: 800))
     var shell: RCPseudoTerminal?
@@ -48,7 +48,7 @@ class XTermViewController: UIViewController, TerminalViewDelegate, ConnectionUse
         
         terminalView.terminalDelegate = self
         
-        self.load()
+        subscribeToConnectionChanges()
     }
     
     func gotData(_ bytes: ArraySlice<UInt8>) {
@@ -129,7 +129,7 @@ class XTermViewController: UIViewController, TerminalViewDelegate, ConnectionUse
             let dims = t.getDims()
             
             do {
-                self.shell = try await connection.createPTY(user: self, settings: RCPseudoTerminalSettings(
+                self.shell = try await connection.createPTY(settings: RCPseudoTerminalSettings(
                     pixelSize: terminalView.frame.size,
                     characterSize: CGSize(width: dims.cols, height: dims.rows),
                     term: "xterm-256color"
@@ -157,6 +157,8 @@ class XTermViewController: UIViewController, TerminalViewDelegate, ConnectionUse
     func subscribeToConnectionChanges() {
         self.connection.state.$status.sink { state in
             switch(state) {
+            case .connected:
+                self.load()
             case .failed(_):
                 self.feedDisconnected()
             default: break

@@ -23,7 +23,6 @@ class ProjectManagementViewState: ObservableObject {
     @Published var rootPath: String
     @Published var canOpen: Bool = false
     @Published var hasChanges: Bool = false
-    @Published var isOpeningProject: Bool = false
     @Published var warnOfAbsolutePath: Bool = false
     
     var selectedHostPublisher: AnyPublisher<Host?, Never> {

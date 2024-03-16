@@ -15,7 +15,17 @@ struct RepositoryEditorView: View {
     let verticalControlSize: CGFloat = 15
     
     @ObservedObject var state: RepositoryEditorViewState
-    @State var terminalHeight:CGFloat = 300
+    @State var terminalHeight:CGFloat = 250
+    
+    @Environment(\.scenePhase) private var scenePhase
+    
+    var isShowingError:Binding<Bool> {
+        Binding {
+            state.error != nil
+        } set: { _ in
+            state.error = nil
+        }
+    }
     
     var verticalResizeDrag: some Gesture {
         DragGesture().onChanged { value in
@@ -26,64 +36,80 @@ struct RepositoryEditorView: View {
     
     var body: some View {
         ZStack {
-            HStack(alignment: .top, spacing: 0) {
-                RepositoryFilesView(state: self.state.browserState)
-                    .frame(width: 300)
-                    .padding(.top)
-                
-                
-                GeometryReader { geometry in
-                    VStack(spacing: 0) {
-                        Editor(state: state.editorState)
-                            .background(.ultraThickMaterial)
-                            .frame(height: max(geometry.size.height - terminalHeight - verticalControlSize, minEditorHeight))
-                            .cornerRadius(cornerRadius)
+            if let browserState = state.browserState,
+               let editorState = state.editorState,
+               let terminalState = state.terminalState  {
+                ZStack {
+                    HStack(alignment: .top, spacing: 0) {
+                        RepositoryFilesView(state: browserState)
+                            .frame(width: 250)
+                            .padding(.top)
                         
-                        ZStack {
-                            Color(.systemBackground)
-                            HStack {
-                                Spacer()
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(.background)
-                                    .frame(maxWidth: 100, maxHeight: 9)
-                                    .gesture(verticalResizeDrag)
-                                    .hoverEffect()
-                                Spacer()
+                        
+                        GeometryReader { geometry in
+                            VStack(spacing: 0) {
+                                Editor(state: editorState)
+                                    .background(.ultraThickMaterial)
+                                    .frame(height: max(geometry.size.height - terminalHeight - verticalControlSize, minEditorHeight))
+                                    .cornerRadius(cornerRadius)
+                                
+                                ZStack {
+                                    Color(.systemBackground)
+                                    HStack {
+                                        Spacer()
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(.background)
+                                            .frame(maxWidth: 100, maxHeight: 9)
+                                            .gesture(verticalResizeDrag)
+                                            .hoverEffect()
+                                        Spacer()
+                                    }
+                                    
+                                }
+                                .frame(maxHeight: verticalControlSize)
+                                
+                                TerminalView(state: terminalState)
+                                    .frame(maxWidth: .infinity, minHeight: min(terminalHeight, geometry.size.height - minEditorHeight - verticalControlSize))
                             }
-                            
                         }
-                        .frame(maxHeight: verticalControlSize)
-                        
-                        TerminalView(state: state.terminalState)
-                            .frame(maxWidth: .infinity, minHeight: min(terminalHeight, geometry.size.height - minEditorHeight - verticalControlSize))
-                        
                     }
-                    
+                    .onDisappear {
+                        self.state.onClose?()
+                    }
+                    if let qs = state.quickOpenSate {
+                        Rectangle()
+                            .opacity(0.001)
+                            .onTapGesture {
+                                state.closeQuickOpen?()
+                            }
+                        Spacer()
+                        QuickOpenView(state: qs)
+                            .frame(maxHeight: 500)
+                            .background(.ultraThinMaterial)
+                            .background(.white.opacity(0.9))
+                            .clipShape(.rect(cornerSize: CGSize(width: 30, height: 30)))
+                            .frame(depth: 60)
+                            .padding(.horizontal, 100)
+                            .padding(.bottom, 25)
+                            .shadow(color: .black, radius: 25)
+                    }
                 }
+                .frame(depth: 100, alignment: .back)
                 
-            }
-            .onDisappear {
-                self.state.onClose?()
-            }
-            if let qs = state.quickOpenSate {
-                Rectangle()
-                    .opacity(0.001)
-                    .onTapGesture {
-                        state.closeQuickOpen?()
-                    }
-                Spacer()
-                QuickOpenView(state: qs)
-                    .frame(maxHeight: 500)
-                    .background(.ultraThinMaterial)
-                    .background(.white.opacity(0.9))
-                    .clipShape(.rect(cornerSize: CGSize(width: 30, height: 30)))
-                    .frame(depth: 60)
-                    .padding(.horizontal, 100)
-                    .padding(.bottom, 25)
-                    .shadow(color: .black, radius: 25)
+            } else {
+                ProgressView()
             }
         }
-        .frame(depth: 100, alignment: .back)
+        .alert(isPresented: isShowingError, content: {
+            Alert(title: Text("Error with connection"),
+                  message: Text(state.error?.localizedDescription ?? "Unknown"),
+                  dismissButton: .default(Text("Ok"), action: {
+                self.state.onDismissedError?()
+            }))
+        })
+        .onChange(of: scenePhase) { _, newValue in
+            state.scenePhase = newValue
+        }
     }
 }
 
@@ -123,10 +149,10 @@ struct ContentView_Previews: PreviewProvider {
                                                                state: ConnectionViewState()),
             directory: "test/")
             let state = RepositoryEditorViewState(
-                editorState: editorState,
+                connectionState: .connected, editorState: editorState,
                 browserState: browserState,
                 terminalState: terminalState)
-            state.editorState.openFiles = [
+            state.editorState?.openFiles = [
                 File(path: "/michael/test.txt", content: "This is a test"),
                 File(path: "/michael/go.txt", content: "This is a test"),
                 File(path: "/michael/grew.txt", content: "This is a test"),
@@ -139,8 +165,8 @@ struct ContentView_Previews: PreviewProvider {
             let fileEditorState = FileViewState(file: File(path: "test"))
             fileEditorState.isLoading = false
             fileEditorState.content = "This is a paragraph"
-            state.editorState.openFileStates = [fileEditorState]
-            state.editorState.activeIndex = 0
+            state.editorState?.openFileStates = [fileEditorState]
+            state.editorState?.activeIndex = 0
             return state
         }
     }

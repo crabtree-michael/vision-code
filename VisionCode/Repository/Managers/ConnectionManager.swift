@@ -10,7 +10,6 @@ import VCRemoteCommandCore
 import RealmSwift
 import Combine
 
-
 class ConnectionManager {
     private var connectionMap = [ObjectId: Connection]()
     private var queue = DispatchQueue(label: "connection-queue")
@@ -26,22 +25,6 @@ class ConnectionManager {
         
     }
     
-    func reloadIfNeeded(id: ObjectId) {
-        guard let connection = self.connectionMap[id],
-            connection.hasUsers() else {
-            return
-        }
-        
-        switch(connection.state.status) {
-        case .failed(_), .notStarted:
-            Task {
-                await self.reload(id: id)
-            }
-        default:
-            break
-        }
-    }
-    
     @MainActor func didDisconnect(for id: ObjectId, withResult result: Result<Void, Error>)  {
         guard let connection = connectionMap[id] else {
             return
@@ -49,9 +32,9 @@ class ConnectionManager {
         
         switch (result) {
         case .success:
-            connection.state.status = .notStarted
+            connection.update(status: .notStarted)
         case .failure(let error):
-            connection.state.status = .failed(error)
+            connection.update(status: .failed(error))
         }
     }
     
@@ -60,25 +43,7 @@ class ConnectionManager {
             return
         }
         
-        connection.state.status = .connecting
-        self.cancellableSet.insert(
-            self.connection(for: id, reuse: false).sink { completion in
-                switch (completion) {
-                case .failure(let error):
-                    Task {
-                        await MainActor.run {
-                            connection.state.status = .failed(CommonError.genericError(error))
-                        }
-                    }
-                default: break
-                }
-            } receiveValue: { newConnection in
-                newConnection.users = connection.users
-                for user in connection.users {
-                    user.connectionDidReload(newConnection)
-                }
-            }
-        )
+        self.load(connection: connection, for: id)
     }
     
     @MainActor func disconnect(id: ObjectId) {
@@ -86,11 +51,11 @@ class ConnectionManager {
             return
         }
         
-        connection.connection.close()
-        connection.state.status = .notStarted
+        connection.close()
+        connection.update(status: .notStarted)
     }
     
-    @MainActor func connection(for id: ObjectId, reuse: Bool = true) -> Future<Connection, Error> {
+    @MainActor private func makeConnection(for id: ObjectId) -> Connection {
         let state = ConnectionViewState()
         state.onReload = { [weak self] in
             self?.reload(id: id)
@@ -98,43 +63,53 @@ class ConnectionManager {
         state.disconnect = { [weak self] in
             self?.disconnect(id: id)
         }
-        state.status = .connecting
-        return Future { [self] promise in
-            queue.async { [self] in
-                guard let host = self.realm?.object(ofType: Host.self, forPrimaryKey: id) else {
-                    promise(.failure(CommonError.objectNotFound))
-                    return
-                }
-                
-                if let existingConnection = connectionMap[host.id], reuse {
-                    promise(.success(existingConnection))
-                    return
-                }
-                
-                let ip = host.ipAddress
-                let port = host.port
-                let username = host.username
-                let password = host.password
-                
-                Task { [self] in
-                    do {
-                        let connection = RCConnection(host: ip, port: port, username: username, password: password)
-                        try await connection.connect { result in
-                            Task {
-                                await self.didDisconnect(for: id, withResult: result)
-                            }
+    
+        return Connection(connection: nil, state: state)
+    }
+    
+    @MainActor private func load(connection: Connection, for id: ObjectId) {
+        connection.update(status: .connecting)
+        queue.async { [self] in
+            guard let host = self.realm?.object(ofType: Host.self, forPrimaryKey: id) else {
+                connection.update(status: .failed(CommonError.objectNotFound))
+                return
+            }
+            
+            let ip = host.ipAddress
+            let port = host.port
+            let username = host.username
+            let password = host.password
+            
+            Task { [self] in
+                do {
+                    let c = RCConnection(host: ip, port: port, username: username, password: password)
+                    try await c.connect { result in
+                        Task {
+                            await self.didDisconnect(for: id, withResult: result)
                         }
-                        
-                        state.status = .connected
-                        let finalConnection = Connection(connection: connection, state: state)
-                        self.connectionMap[id] = finalConnection
-                        promise(.success(finalConnection))
                     }
-                    catch {
-                        promise(.failure(error))
-                    }
+                    
+                    connection.update(connection: c)
+                    connection.update(status: .connected)
+                }
+                catch {
+                    connection.update(status: .failed(error))
                 }
             }
         }
+    }
+    
+    @MainActor func connection(for id: ObjectId) -> Connection {
+        if let connection = self.connectionMap[id] {
+            if connection.state.status != .connecting || connection.state.status != .connected {
+                self.load(connection: connection, for: id)
+            }
+            return connection
+        }
+        
+        let connection = self.makeConnection(for: id)
+        self.connectionMap[id] = connection
+        self.load(connection: connection, for: id)
+        return connection
     }
 }

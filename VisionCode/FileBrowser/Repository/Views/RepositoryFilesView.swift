@@ -27,7 +27,6 @@ struct RepositoryFilesView: View {
                 HStack(alignment: .center) {
                     Text(state.root.file.name)
                         .font(.title)
-                    Spacer()
                     if (state.root.loaded) {
                         Button(action: {
                             self.state.refreshDirectory?(state.root.file)
@@ -38,13 +37,24 @@ struct RepositoryFilesView: View {
                                 Image(systemName: "arrow.clockwise")
                             })
                         })
-                        .buttonStyle(IconOnlyButtonStyle())
                     } else {
                         ProgressView()
                             .scaleEffect(
                                 CGSize(width: 0.4, height: 0.4))
                     }
+                    Spacer()
+                    
+                    Button {
+                        state.closeProject?()
+                    } label: {
+                        Label(title: {
+                            Text("Close project")
+                        }, icon: {
+                            Image(systemName: "x.circle")
+                        })
+                    }
                 }
+                .buttonStyle(IconOnlyButtonStyle())
                 .padding([.top, .horizontal], 4)
                 ScrollView {
                     LazyVStack(spacing: 4)
@@ -65,56 +75,31 @@ struct RepositoryFilesView: View {
             }
             .padding(.bottom)
             .padding(.leading)
-            if (state.error != nil) {
-                VStack{
+            switch(state.connectionState.status) {
+            case .connected:
+                VStack {}
+            default:
+                VStack {
                     Spacer()
-                    Button {
-                        state.closeProject?()
-                    } label: {
-                        Label(
-                            title: { Text("Close") },
-                            icon: { Image(systemName: "x.circle") }
-                        )
-                    }
-                }
-            } else {
-                switch(state.connectionState.status) {
-                case .connected:
-                    VStack{
+                    HStack {
+                        Text(state.connectionState.displayMessage())
+                            .font(.caption)
                         Spacer()
-                        Button {
-                            state.connectionState.disconnect?()
-                        } label: {
-                            Label(
-                                title: { Text("Disconnect") },
-                                icon: { Image(systemName: "icloud") }
-                            )
+                        switch(state.connectionState.status) {
+                        case .connected: VStack{}
+                        case .connecting:
+                            ProgressView().scaleEffect(
+                                CGSize(width: 0.5, height: 0.5))
+                        case .failed(_), .notStarted:
+                            Image(systemName: "arrow.clockwise")
+                                .hoverEffect()
+                                .onTapGesture {
+                                    state.connectionState.onReload?()
+                                }
                         }
                     }
                     .padding()
-                default:
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Text(state.connectionState.displayMessage())
-                                .font(.caption)
-                            Spacer()
-                            switch(state.connectionState.status) {
-                            case .connected: VStack{}
-                            case .connecting:
-                                ProgressView().scaleEffect(
-                                    CGSize(width: 0.5, height: 0.5))
-                            case .failed(_), .notStarted:
-                                Image(systemName: "arrow.clockwise")
-                                    .hoverEffect()
-                                    .onTapGesture {
-                                        state.connectionState.onReload?()
-                                    }
-                            }
-                        }
-                        .padding()
-                        .background(.ultraThickMaterial)
-                    }
+                    .background(.ultraThickMaterial)
                 }
             }
         }

@@ -8,7 +8,7 @@
 import Foundation
 import VCRemoteCommandCore
 
-class RepositoryFileBrowserManager: ConnectionUser {
+class RepositoryFileBrowserManager {
     private let identifier: UUID
     var client: RCSFTPClient?
     let state: RepositoryFilesViewState
@@ -55,7 +55,7 @@ class RepositoryFileBrowserManager: ConnectionUser {
     
     func load(traverse: Bool = true) async {
         do {
-            self.client = try await self.remote.createSFTPClient(user: self)
+            self.client = try await self.remote.createSFTPClient()
             guard let _ = self.client else {
                 return
             }

@@ -20,16 +20,7 @@ class RepositoryViewManager {
     let connectionManager: ConnectionManager
 
     let state = RepositoryViewState()
-    
-    var connectionCancellable: AnyCancellable? = nil
-    
     var openHostId: ObjectId? = nil
-    
-    var isOpeningProject: Bool = false {
-        didSet {
-            state.managerState.projectsManagmentState?.isOpeningProject = self.isOpeningProject
-        }
-    }
     
     init(realm: Realm,
          connectionManager: ConnectionManager,
@@ -45,8 +36,6 @@ class RepositoryViewManager {
            let project = realm.object(ofType: Project.self, forPrimaryKey: id) {
             self.open(project: project)
         }
-        
-        self.state.didOpenFromBackground = self.didOpenFromBackground
     }
     
     func open(project: Project, openWindow: OpenWindowAction? = nil) {
@@ -61,47 +50,17 @@ class RepositoryViewManager {
             return
         }
         
-        self.isOpeningProject = true
-        self.connectionCancellable = self.connectionManager.connection(for: hostID).mapError({ error in
-            return CommonError.genericError(error)
-        }).sink(receiveCompletion: { completion in
-            DispatchQueue.main.async {
-                switch(completion) {
-                case .failure(let error):
-                    self.state.error = error
-                case .finished: break
-                }
-                
-                self.isOpeningProject = false
-            }
-
-        }, receiveValue: { connection in
-            DispatchQueue.main.async {
-                self.open(project: project, connection: connection)
-            }
-        })
-    }
-    
-    private func open(project: Project, connection: Connection) {
-        let manager = RepositoryEditorViewManager(path: project.root, connection: connection)
+        let manager = RepositoryEditorViewManager(path: project.root, connectionManager: connectionManager)
         if editorManager == nil {
             self.editorManager = manager
-            manager.load()
-            manager.state.browserState.closeProject = {
+            manager.load(hostID: hostID)
+            manager.onCloseEditor = {
                 self.editorManager = nil
                 self.state.editorState = nil
             }
             self.state.editorState = manager.state
-            self.isOpeningProject = false
             self.state.tabSelection = .repository
         }
         self.openHostId = project.host?.id
-    }
-    
-    private func didOpenFromBackground() {
-        guard let id = self.openHostId else {
-            return
-        }
-        self.connectionManager.reloadIfNeeded(id: id)
     }
 }
