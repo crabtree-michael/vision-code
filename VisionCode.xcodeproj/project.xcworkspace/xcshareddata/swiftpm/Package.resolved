@@ -123,6 +123,14 @@
         "revision" : "8883fa739aa213e70e6cb109bfbf0a0b551e4cb5",
         "version" : "0.8.0"
       }
+    },
+    {
+      "identity" : "vcremotecommand",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/crabtree-michael/VCRemoteCommand",
+      "state" : {
+        "revision" : "937ef677670ec251dbe736286201234da77f96d1"
+      }
     }
   ],
   "version" : 2

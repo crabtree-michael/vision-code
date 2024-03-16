@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D803F0FB2B89C939008DAE32 /* OneDark-Pro.json in Resources */ = {isa = PBXBuildFile; fileRef = D803F0FA2B89C939008DAE32 /* OneDark-Pro.json */; };
+		D80600F32BA607020022AFE0 /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = D80600F22BA607020022AFE0 /* SwiftTerm */; };
 		D80881D82B63DBB500582C41 /* FinderFolderViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881D72B63DBB500582C41 /* FinderFolderViewManager.swift */; };
 		D80881DA2B63DC8300582C41 /* FinderViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881D92B63DC8300582C41 /* FinderViewManager.swift */; };
 		D80881DC2B63DCF300582C41 /* RepositoryFileBrowserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80881DB2B63DCF300582C41 /* RepositoryFileBrowserManager.swift */; };
@@ -27,7 +28,6 @@
 		D80D08F72B98937500E5D7F7 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D80D08F62B98937500E5D7F7 /* RealmSwift */; };
 		D80E37AD2B744A9B008D0FFA /* XTerm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D80E37AC2B744A9B008D0FFA /* XTerm.swift */; };
 		D80E37B02B744BC3008D0FFA /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = D80E37AF2B744BC3008D0FFA /* SwiftTerm */; };
-		D80E37B22B744BC3008D0FFA /* SwiftTermFuzz in Frameworks */ = {isa = PBXBuildFile; productRef = D80E37B12B744BC3008D0FFA /* SwiftTermFuzz */; };
 		D81804AE2B934F21006682D2 /* TextFilterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81804AD2B934F21006682D2 /* TextFilterManager.swift */; };
 		D81804B32B935F4B006682D2 /* VCTextInputView+TextInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81804B22B935F4B006682D2 /* VCTextInputView+TextInterface.swift */; };
 		D81804B62B941C17006682D2 /* SimplePairInsertationFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81804B52B941C17006682D2 /* SimplePairInsertationFilter.swift */; };
@@ -37,7 +37,6 @@
 		D81BAC672B6EB74200A080DF /* Highlighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81BAC662B6EB74200A080DF /* Highlighter.swift */; };
 		D81BAC692B6EB80200A080DF /* Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81BAC682B6EB80200A080DF /* Content.swift */; };
 		D81BAC6D2B6F29E100A080DF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D81BAC6C2B6F29E000A080DF /* Theme.swift */; };
-		D832FB5E2B95F16B00D7E3B2 /* VCRemoteCommand in Frameworks */ = {isa = PBXBuildFile; productRef = D832FB5D2B95F16B00D7E3B2 /* VCRemoteCommand */; };
 		D8393BAE2B6870E9004018DC /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8393BAD2B6870E9004018DC /* Models.swift */; };
 		D8393BB02B687113004018DC /* GutterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8393BAF2B687113004018DC /* GutterView.swift */; };
 		D8393BB22B6871EE004018DC /* Recycler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8393BB12B6871EE004018DC /* Recycler.swift */; };
@@ -69,10 +68,8 @@
 		D8874E652B6CEED10062A920 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8874E642B6CEED10062A920 /* ConnectionManager.swift */; };
 		D8874E672B6CF2280062A920 /* RepositoryViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8874E662B6CF2280062A920 /* RepositoryViewManager.swift */; };
 		D8874E6A2B6D279D0062A920 /* SwiftTreeSitter in Frameworks */ = {isa = PBXBuildFile; productRef = D8874E692B6D279D0062A920 /* SwiftTreeSitter */; };
-		D896700B2BA5FDCD00CF32F0 /* TextFormation in Frameworks */ = {isa = PBXBuildFile; productRef = D896700A2BA5FDCD00CF32F0 /* TextFormation */; };
-		D896700E2BA5FDF300CF32F0 /* VCRemoteCommand in Frameworks */ = {isa = PBXBuildFile; productRef = D896700D2BA5FDF300CF32F0 /* VCRemoteCommand */; };
 		D89670112BA5FE4400CF32F0 /* CodeEditLanguages in Frameworks */ = {isa = PBXBuildFile; productRef = D89670102BA5FE4400CF32F0 /* CodeEditLanguages */; };
-		D898B7D32BA6039A003DD0B9 /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = D898B7D22BA6039A003DD0B9 /* SwiftTerm */; };
+		D898B7D62BA60693003DD0B9 /* VCRemoteCommand in Frameworks */ = {isa = PBXBuildFile; productRef = D898B7D52BA60693003DD0B9 /* VCRemoteCommand */; };
 		D8A9BF012B63E33500115D77 /* FinderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF002B63E33500115D77 /* FinderView.swift */; };
 		D8A9BF042B63E4C900115D77 /* FinderViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF032B63E4C900115D77 /* FinderViewState.swift */; };
 		D8A9BF062B63E4F400115D77 /* FolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF052B63E4F400115D77 /* FolderView.swift */; };
@@ -86,7 +83,6 @@
 		D8A9BF1B2B63E6FF00115D77 /* FileCellViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF1A2B63E6FF00115D77 /* FileCellViewState.swift */; };
 		D8A9BF1D2B63E74700115D77 /* RepositoryFilesViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF1C2B63E74700115D77 /* RepositoryFilesViewState.swift */; };
 		D8AA4C1E2B9BFD4300CB00D1 /* ContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8AA4C1D2B9BFD4300CB00D1 /* ContactView.swift */; };
-		D8B5333E2B95EF8200048303 /* CodeEditLanguages in Frameworks */ = {isa = PBXBuildFile; productRef = D8B5333D2B95EF8200048303 /* CodeEditLanguages */; };
 		D8B533412B95EFF300048303 /* TextFormation in Frameworks */ = {isa = PBXBuildFile; productRef = D8B533402B95EFF300048303 /* TextFormation */; };
 		D8CA54A52B74FFD6009D5770 /* QuickOpenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CA54A42B74FFD6009D5770 /* QuickOpenView.swift */; };
 		D8CCC7092B66E21000730B45 /* TextLayoutFragmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CCC7082B66E21000730B45 /* TextLayoutFragmentView.swift */; };
@@ -154,7 +150,6 @@
 		D840A6932B5A0A32002F3303 /* VisionCode.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VisionCode.entitlements; sourceTree = "<group>"; };
 		D840A6952B5A0A32002F3303 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D840A69E2B5AE2A3002F3303 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		D840A6AC2B5C4890002F3303 /* VCRemoteCommand */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = VCRemoteCommand; sourceTree = "<group>"; };
 		D84AAABD2B6510AF002B8E1E /* TextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEditor.swift; sourceTree = "<group>"; };
 		D84BD2702B83183B00CD709D /* Tokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokenizer.swift; sourceTree = "<group>"; };
 		D84BD2722B83186D00CD709D /* TreeSitterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreeSitterManager.swift; sourceTree = "<group>"; };
@@ -213,16 +208,12 @@
 			files = (
 				D80D08F72B98937500E5D7F7 /* RealmSwift in Frameworks */,
 				D87BB59C2B6C1C41004222F8 /* Realm in Frameworks */,
-				D898B7D32BA6039A003DD0B9 /* SwiftTerm in Frameworks */,
 				D80E37B02B744BC3008D0FFA /* SwiftTerm in Frameworks */,
-				D896700B2BA5FDCD00CF32F0 /* TextFormation in Frameworks */,
-				D832FB5E2B95F16B00D7E3B2 /* VCRemoteCommand in Frameworks */,
-				D80E37B22B744BC3008D0FFA /* SwiftTermFuzz in Frameworks */,
-				D8B5333E2B95EF8200048303 /* CodeEditLanguages in Frameworks */,
 				D8874E6A2B6D279D0062A920 /* SwiftTreeSitter in Frameworks */,
 				D8B533412B95EFF300048303 /* TextFormation in Frameworks */,
-				D896700E2BA5FDF300CF32F0 /* VCRemoteCommand in Frameworks */,
 				D89670112BA5FE4400CF32F0 /* CodeEditLanguages in Frameworks */,
+				D80600F32BA607020022AFE0 /* SwiftTerm in Frameworks */,
+				D898B7D62BA60693003DD0B9 /* VCRemoteCommand in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -340,7 +331,6 @@
 		D840A6812B5A0A31002F3303 = {
 			isa = PBXGroup;
 			children = (
-				D840A6AC2B5C4890002F3303 /* VCRemoteCommand */,
 				D840A68C2B5A0A31002F3303 /* VisionCode */,
 				D8F89CDB2B75449900444923 /* VisionCodeTests */,
 				D840A68B2B5A0A31002F3303 /* Products */,
@@ -566,15 +556,11 @@
 				D87BB59B2B6C1C41004222F8 /* Realm */,
 				D8874E692B6D279D0062A920 /* SwiftTreeSitter */,
 				D80E37AF2B744BC3008D0FFA /* SwiftTerm */,
-				D80E37B12B744BC3008D0FFA /* SwiftTermFuzz */,
-				D8B5333D2B95EF8200048303 /* CodeEditLanguages */,
 				D8B533402B95EFF300048303 /* TextFormation */,
-				D832FB5D2B95F16B00D7E3B2 /* VCRemoteCommand */,
 				D80D08F62B98937500E5D7F7 /* RealmSwift */,
-				D896700A2BA5FDCD00CF32F0 /* TextFormation */,
-				D896700D2BA5FDF300CF32F0 /* VCRemoteCommand */,
 				D89670102BA5FE4400CF32F0 /* CodeEditLanguages */,
-				D898B7D22BA6039A003DD0B9 /* SwiftTerm */,
+				D898B7D52BA60693003DD0B9 /* VCRemoteCommand */,
+				D80600F22BA607020022AFE0 /* SwiftTerm */,
 			);
 			productName = VisionCode;
 			productReference = D840A68A2B5A0A31002F3303 /* VisionCode.app */;
@@ -632,9 +618,9 @@
 				D87BB59A2B6C1C41004222F8 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				D8874E682B6D279D0062A920 /* XCRemoteSwiftPackageReference "SwiftTreeSitter" */,
 				D89670092BA5FDCD00CF32F0 /* XCRemoteSwiftPackageReference "TextFormation" */,
-				D896700C2BA5FDF300CF32F0 /* XCRemoteSwiftPackageReference "VCRemoteCommand" */,
 				D896700F2BA5FE4400CF32F0 /* XCRemoteSwiftPackageReference "CodeEditLanguages" */,
-				D898B7D12BA6039A003DD0B9 /* XCRemoteSwiftPackageReference "SwiftTerm" */,
+				D898B7D42BA60693003DD0B9 /* XCRemoteSwiftPackageReference "VCRemoteCommand" */,
+				D80600F12BA607020022AFE0 /* XCRemoteSwiftPackageReference "SwiftTerm" */,
 			);
 			productRefGroup = D840A68B2B5A0A31002F3303 /* Products */;
 			projectDirPath = "";
@@ -1041,6 +1027,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D80600F12BA607020022AFE0 /* XCRemoteSwiftPackageReference "SwiftTerm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/crabtree-michael/SwiftTerm";
+			requirement = {
+				branch = visioncode;
+				kind = branch;
+			};
+		};
 		D840A6B02B5C4BB3002F3303 /* XCRemoteSwiftPackageReference "swift-nio" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-nio.git";
@@ -1081,14 +1075,6 @@
 				revision = 284f40302ce797a47a090a884bc6886b275a07ac;
 			};
 		};
-		D896700C2BA5FDF300CF32F0 /* XCRemoteSwiftPackageReference "VCRemoteCommand" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/crabtree-michael/VCRemoteCommand";
-			requirement = {
-				kind = revision;
-				revision = 0648b2d39dc3b18de5725203005b028370d41435;
-			};
-		};
 		D896700F2BA5FE4400CF32F0 /* XCRemoteSwiftPackageReference "CodeEditLanguages" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/crabtree-michael/CodeEditLanguages";
@@ -1097,17 +1083,22 @@
 				revision = 3d3c63b9ec49f496058a6301803ddfcd9d149cb1;
 			};
 		};
-		D898B7D12BA6039A003DD0B9 /* XCRemoteSwiftPackageReference "SwiftTerm" */ = {
+		D898B7D42BA60693003DD0B9 /* XCRemoteSwiftPackageReference "VCRemoteCommand" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/crabtree-michael/SwiftTerm";
+			repositoryURL = "https://github.com/crabtree-michael/VCRemoteCommand";
 			requirement = {
-				branch = visioncode;
-				kind = branch;
+				kind = revision;
+				revision = 937ef677670ec251dbe736286201234da77f96d1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D80600F22BA607020022AFE0 /* SwiftTerm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D80600F12BA607020022AFE0 /* XCRemoteSwiftPackageReference "SwiftTerm" */;
+			productName = SwiftTerm;
+		};
 		D80D08F62B98937500E5D7F7 /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D87BB59A2B6C1C41004222F8 /* XCRemoteSwiftPackageReference "realm-swift" */;
@@ -1116,14 +1107,6 @@
 		D80E37AF2B744BC3008D0FFA /* SwiftTerm */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SwiftTerm;
-		};
-		D80E37B12B744BC3008D0FFA /* SwiftTermFuzz */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SwiftTermFuzz;
-		};
-		D832FB5D2B95F16B00D7E3B2 /* VCRemoteCommand */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = VCRemoteCommand;
 		};
 		D87BB59B2B6C1C41004222F8 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -1135,29 +1118,15 @@
 			package = D8874E682B6D279D0062A920 /* XCRemoteSwiftPackageReference "SwiftTreeSitter" */;
 			productName = SwiftTreeSitter;
 		};
-		D896700A2BA5FDCD00CF32F0 /* TextFormation */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D89670092BA5FDCD00CF32F0 /* XCRemoteSwiftPackageReference "TextFormation" */;
-			productName = TextFormation;
-		};
-		D896700D2BA5FDF300CF32F0 /* VCRemoteCommand */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D896700C2BA5FDF300CF32F0 /* XCRemoteSwiftPackageReference "VCRemoteCommand" */;
-			productName = VCRemoteCommand;
-		};
 		D89670102BA5FE4400CF32F0 /* CodeEditLanguages */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D896700F2BA5FE4400CF32F0 /* XCRemoteSwiftPackageReference "CodeEditLanguages" */;
 			productName = CodeEditLanguages;
 		};
-		D898B7D22BA6039A003DD0B9 /* SwiftTerm */ = {
+		D898B7D52BA60693003DD0B9 /* VCRemoteCommand */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D898B7D12BA6039A003DD0B9 /* XCRemoteSwiftPackageReference "SwiftTerm" */;
-			productName = SwiftTerm;
-		};
-		D8B5333D2B95EF8200048303 /* CodeEditLanguages */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CodeEditLanguages;
+			package = D898B7D42BA60693003DD0B9 /* XCRemoteSwiftPackageReference "VCRemoteCommand" */;
+			productName = VCRemoteCommand;
 		};
 		D8B533402B95EFF300048303 /* TextFormation */ = {
 			isa = XCSwiftPackageProductDependency;
