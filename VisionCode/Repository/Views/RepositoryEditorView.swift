@@ -45,12 +45,9 @@ struct RepositoryEditorView: View {
                             .frame(width: 250)
                             .padding(.top)
                         
-                        
-                        GeometryReader { geometry in
                             VStack(spacing: 0) {
                                 Editor(state: editorState)
                                     .background(.ultraThickMaterial)
-                                    .frame(height: max(geometry.size.height - terminalHeight - verticalControlSize, minEditorHeight))
                                     .cornerRadius(cornerRadius)
                                 
                                 ZStack {
@@ -69,9 +66,9 @@ struct RepositoryEditorView: View {
                                 .frame(maxHeight: verticalControlSize)
                                 
                                 TerminalView(state: terminalState)
-                                    .frame(maxWidth: .infinity, minHeight: min(terminalHeight, geometry.size.height - minEditorHeight - verticalControlSize))
+                                    .frame(maxWidth: .infinity, maxHeight: terminalHeight)
                             }
-                        }
+            
                     }
                     .onDisappear {
                         self.state.onClose?()
