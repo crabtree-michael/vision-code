@@ -28,7 +28,10 @@ class Tokenizer {
         }
         
         let offset = self.provider.offset(from: self.provider.documentRange.location, to: index)
-        let index = content.index(content.startIndex, offsetBy: offset)
+        var index = content.index(content.startIndex, offsetBy: offset)
+        if index == content.endIndex {
+            index = content.index(before: content.endIndex)
+        }
         
         let startIndex = nextUnacceptableCharacter(in: content, at: index, direction: -1)
         let endIndex = nextUnacceptableCharacter(in: content, at: index, direction: 1)
