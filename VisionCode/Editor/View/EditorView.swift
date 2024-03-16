@@ -21,7 +21,7 @@ struct Editor: View {
             if let activeIndex = state.activeIndex {
                 ZStack {
                     ForEach(Array(zip(state.openFileStates.indices, state.openFileStates)),
-                            id: \.0) { (index, fileState) in
+                            id: \.1.file.path) { (index, fileState) in
                         VStack(spacing: 0) {
                             FileView(state: fileState, isVisible: activeIndex == index)
                             FileViewToolBar(state: fileState)
