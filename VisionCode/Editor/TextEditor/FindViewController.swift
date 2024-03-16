@@ -23,12 +23,12 @@ class Search {
     var selectedIndex: Int? = nil
     
     init(with query: String, storage: NSTextContentStorage) {
-        self.query = query
+        self.query = query.uppercased()
         self.storage = storage
     }
     
     func perform() {
-        guard let content = storage.textStorage?.string else {
+        guard let content = storage.textStorage?.string.uppercased() else {
             return
         }
         
