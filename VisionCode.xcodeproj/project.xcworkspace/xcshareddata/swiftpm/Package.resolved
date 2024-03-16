@@ -1,6 +1,14 @@
 {
   "pins" : [
     {
+      "identity" : "codeeditlanguages",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/crabtree-michael/CodeEditLanguages",
+      "state" : {
+        "revision" : "3d3c63b9ec49f496058a6301803ddfcd9d149cb1"
+      }
+    },
+    {
       "identity" : "mainoffender",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mattmassicotte/MainOffender",
@@ -82,12 +90,29 @@
       }
     },
     {
+      "identity" : "swiftterm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/crabtree-michael/SwiftTerm",
+      "state" : {
+        "branch" : "visioncode",
+        "revision" : "09fbce0e82671b91a8961abe873fa87e86e8a74b"
+      }
+    },
+    {
       "identity" : "swifttreesitter",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ChimeHQ/SwiftTreeSitter",
       "state" : {
         "revision" : "2599e95310b3159641469d8a21baf2d3d200e61f",
         "version" : "0.8.0"
+      }
+    },
+    {
+      "identity" : "textformation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ChimeHQ/TextFormation",
+      "state" : {
+        "revision" : "284f40302ce797a47a090a884bc6886b275a07ac"
       }
     },
     {

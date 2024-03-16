@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -69,6 +69,10 @@
 		D8874E652B6CEED10062A920 /* ConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8874E642B6CEED10062A920 /* ConnectionManager.swift */; };
 		D8874E672B6CF2280062A920 /* RepositoryViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8874E662B6CF2280062A920 /* RepositoryViewManager.swift */; };
 		D8874E6A2B6D279D0062A920 /* SwiftTreeSitter in Frameworks */ = {isa = PBXBuildFile; productRef = D8874E692B6D279D0062A920 /* SwiftTreeSitter */; };
+		D896700B2BA5FDCD00CF32F0 /* TextFormation in Frameworks */ = {isa = PBXBuildFile; productRef = D896700A2BA5FDCD00CF32F0 /* TextFormation */; };
+		D896700E2BA5FDF300CF32F0 /* VCRemoteCommand in Frameworks */ = {isa = PBXBuildFile; productRef = D896700D2BA5FDF300CF32F0 /* VCRemoteCommand */; };
+		D89670112BA5FE4400CF32F0 /* CodeEditLanguages in Frameworks */ = {isa = PBXBuildFile; productRef = D89670102BA5FE4400CF32F0 /* CodeEditLanguages */; };
+		D898B7D32BA6039A003DD0B9 /* SwiftTerm in Frameworks */ = {isa = PBXBuildFile; productRef = D898B7D22BA6039A003DD0B9 /* SwiftTerm */; };
 		D8A9BF012B63E33500115D77 /* FinderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF002B63E33500115D77 /* FinderView.swift */; };
 		D8A9BF042B63E4C900115D77 /* FinderViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF032B63E4C900115D77 /* FinderViewState.swift */; };
 		D8A9BF062B63E4F400115D77 /* FolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A9BF052B63E4F400115D77 /* FolderView.swift */; };
@@ -209,12 +213,16 @@
 			files = (
 				D80D08F72B98937500E5D7F7 /* RealmSwift in Frameworks */,
 				D87BB59C2B6C1C41004222F8 /* Realm in Frameworks */,
+				D898B7D32BA6039A003DD0B9 /* SwiftTerm in Frameworks */,
 				D80E37B02B744BC3008D0FFA /* SwiftTerm in Frameworks */,
+				D896700B2BA5FDCD00CF32F0 /* TextFormation in Frameworks */,
 				D832FB5E2B95F16B00D7E3B2 /* VCRemoteCommand in Frameworks */,
 				D80E37B22B744BC3008D0FFA /* SwiftTermFuzz in Frameworks */,
 				D8B5333E2B95EF8200048303 /* CodeEditLanguages in Frameworks */,
 				D8874E6A2B6D279D0062A920 /* SwiftTreeSitter in Frameworks */,
 				D8B533412B95EFF300048303 /* TextFormation in Frameworks */,
+				D896700E2BA5FDF300CF32F0 /* VCRemoteCommand in Frameworks */,
+				D89670112BA5FE4400CF32F0 /* CodeEditLanguages in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -563,6 +571,10 @@
 				D8B533402B95EFF300048303 /* TextFormation */,
 				D832FB5D2B95F16B00D7E3B2 /* VCRemoteCommand */,
 				D80D08F62B98937500E5D7F7 /* RealmSwift */,
+				D896700A2BA5FDCD00CF32F0 /* TextFormation */,
+				D896700D2BA5FDF300CF32F0 /* VCRemoteCommand */,
+				D89670102BA5FE4400CF32F0 /* CodeEditLanguages */,
+				D898B7D22BA6039A003DD0B9 /* SwiftTerm */,
 			);
 			productName = VisionCode;
 			productReference = D840A68A2B5A0A31002F3303 /* VisionCode.app */;
@@ -619,10 +631,10 @@
 				D840A6B12B5C4C26002F3303 /* XCRemoteSwiftPackageReference "swift-nio-ssh" */,
 				D87BB59A2B6C1C41004222F8 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				D8874E682B6D279D0062A920 /* XCRemoteSwiftPackageReference "SwiftTreeSitter" */,
-				D80E37AE2B744BC3008D0FFA /* XCLocalSwiftPackageReference "SwiftTerm" */,
-				D8B5333C2B95EF8200048303 /* XCLocalSwiftPackageReference "CodeEditLanguages" */,
-				D8B5333F2B95EFF300048303 /* XCLocalSwiftPackageReference "TextFormation" */,
-				D8B533422B95F00C00048303 /* XCLocalSwiftPackageReference "VCRemoteCommand" */,
+				D89670092BA5FDCD00CF32F0 /* XCRemoteSwiftPackageReference "TextFormation" */,
+				D896700C2BA5FDF300CF32F0 /* XCRemoteSwiftPackageReference "VCRemoteCommand" */,
+				D896700F2BA5FE4400CF32F0 /* XCRemoteSwiftPackageReference "CodeEditLanguages" */,
+				D898B7D12BA6039A003DD0B9 /* XCRemoteSwiftPackageReference "SwiftTerm" */,
 			);
 			productRefGroup = D840A68B2B5A0A31002F3303 /* Products */;
 			projectDirPath = "";
@@ -1028,25 +1040,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		D80E37AE2B744BC3008D0FFA /* XCLocalSwiftPackageReference "SwiftTerm" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = SwiftTerm;
-		};
-		D8B5333C2B95EF8200048303 /* XCLocalSwiftPackageReference "CodeEditLanguages" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = CodeEditLanguages;
-		};
-		D8B5333F2B95EFF300048303 /* XCLocalSwiftPackageReference "TextFormation" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = TextFormation;
-		};
-		D8B533422B95F00C00048303 /* XCLocalSwiftPackageReference "VCRemoteCommand" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = VCRemoteCommand;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		D840A6B02B5C4BB3002F3303 /* XCRemoteSwiftPackageReference "swift-nio" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -1080,6 +1073,38 @@
 				minimumVersion = 0.8.0;
 			};
 		};
+		D89670092BA5FDCD00CF32F0 /* XCRemoteSwiftPackageReference "TextFormation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ChimeHQ/TextFormation";
+			requirement = {
+				kind = revision;
+				revision = 284f40302ce797a47a090a884bc6886b275a07ac;
+			};
+		};
+		D896700C2BA5FDF300CF32F0 /* XCRemoteSwiftPackageReference "VCRemoteCommand" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/crabtree-michael/VCRemoteCommand";
+			requirement = {
+				kind = revision;
+				revision = 0648b2d39dc3b18de5725203005b028370d41435;
+			};
+		};
+		D896700F2BA5FE4400CF32F0 /* XCRemoteSwiftPackageReference "CodeEditLanguages" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/crabtree-michael/CodeEditLanguages";
+			requirement = {
+				kind = revision;
+				revision = 3d3c63b9ec49f496058a6301803ddfcd9d149cb1;
+			};
+		};
+		D898B7D12BA6039A003DD0B9 /* XCRemoteSwiftPackageReference "SwiftTerm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/crabtree-michael/SwiftTerm";
+			requirement = {
+				branch = visioncode;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1109,6 +1134,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D8874E682B6D279D0062A920 /* XCRemoteSwiftPackageReference "SwiftTreeSitter" */;
 			productName = SwiftTreeSitter;
+		};
+		D896700A2BA5FDCD00CF32F0 /* TextFormation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D89670092BA5FDCD00CF32F0 /* XCRemoteSwiftPackageReference "TextFormation" */;
+			productName = TextFormation;
+		};
+		D896700D2BA5FDF300CF32F0 /* VCRemoteCommand */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D896700C2BA5FDF300CF32F0 /* XCRemoteSwiftPackageReference "VCRemoteCommand" */;
+			productName = VCRemoteCommand;
+		};
+		D89670102BA5FE4400CF32F0 /* CodeEditLanguages */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D896700F2BA5FE4400CF32F0 /* XCRemoteSwiftPackageReference "CodeEditLanguages" */;
+			productName = CodeEditLanguages;
+		};
+		D898B7D22BA6039A003DD0B9 /* SwiftTerm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D898B7D12BA6039A003DD0B9 /* XCRemoteSwiftPackageReference "SwiftTerm" */;
+			productName = SwiftTerm;
 		};
 		D8B5333D2B95EF8200048303 /* CodeEditLanguages */ = {
 			isa = XCSwiftPackageProductDependency;
