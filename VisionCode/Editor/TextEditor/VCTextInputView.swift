@@ -47,8 +47,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     var theme: Theme
     var language: CodeLanguage = .default
     
-    let carrot = Carrot()
-    var carrotLocation: NSTextLocation? = nil
+    let caret = Caret()
+    var caretLocation: NSTextLocation? = nil
     var selectionRange: NSTextRange? = nil {
         didSet {
             self.updateTextForSelectionRangeChanges(old: oldValue, new: self.selectionRange)
@@ -149,7 +149,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             if let selectionRange = self.selectionRange {
                 return NSRange(selectionRange, provider: self.contentStore)
             }
-            if let cursorLocation = self.carrotLocation {
+            if let cursorLocation = self.caretLocation {
                 let offset = self.contentStore.offset(from: contentStore.documentRange.location, to: cursorLocation)
                 return NSRange((offset..<offset))
             }
@@ -162,8 +162,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             }
             
             if range.isEmpty {
-                self.carrotLocation = range.location
-                self.updateCarrotLocation()
+                self.caretLocation = range.location
+                self.updateCaretLocation()
             } else {
                 self.selectionRange = range
             }
@@ -227,7 +227,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     func textViewportLayoutControllerDidLayout(_ textViewportLayoutController: NSTextViewportLayoutController) {
         self.updateContentSizeIfNeeded()
         if self.updateCursorLocationOnNextLayout {
-            self.updateCarrotLocation(scrollToCarrot: false)
+            self.updateCaretLocation(scrollToCaret: false)
         }
         for view in self.recycler.unusedViews() {
             view.isHidden = true
@@ -280,11 +280,11 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         
         self.addSubview(contentView)
         
-        carrot.frame = CGRect(x: 0, y: 0, width: 6, height: 10)
-        carrot.backgroundColor = .white
-        carrot.isHidden = true
-        carrot.hoverStyle = .init(effect: .lift)
-        self.contentView.addSubview(carrot)
+        caret.frame = CGRect(x: 0, y: 0, width: 6, height: 10)
+        caret.backgroundColor = .white
+        caret.isHidden = true
+        caret.hoverStyle = .init(effect: .lift)
+        self.contentView.addSubview(caret)
         
         tapGesture.addTarget(self, action: #selector(onTap))
         addGestureRecognizer(tapGesture)
@@ -344,10 +344,10 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         let adjustedLocation = CGPoint(x: location.x - CGFloat(self.insets?.left ?? 0),
                                      y: location.y - CGFloat(self.insets?.top ?? 0))
         
-        self.carrotLocation = closestLocation(to: adjustedLocation)
-        self.updateCarrotLocation()
+        self.caretLocation = closestLocation(to: adjustedLocation)
+        self.updateCaretLocation()
         
-        self.verticalKeyPressStartX = self.carrot.frame.minX
+        self.verticalKeyPressStartX = self.caret.frame.minX
     }
     
     @objc func onDoubleTap(_ gesture: UITapGestureRecognizer) {
@@ -365,14 +365,14 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         let adjustedRange = NSTextRange(location: range.location, end: endLocation)
         
         self.selectionRange = adjustedRange
-        self.carrotLocation = adjustedRange?.endLocation
-        self.updateCarrotLocation()
+        self.caretLocation = adjustedRange?.endLocation
+        self.updateCaretLocation()
         layoutManager.textViewportLayoutController.layoutViewport()
     }
     
-    func carrotHitFrame() -> CGRect {
+    func caretHitFrame() -> CGRect {
         let padding: CGFloat = 10
-        return CGRect(x: carrot.frame.minX - padding, y: carrot.frame.minY - padding, width: carrot.frame.width + padding * 2, height: carrot.frame.height + padding * 2)
+        return CGRect(x: caret.frame.minX - padding, y: caret.frame.minY - padding, width: caret.frame.width + padding * 2, height: caret.frame.height + padding * 2)
     }
     
     @objc func onHoldGesture(_ gesture: UILongPressGestureRecognizer) {
@@ -392,15 +392,15 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         
         switch(gesture.state) {
         case .began:
-            guard !carrot.frame.contains(gestureLocation) else {
+            guard !caret.frame.contains(gestureLocation) else {
                 self.holdGestureIsInsideCarret = true
                 self.onHoldGesture(gesture)
                 return
             }
             
             self.selectionStart = location
-            self.carrotLocation = location
-            self.updateCarrotLocation()
+            self.caretLocation = location
+            self.updateCaretLocation()
             self.onDidSelectText?()
             layoutManager.textViewportLayoutController.layoutViewport()
         case .changed:
@@ -417,14 +417,14 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
                 self.selectionRange = NSTextRange(location: start, end: endLocation)
             }
             
-            self.carrotLocation = location
-            self.updateCarrotLocation()
+            self.caretLocation = location
+            self.updateCaretLocation()
             layoutManager.textViewportLayoutController.layoutViewport()
         case .cancelled:
             self.selectionStart = nil
             self.selectionRange = nil
-            self.carrotLocation = location
-            self.updateCarrotLocation()
+            self.caretLocation = location
+            self.updateCaretLocation()
             layoutManager.textViewportLayoutController.layoutViewport()
         case .possible:
             break
@@ -444,20 +444,20 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     @objc func onCarretHoldGesture(_ gesture: UILongPressGestureRecognizer) {
         switch(gesture.state) {
         case .began:
-            self.carrot.layer.shadowOffset = CGSize(width: 2, height: 2)
-            self.carrot.layer.shadowColor = UIColor.black.cgColor
-            self.carrot.layer.shadowOpacity = 1
+            self.caret.layer.shadowOffset = CGSize(width: 2, height: 2)
+            self.caret.layer.shadowColor = UIColor.black.cgColor
+            self.caret.layer.shadowOpacity = 1
         case .changed:
             let location = gesture.location(in: self.contentView)
-            self.carrot.center = location
-            self.scrollToCarrotIfNeeded()
+            self.caret.center = location
+            self.scrollToCaretIfNeeded()
         default:
             self.holdGestureIsInsideCarret = false
-            self.carrot.layer.shadowOpacity = 0
-            let location = self.closestLocation(to: CGPoint(x: self.carrot.frame.minX, y: self.carrot.center.y))
-            self.carrotLocation = location
-            self.updateCarrotLocation()
-            self.scrollToCarrotIfNeeded()
+            self.caret.layer.shadowOpacity = 0
+            let location = self.closestLocation(to: CGPoint(x: self.caret.frame.minX, y: self.caret.center.y))
+            self.caretLocation = location
+            self.updateCaretLocation()
+            self.scrollToCaretIfNeeded()
         }
     }
     
@@ -504,13 +504,13 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             return
         }
         
-        if let location = carrotLocation {
+        if let location = caretLocation {
             self.insert(text: text, at: location)
             return
         }
     }
     
-    func insert(text: String, at location: NSTextLocation, ignoreEditingDelegate: Bool = false, moveCarrot: Bool = true) {
+    func insert(text: String, at location: NSTextLocation, ignoreEditingDelegate: Bool = false, moveCaret: Bool = true) {
         guard let textStore = self.contentStore.textStorage else {
             return
         }
@@ -539,9 +539,9 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         
         layoutManager.textViewportLayoutController.layoutViewport()
         
-        if moveCarrot {
-            self.carrotLocation = contentStore.location(location, offsetBy: text.count)
-            self.updateCarrotLocation()
+        if moveCaret {
+            self.caretLocation = contentStore.location(location, offsetBy: text.count)
+            self.updateCaretLocation()
         }
         
         self.inputDelegate?.textDidChange(self)
@@ -595,15 +595,15 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         if let lastRange = replacements.first,
            let start = contentStore.location(lastRange.range.location, offsetBy: textDelta) {
             let text = lastRange.text
-            self.carrotLocation = contentStore.location(start, offsetBy: text.count)
-            self.updateCarrotLocation()
+            self.caretLocation = contentStore.location(start, offsetBy: text.count)
+            self.updateCaretLocation()
         }
         
         self.inputDelegate?.textDidChange(self)
     }
     
     func deleteBackward() {
-        guard let carrotLocation = self.carrotLocation else {
+        guard let caretLocation = self.caretLocation else {
             return
         }
         
@@ -612,7 +612,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             let inclusiveEnd = contentStore.location(selectionRange.endLocation, offsetBy: -1)
             range = NSTextRange(location: selectionRange.location, end: inclusiveEnd)
             self.selectionRange = nil
-        } else if let start = contentStore.location(carrotLocation, offsetBy: -1) {
+        } else if let start = contentStore.location(caretLocation, offsetBy: -1) {
             range = NSTextRange(location: start, end: start)
         }
         
@@ -660,13 +660,13 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         
         layoutManager.textViewportLayoutController.layoutViewport()
         
-        self.carrotLocation = range.location
-        updateCarrotLocation()
+        self.caretLocation = range.location
+        updateCaretLocation()
         
         self.inputDelegate?.textDidChange(self)
     }
     
-    func setCarrotToEndOfDocument() {
+    func setCaretToEndOfDocument() {
         let endLocation = contentStore.documentRange.endLocation
         var fragment: NSTextLayoutFragment?
         self.layoutManager.enumerateTextLayoutFragments(from: endLocation, options: [.reverse]) { f in
@@ -680,50 +680,50 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         
         let isDoubleFragment = abs(fragment.layoutFragmentFrame.height - lineHeight * 2) < 2
         
-        self.carrot.frame = CGRect(
+        self.caret.frame = CGRect(
             x: isDoubleFragment ? fragment.layoutFragmentFrame.minX : fragment.layoutFragmentFrame.maxX,
             y: fragment.layoutFragmentFrame.maxY - self.lineHeight,
-            width: self.carrot.frame.width,
+            width: self.caret.frame.width,
             height: self.lineHeight)
     }
     
-    func updateCarrotLocation(scrollToCarrot: Bool = true) {
-        guard let carrotLocation = self.carrotLocation else {
+    func updateCaretLocation(scrollToCaret: Bool = true) {
+        guard let caretLocation = self.caretLocation else {
             return
         }
         
-        guard carrotLocation.compare(contentStore.documentRange.endLocation) != .orderedSame else {
-            self.setCarrotToEndOfDocument()
+        guard caretLocation.compare(contentStore.documentRange.endLocation) != .orderedSame else {
+            self.setCaretToEndOfDocument()
             return
         }
         
-        guard let lineFragment = self.layoutManager.textLayoutFragment(for: carrotLocation) else {
+        guard let lineFragment = self.layoutManager.textLayoutFragment(for: caretLocation) else {
             return
         }
     
         var found = false
-        self.layoutManager.enumerateCaretOffsetsInLineFragment(at: carrotLocation, using: { x, location, le, _ in
-            if location.compare(carrotLocation) == .orderedSame {
+        self.layoutManager.enumerateCaretOffsetsInLineFragment(at: caretLocation, using: { x, location, le, _ in
+            if location.compare(caretLocation) == .orderedSame {
                 if le {
                     found = true
-                    self.carrot.frame = CGRect(x: x, y: lineFragment.layoutFragmentFrame.minY, width: self.carrot.frame.width, height: self.lineHeight)
+                    self.caret.frame = CGRect(x: x, y: lineFragment.layoutFragmentFrame.minY, width: self.caret.frame.width, height: self.lineHeight)
                 }
             }
         })
         
         if !found {
-            self.carrot.frame = CGRect(x: lineFragment.layoutFragmentFrame.maxX, y: lineFragment.layoutFragmentFrame.minY, width: self.carrot.frame.width, height: self.lineHeight)
+            self.caret.frame = CGRect(x: lineFragment.layoutFragmentFrame.maxX, y: lineFragment.layoutFragmentFrame.minY, width: self.caret.frame.width, height: self.lineHeight)
         }
         
-        if scrollToCarrot {
-            self.scrollToCarrotIfNeeded()
+        if scrollToCaret {
+            self.scrollToCaretIfNeeded()
         }
     }
     
-    func scrollToCarrotIfNeeded() {
-        if (self.carrot.frame.origin.y < self.contentOffset.y ||  self.carrot.frame.origin.y > self.contentOffset.y + self.frame.height) {
+    func scrollToCaretIfNeeded() {
+        if (self.caret.frame.origin.y < self.contentOffset.y ||  self.caret.frame.origin.y > self.contentOffset.y + self.frame.height) {
             self.updateCursorLocationOnNextLayout = true
-            self.scrollRectToVisible(self.carrot.frame, animated: true)
+            self.scrollRectToVisible(self.caret.frame, animated: true)
         }
     }
     
@@ -733,26 +733,26 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         for view in self.contentView.subviews {
             view.removeFromSuperview()
         }
-        self.contentView.addSubview(carrot)
+        self.contentView.addSubview(caret)
         recycler = TextLayoutFragmentViewRecycler()
     }
     
     override func becomeFirstResponder() -> Bool {
-        carrot.isHidden = false
-        carrot.startBlinking()
+        caret.isHidden = false
+        caret.startBlinking()
         return super.becomeFirstResponder()
     }
     
     override func resignFirstResponder() -> Bool {
-        self.carrot.stopBlinking()
-        self.carrot.isHidden = true
+        self.caret.stopBlinking()
+        self.caret.isHidden = true
         return super.resignFirstResponder()
     }
     
     @objc func upPressed() {
         self.clearSelectionRange()
         if self.verticalKeyPressStartX == nil {
-            self.verticalKeyPressStartX = self.carrot.frame.maxX
+            self.verticalKeyPressStartX = self.caret.frame.maxX
         }
         self.moveCursorVertically(lines: 1)
     }
@@ -760,7 +760,7 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     @objc func downPressed() {
         self.clearSelectionRange()
         if self.verticalKeyPressStartX == nil {
-            self.verticalKeyPressStartX = self.carrot.frame.maxX
+            self.verticalKeyPressStartX = self.caret.frame.maxX
         }
         self.moveCursorVertically(lines: -1)
     }
@@ -768,30 +768,30 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     @objc func rightPressed() {
         self.clearSelectionRange()
         self.moveCursorHorizontially(offset: 1)
-        self.verticalKeyPressStartX = self.carrot.frame.minX
+        self.verticalKeyPressStartX = self.caret.frame.minX
     }
     @objc func leftPressed() {
         self.clearSelectionRange()
         self.moveCursorHorizontially(offset: -1)
-        self.verticalKeyPressStartX = self.carrot.frame.minX
+        self.verticalKeyPressStartX = self.caret.frame.minX
     }
     
     func moveCursorHorizontially(offset: Int) {
-        guard let location = self.carrotLocation else {
+        guard let location = self.caretLocation else {
             return
         }
         
         if let newLocation =  contentStore.location(location, offsetBy: offset) {
-            self.carrotLocation = newLocation
+            self.caretLocation = newLocation
         } else {
             if offset > 0 {
-                self.carrotLocation = contentStore.documentRange.endLocation
+                self.caretLocation = contentStore.documentRange.endLocation
             } else {
-                self.carrotLocation = contentStore.documentRange.location
+                self.caretLocation = contentStore.documentRange.location
             }
         }
         
-        self.updateCarrotLocation()
+        self.updateCaretLocation()
     }
     
     func moveCursorVertically(lines: Int) {
@@ -803,10 +803,10 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             return
         }
         
-        self.carrotLocation = closestLocation(to:
+        self.caretLocation = closestLocation(to:
                                                 CGPoint(x: keyPress,
-                                                        y: carrot.frame.minY - CGFloat(lines) * carrot.frame.height))
-        self.updateCarrotLocation()
+                                                        y: caret.frame.minY - CGFloat(lines) * caret.frame.height))
+        self.updateCaretLocation()
     }
     
     func clearSelectionRange() {

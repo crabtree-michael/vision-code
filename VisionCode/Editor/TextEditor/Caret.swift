@@ -1,5 +1,5 @@
 //
-//  Carrot.swift
+//  Caret.swift
 //  VisionCode
 //
 //  Created by Michael Crabtree on 1/30/24.
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class Carrot: UIView {
+class Caret: UIView {
     var blinkDuration: TimeInterval = 0.36
     var isBlinking = false
 

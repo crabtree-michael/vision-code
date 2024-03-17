@@ -37,9 +37,9 @@ extension VCTextInputView {
         if self.selectionRange != nil {
             range = self.selectionRange
         }
-        else if let carrotLocation = self.carrotLocation,
-                let start = self.contentStore.location(carrotLocation, offsetBy: -1),
-           let newRange = NSTextRange(location: start, end: carrotLocation) {
+        else if let caretLocation = self.caretLocation,
+                let start = self.contentStore.location(caretLocation, offsetBy: -1),
+           let newRange = NSTextRange(location: start, end: caretLocation) {
             range = newRange
         }
         

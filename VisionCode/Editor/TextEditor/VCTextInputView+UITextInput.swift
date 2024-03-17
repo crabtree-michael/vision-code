@@ -183,7 +183,7 @@ extension VCTextInputView: UITextInput {
     }
     
     func caretRect(for position: UITextPosition) -> CGRect {
-        return self.carrot.frame
+        return self.caret.frame
     }
     
     func selectionRects(for range: UITextRange) -> [UITextSelectionRect] {
