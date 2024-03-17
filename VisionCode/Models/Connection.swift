@@ -12,6 +12,10 @@ class Connection {
     private var connection: RCConnection?
     var state: ConnectionViewState
     
+    var status: ConnectionState {
+        return state.status
+    }
+    
     init(connection: RCConnection?, state: ConnectionViewState) {
         self.connection = connection
         self.state = state

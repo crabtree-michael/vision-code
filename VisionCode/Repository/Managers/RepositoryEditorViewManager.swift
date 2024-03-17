@@ -18,6 +18,7 @@ class RepositoryEditorViewManager {
     var browser: RepositoryFileBrowserManager?
     var terminal: TerminalManager?
     let state: RepositoryEditorViewState
+    var hostId: ObjectId? = nil
     
     var didClose: ((RepositoryEditorViewManager) -> ())? = nil
     var onCloseEditor: VoidLambda? = nil
@@ -36,9 +37,23 @@ class RepositoryEditorViewManager {
                 self.onCloseEditor?()
             }
         }
+        
+        self.state.$scenePhase
+            .sink { [weak self] phase in
+            Task { @MainActor [weak self] in
+                if let connection = self?.connection,
+                   let id = self?.hostId,
+                   phase == .active &&
+                    (connection.status != .connecting || connection.status != .connected) {
+                    self?.connectionManager.reload(id: id)
+                }
+            }
+        }
+        .store(in: &tasks)
     }
     
     @MainActor func load(hostID: ObjectId) {
+        self.hostId = hostID
         let connection = self.connectionManager.connection(for: hostID)
         connection.state.$status.sink { [weak self] state in
             guard let self = self else {
