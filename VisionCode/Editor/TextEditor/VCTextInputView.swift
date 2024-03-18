@@ -602,6 +602,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         for observer in textObservers {
             observer.textDidFinishChanges?(in: self, text: textStore.string)
         }
+        
+        self.selectionRange = nil
 
         layoutManager.textViewportLayoutController.layoutViewport()
         
@@ -830,9 +832,31 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     func insertTab() {
         if let selectionRange = self.selectionRange {
             let range = self.adjustRangeToIncludeNewLine(selectionRange, inclusive: false)
-            self.tab(range: range)
+            let offet = self.tab(range: range)
+            
+            if let end = self.contentStore.location(range.endLocation, offsetBy: offet) {
+                self.selectionRange = NSTextRange(location: range.location, end: end)
+                self.layoutManager.textViewportLayoutController.layoutViewport()
+            }
         } else {
             self.insertText(self.tabWidth.tabString)
+        }
+    }
+    
+    func unindent() {
+        if let selectionRange = self.selectionRange {
+            let range = self.adjustRangeToIncludeNewLine(selectionRange, inclusive: false)
+            let offet = self.unindent(range: range)
+            
+            if let end = self.contentStore.location(range.endLocation, offsetBy: offet) {
+                self.selectionRange = NSTextRange(location: range.location, end: end)
+                self.layoutManager.textViewportLayoutController.layoutViewport()
+            }
+        } else if let caretLocation = self.caretLocation,
+                  let start = self.contentStore.location(caretLocation, offsetBy: -1),
+                  let newRange = NSTextRange(location: start, end: caretLocation) {
+            let range = self.adjustRangeToIncludeNewLine(newRange, inclusive: false)
+            let _ = self.unindent(range: range)
         }
     }
     
@@ -896,7 +920,11 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
                 return
             }
         case .keyboardTab:
-            self.insertTab()
+            if press.key?.modifierFlags == .command || press.key?.modifierFlags == .shift {
+                self.unindent()
+            } else {
+                self.insertTab()
+            }
             return
         case .keyboardSlash:
             if press.key?.modifierFlags == .command {

@@ -28,8 +28,12 @@ extension CodeLanguage {
 
 
 extension VCTextInputView {
-    func tab(range: NSTextRange) {
+    func tab(range: NSTextRange) -> Int {
         self.insert(string: self.tabWidth.tabString, atAllOccurancesOf: "\n", in: range)
+    }
+    
+    func unindent(range: NSTextRange) -> Int {
+        self.replaceOccurances(of: "\n" + self.tabWidth.tabString, with: "\n", in: range)
     }
     
     func commentSelection() {
@@ -75,26 +79,26 @@ extension VCTextInputView {
         }
         
         if text.hasPrefix("\n\(commentStr)") {
-            self.replaceOccurances(of: "\n\(commentStr)", with: "\n", in: range)
+            let _ = self.replaceOccurances(of: "\n\(commentStr)", with: "\n", in: range)
         } else {
-            self.insert(string: commentStr, atAllOccurancesOf: "\n", in: range)
+            let _ = self.insert(string: commentStr, atAllOccurancesOf: "\n", in: range)
         }
     }
     
     func delete(occurancesOf replacementStr: String, in range: NSTextRange, allowSingleLines: Bool = false) {
-        self.replaceOccurances(of: replacementStr, with: "", in: range)
+        let _ = self.replaceOccurances(of: replacementStr, with: "", in: range)
     }
     
     func insert(string: String, atAllOccurancesOf replacementStr: String, in range: NSTextRange,
-                allowSingleLines: Bool = false) {
+                allowSingleLines: Bool = false) -> Int {
         self.replaceOccurances(of: replacementStr, with: replacementStr + string, in: range)
     }
     
-    func replaceOccurances(of matchStr: String, with replacementStr: String, in range: NSTextRange) {
+    func replaceOccurances(of matchStr: String, with replacementStr: String, in range: NSTextRange) -> Int {
         let documentStart = contentStore.documentRange.location
         guard let str = self.contentStore.string(in: range, inclusive: false),
               let globalOffset = range.offset(provider: self.contentStore) else {
-            return
+            return 0
         }
         
         self.selectionRange = nil
@@ -111,11 +115,14 @@ extension VCTextInputView {
             return true
         }
         
+        let count = replacements.count * (replacementStr.count - matchStr.count)
+        
         // Add a no-op replacement for cursor placement
         replacements.append(Replacement(text: "", range: NSTextRange(location: range.endLocation, end: range.endLocation)!))
         
         // Perform replacements
         self.perform(replacements: replacements.reversed())
+        return count
     }
     
     func line(at location: NSTextLocation) -> String? {
