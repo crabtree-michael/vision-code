@@ -175,6 +175,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
     
     var editDelegate: TextViewEditDelegate?
     
+    var shiftPressed: Bool = false
+    
     
     override var keyCommands: [UIKeyCommand]? {
         return [
@@ -343,8 +345,19 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         let location = gesture.location(in: self)
         let adjustedLocation = CGPoint(x: location.x - CGFloat(self.insets?.left ?? 0),
                                      y: location.y - CGFloat(self.insets?.top ?? 0))
+        let newLocation = closestLocation(to: adjustedLocation)
         
-        self.caretLocation = closestLocation(to: adjustedLocation)
+        if let newLocation = newLocation,
+            let currentLocation = self.caretLocation, shiftPressed {
+            let order = currentLocation.compare(newLocation)
+            let start = order == .orderedAscending ? currentLocation : newLocation
+            let end = order == .orderedAscending ? newLocation : currentLocation
+            self.selectionRange = NSTextRange(location: start, end: end)
+            self.layoutManager.textViewportLayoutController.layoutViewport()
+            return
+        }
+        
+        self.caretLocation = newLocation
         self.updateCaretLocation()
         
         self.verticalKeyPressStartX = self.caret.frame.minX
@@ -873,6 +886,8 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
             super.pressesBegan(presses, with: event)
             return
         }
+        
+        shiftPressed = press.key?.modifierFlags == .shift
     
         switch (press.key?.keyCode) {
         case .keyboardF:
@@ -891,6 +906,23 @@ class VCTextInputView: UIScrollView, NSTextViewportLayoutControllerDelegate, UIT
         }
         
         super.pressesBegan(presses, with: event)
+    }
+    
+    override func pressesChanged(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        if let press = presses.first {
+            shiftPressed = press.key?.modifierFlags == .shift
+        }
+        super.pressesChanged(presses, with: event)
+    }
+    
+    override func pressesCancelled(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        shiftPressed = false
+        super.pressesCancelled(presses, with: event)
+    }
+    
+    override func pressesEnded(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        shiftPressed = false
+        super.pressesEnded(presses, with: event)
     }
 }
 
