@@ -105,7 +105,7 @@ class PathNode: Hashable {
             return nil
         }
         
-        if let index = parentNode.subnodes.firstIndex(where: { $0.file.name == node.file.name }) {
+        if let _ = parentNode.subnodes.firstIndex(where: { $0.file.name == node.file.name }) {
             return nil
         }
 
@@ -115,6 +115,10 @@ class PathNode: Hashable {
     
     private func findParent(path: String, currentComponentIndex: Int) -> PathNode? {
         let components = (path as NSString).pathComponents
+        guard currentComponentIndex < components.count else {
+            return nil
+        }
+        
         let component = components[currentComponentIndex]
         
         if currentComponentIndex > 0 &&

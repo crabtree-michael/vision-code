@@ -122,7 +122,6 @@ class RepositoryFileBrowserManager {
         if node.file.path == self.path {
             oldNode = self.root
             self.root = node
-            
         } else {
             oldNode = self.root.update(node: node)
         }
